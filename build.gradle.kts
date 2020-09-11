@@ -37,7 +37,7 @@ version = pluginVersion
 // Configure project's dependencies
 repositories {
     mavenCentral()
-
+    jcenter()
 }
 dependencies {
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.12.0")
