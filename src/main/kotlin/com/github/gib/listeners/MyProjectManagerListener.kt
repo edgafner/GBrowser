@@ -1,8 +1,8 @@
-package com.github.jonatha1983.gib.listeners
+package com.github.gib.listeners
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManagerListener
-import com.github.jonatha1983.gib.services.MyProjectService
+import com.github.gib.services.MyProjectService
 
 internal class MyProjectManagerListener : ProjectManagerListener {
 

@@ -37,7 +37,7 @@ version = pluginVersion
 // Configure project's dependencies
 repositories {
     mavenCentral()
-    jcenter()
+
 }
 dependencies {
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.12.0")
@@ -55,7 +55,7 @@ intellij {
 //  Plugin Dependencies:
 //  https://www.jetbrains.org/intellij/sdk/docs/basics/plugin_structure/plugin_dependencies.html
 //
-//  setPlugins("java")
+  setPlugins("java")
 }
 
 // Configure detekt plugin.
@@ -63,7 +63,6 @@ intellij {
 detekt {
     config = files("./detekt-config.yml")
     buildUponDefaultConfig = true
-
     reports {
         html.enabled = false
         xml.enabled = false
@@ -117,7 +116,7 @@ tasks {
 
     publishPlugin {
         dependsOn("patchChangelog")
-        token(System.getenv("PUBLISH_TOKEN"))
+        token(System.getenv("GIDEABROWSERGITHUB"))
         channels(pluginVersion.split('-').getOrElse(1) { "default" }.split('.').first())
     }
 }

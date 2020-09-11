@@ -1,19 +1,29 @@
 <idea-plugin>
-    <id>com.github.jonatha1983.gib</id>
-    <name>GIB</name>
-    <vendor>jonatha1983</vendor>
+    <id>com.gafner.giv</id>
+    <name>GIdeaBrowser</name>
+    <vendor email="jgafner@gmail.com">JGAFNER</vendor>
 
-    <!-- Product and plugin compatibility requirements -->
-    <!-- https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html -->
+    <description><![CDATA[
+    Embedded Web Browser in a ToolWindow.<br>
+    Watch YouTube coding session directly in the IDE<br>
+    ]]></description>
+
+    <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
     <depends>com.intellij.modules.platform</depends>
+    <idea-version since-build="2020.1"/>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceImplementation="com.github.jonatha1983.gib.services.MyApplicationService"/>
-        <projectService serviceImplementation="com.github.jonatha1983.gib.services.MyProjectService"/>
+        <!-- Add your extensions here -->
+
+        <projectService serviceImplementation="com.github.gib.GivToolWindow"/>
+        <toolWindow id="GIdeaBrowser" icon="/icons/youtube.svg" anchor="right"
+                    factoryClass="com.gafner.giv.GivToolWindowFactory"/>
+
     </extensions>
 
-    <projectListeners>
-        <listener class="com.github.jonatha1983.gib.listeners.MyProjectManagerListener"
-                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
-    </projectListeners>
+    <actions>
+        <!-- Add your actions here -->
+    </actions>
+
 </idea-plugin>

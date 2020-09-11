@@ -1,4 +1,4 @@
-package com.github.jonatha1983.gib
+package com.github.gib
 
 import com.intellij.AbstractBundle
 import org.jetbrains.annotations.NonNls

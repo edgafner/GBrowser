@@ -1,7 +1,7 @@
-package com.github.jonatha1983.gib.services
+package com.github.gib.services
 
 import com.intellij.openapi.project.Project
-import com.github.jonatha1983.gib.MyBundle
+import com.github.gib.MyBundle
 
 class MyProjectService(project: Project) {
 
