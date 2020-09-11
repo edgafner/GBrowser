@@ -4,3 +4,22 @@
 formatting:
   Indentation:
     active: true
+  FinalNewline:
+    active: false
+  ParameterListWrapping:
+    active: false
+  MaximumLineLength:
+    active: false
+  NoBlankLineBeforeRbrace:
+    active: false
+empty-blocks:
+  EmptyFunctionBlock:
+    ignoreOverridden: true
+style:
+  NewLineAtEndOfFile:
+    active: false
+  ForbiddenComment:
+    active: false
+  MaxLineLength:
+    active: false
+

@@ -7,9 +7,6 @@ import com.intellij.openapi.wm.ToolWindowFactory
 class GivToolWindowFactory : ToolWindowFactory {
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
         val givExplorer = GivToolWindow.getInstance(project)
-
         givExplorer.initializePanel(toolWindow)
-
     }
-
 }

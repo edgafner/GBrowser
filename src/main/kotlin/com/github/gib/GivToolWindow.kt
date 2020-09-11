@@ -23,11 +23,9 @@ class GivToolWindow(project: Project) : DumbAware, Disposable {
         toolWindow.contentManager.addContent(content)
     }
 
-
     companion object {
         fun getInstance(project: Project): GivToolWindow = ServiceManager.getService(project, GivToolWindow::class.java)
     }
 
     override fun dispose() {}
-
 }
