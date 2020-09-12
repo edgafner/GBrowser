@@ -2,7 +2,7 @@
 
 # GIB Changelog
 
-## [1.0.5-beta] - 2020-09-12
+
 - Initial migration from private repo
 
 ## [Unreleased]
