@@ -1,11 +1,17 @@
-<!-- Keep a Changelog guide -> https://keepachangelog.com -->
+# Changelog
 
-# GIB Changelog
-
-
-- Initial migration from private repo
 
 ## [Unreleased]
+- Initial From template for make it Open Source
+## [1.0.3]
+-- First Jetbrains Public
 ### Added
-- Initial scaffold created from [IntelliJ Platform Plugin Template](https://github.com/JetBrains/intellij-platform-plugin-template)
+### Changed
 
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
