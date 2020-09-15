@@ -7,10 +7,11 @@
 ## G. Idea Browser
 
 <!-- Plugin description -->
+Open Source.
 Embedded Web Browser in a ToolWindow. 
 Watch YouTube coding session directly in the IDE.
 
-The goal of this project is to add more browser capability inside the IDE. 
+The goal of this project is to like browsers capabilities in the IDE toolwindow. 
 <!-- Plugin description end -->
 
 ## Installation
