@@ -7,7 +7,7 @@
 ## G. Idea Browser
 
 <!-- Plugin description -->
-Embedded Web Browser in a ToolWindow. 
+Embedded Web Browser in a ToolWindow  with JCEF. 
 Watch YouTube coding session directly in the IDE.
 
 The goal of this project is to add more browser capability inside the IDE. 
