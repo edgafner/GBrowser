@@ -1,1 +1,1 @@
-rootProject.name = "GIB"
+rootProject.name = "GIdeaBrowser"
