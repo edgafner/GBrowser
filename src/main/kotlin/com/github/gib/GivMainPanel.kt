@@ -25,10 +25,7 @@ class GivMainPanel(val project: Project) : SimpleToolWindowPanel(true, true), Di
     private val url = "http://youtube.com"
 
     init {
-        when (JBCefApp.isSupported()) {
-            true -> initGivPanel()
-            else -> notifyDisable()
-        }
+        initGivPanel()
     }
 
     private fun initGivPanel() {
@@ -50,7 +47,8 @@ class GivMainPanel(val project: Project) : SimpleToolWindowPanel(true, true), Di
 
     private fun notifyDisable() {
         val jTextArea = JTextArea("Set the reg key to enable JCEF:\n\"ide.browser.jcef.enabled=true\"")
-        JBPopupFactory.getInstance().createComponentPopupBuilder(jTextArea, null).setTitle("JCEF Web Browser Is not Supported").createPopup().showCenteredInCurrentWindow(project)
+        JBPopupFactory.getInstance().createComponentPopupBuilder(jTextArea, null)
+            .setTitle("JCEF Web Browser Is not Supported").createPopup().showCenteredInCurrentWindow(project)
     }
 
     override fun dispose() {}
