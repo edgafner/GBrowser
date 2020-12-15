@@ -1,27 +1,28 @@
 package com.github.gib
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.SimpleToolWindowPanel
-import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.ui.IdeBorderFactory
 import com.intellij.ui.SideBorder
 import com.intellij.ui.jcef.JBCefBrowser
 import com.intellij.ui.layout.panel
 import com.intellij.util.ui.UIUtil
 import java.awt.BorderLayout
-import java.awt.event.ActionEvent
 import javax.swing.JPanel
-import javax.swing.JTextArea
 import javax.swing.JTextField
+import org.cef.browser.CefBrowser
+
+
+
+
 
 @Suppress("UnstableApiUsage")
-class GivMainPanel(val project: Project) : SimpleToolWindowPanel(true, true), Disposable {
+class GivMainPanel : SimpleToolWindowPanel(true, true), Disposable {
 
     /**
      * Maybe change this to something else
      */
-    private val url = "http://youtube.com"
+    private val url = "https://youtube.com"
 
     init {
         initGivPanel()
@@ -29,6 +30,9 @@ class GivMainPanel(val project: Project) : SimpleToolWindowPanel(true, true), Di
 
     private fun initGivPanel() {
         val jbCefBrowser = JBCefBrowser(url)
+//        val myDevTools: CefBrowser = jbCefBrowser.getCefBrowser().getDevTools()
+//        val myDevToolsBrowser = JBCefBrowser(myDevTools, jbCefBrowser.getJBCefClient())
+//        myDevToolsBrowser.age
 
         val divPanel = JPanel(BorderLayout())
         divPanel.border = IdeBorderFactory.createBorder(UIUtil.getBoundsColor(), SideBorder.ALL)
@@ -40,14 +44,8 @@ class GivMainPanel(val project: Project) : SimpleToolWindowPanel(true, true), Di
             row { myUrlBar() }
         }
 
-        myUrlBar.addActionListener { event: ActionEvent? -> jbCefBrowser.loadURL(myUrlBar.text) }
+        myUrlBar.addActionListener { jbCefBrowser.loadURL(myUrlBar.text) }
         divPanel.add(panel, BorderLayout.NORTH)
-    }
-
-    private fun notifyDisable() {
-        val jTextArea = JTextArea("Set the reg key to enable JCEF:\n\"ide.browser.jcef.enabled=true\"")
-        JBPopupFactory.getInstance().createComponentPopupBuilder(jTextArea, null)
-            .setTitle("JCEF Web Browser Is not Supported").createPopup().showCenteredInCurrentWindow(project)
     }
 
     override fun dispose() {}
