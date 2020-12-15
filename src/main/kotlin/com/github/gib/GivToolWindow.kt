@@ -9,9 +9,9 @@ import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.content.Content
 import com.intellij.ui.content.ContentFactory
 
-class GivToolWindow(project: Project) : DumbAware, Disposable {
+class GivToolWindow : DumbAware, Disposable {
 
-    private val givPanel: GivMainPanel = GivMainPanel(project)
+    private val givPanel: GivMainPanel = GivMainPanel()
 
     fun initializePanel(toolWindow: ToolWindow) {
         val contentFactory = ContentFactory.SERVICE.getInstance()
