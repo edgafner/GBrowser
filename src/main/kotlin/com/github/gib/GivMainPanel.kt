@@ -10,10 +10,6 @@ import com.intellij.util.ui.UIUtil
 import java.awt.BorderLayout
 import javax.swing.JPanel
 import javax.swing.JTextField
-import org.cef.browser.CefBrowser
-
-
-
 
 
 @Suppress("UnstableApiUsage")
