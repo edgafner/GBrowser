@@ -2,7 +2,7 @@
 
 
 ## [Unreleased]
-- Initial From the template for make it Open Source
+- Open Source with GH actions.
 ## [1.0.3]
 -- First Jetbrains Public
 ### Added
