@@ -7,7 +7,7 @@ import java.util.function.Consumer
 
 class CefUrlChangeHandler(private val onUrlChange: Consumer<String?>) : CefDisplayHandlerAdapter() {
 
-    override fun onAddressChange(browser: CefBrowser?, frame:   CefFrame?, url: String?) {
+    override fun onAddressChange(browser: CefBrowser?, frame: CefFrame?, url: String?) {
         onUrlChange.accept(url)
     }
 }

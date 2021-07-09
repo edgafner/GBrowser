@@ -1,6 +1,5 @@
 package com.github.gib.actions
 
-import com.intellij.ide.actions.ForwardAction
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.ui.jcef.JBCefBrowser

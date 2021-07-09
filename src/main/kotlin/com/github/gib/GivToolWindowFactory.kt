@@ -10,13 +10,13 @@ class GivToolWindowFactory : ToolWindowFactory , DumbAware {
 
 
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
-        setupToolWindowContent(project,toolWindow)
+        setupToolWindowContent(toolWindow)
     }
 
 
-    private fun setupToolWindowContent(project: Project, toolWindow: ToolWindow) {
+    private fun setupToolWindowContent(toolWindow: ToolWindow) {
         val contentManager = toolWindow.contentManager
-        val rootComponent = GivMainPanel(project,GivServiceSettings.instance().getLastSaveHomePage())
+        val rootComponent = GivMainPanel(GivServiceSettings.instance().getLastSaveHomePage())
         val content = contentManager.factory.createContent(rootComponent, null, false)
         contentManager.addContent(content)
     }

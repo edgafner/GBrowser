@@ -7,10 +7,9 @@ import com.intellij.util.ui.FormBuilder
 import javax.swing.JComponent
 import javax.swing.JPanel
 
-
 class ProjectSettingsComponent {
 
-    private val myMainPanel : JPanel
+    private val myMainPanel: JPanel
     private val homePageText = JBTextField(GivServiceSettings.instance().getLastSaveHomePage())
 
     init {
@@ -33,9 +32,7 @@ class ProjectSettingsComponent {
         return homePageText.text
     }
 
-    fun setHomePageText( newText: String?) {
-        homePageText.setText(newText)
+    fun setHomePageText(newText: String?) {
+        homePageText.text = newText
     }
-
-
 }

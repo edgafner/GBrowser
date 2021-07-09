@@ -6,7 +6,7 @@ import javax.swing.JComponent
 
 class ProjectSettingsConfigurable : SearchableConfigurable {
 
-    private var projectSettingsComponent : ProjectSettingsComponent? = null
+    private var projectSettingsComponent: ProjectSettingsComponent? = null
 
     override fun createComponent(): JComponent {
 
@@ -20,7 +20,7 @@ class ProjectSettingsConfigurable : SearchableConfigurable {
 
     override fun isModified(): Boolean {
         val settings: GivServiceSettings = GivServiceSettings.instance()
-        return  projectSettingsComponent!!.getHomePageText() != settings.getLastSaveHomePage()
+        return projectSettingsComponent!!.getHomePageText() != settings.getLastSaveHomePage()
     }
 
     override fun apply() {

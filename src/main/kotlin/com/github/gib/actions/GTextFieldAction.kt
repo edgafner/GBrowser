@@ -6,11 +6,9 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.actionSystem.ex.CustomComponentAction
 import com.intellij.openapi.project.DumbAware
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.ui.ClickListener
 import com.intellij.ui.jcef.JBCefBrowser
-import com.intellij.util.textCompletion.TextFieldWithCompletion
 import com.intellij.util.ui.JBDimension
 import com.intellij.util.ui.JBUI
 import java.awt.BorderLayout
@@ -21,7 +19,7 @@ import javax.swing.*
 import javax.swing.border.Border
 import javax.swing.border.CompoundBorder
 
-class GTextFieldAction(text: String, description: String, icon: Icon, private val jbCefBrowser: JBCefBrowser, width: Int) :
+class GTextFieldAction(text: String, description: String, icon: Icon, private val jbCefBrowser: JBCefBrowser) :
     AnAction(text, description, icon), CustomComponentAction, DumbAware {
     private var myDescription: String? = null
     private val urlTextField = JTextField(text)

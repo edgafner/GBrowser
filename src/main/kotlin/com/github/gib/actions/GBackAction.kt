@@ -4,7 +4,6 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.ui.jcef.JBCefBrowser
 import javax.swing.Icon
-import javax.swing.ImageIcon
 
 class GBackAction(private val jbCefBrowser: JBCefBrowser, icon : Icon) : AnAction(icon) {
 
@@ -15,7 +14,6 @@ class GBackAction(private val jbCefBrowser: JBCefBrowser, icon : Icon) : AnActio
             return
         }
         super.update(e)
-
     }
 
     override fun actionPerformed(e: AnActionEvent) {

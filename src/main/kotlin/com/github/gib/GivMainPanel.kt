@@ -9,14 +9,13 @@ import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.Constraints
 import com.intellij.openapi.actionSystem.DefaultActionGroup
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.SimpleToolWindowPanel
 import com.intellij.ui.jcef.JBCefBrowser
 import javax.swing.ImageIcon
 
 
 @Suppress("UnstableApiUsage")
-class GivMainPanel(private val project: Project, private val initialUrl: String) : SimpleToolWindowPanel(true, true),
+class GivMainPanel(private val initialUrl: String) : SimpleToolWindowPanel(true, true),
     Disposable {
 
     private val jbCefBrowser: JBCefBrowser = JBCefBrowser(initialUrl)
@@ -34,8 +33,7 @@ class GivMainPanel(private val project: Project, private val initialUrl: String)
         val forwardButton = GForwardAction(jbCefBrowser, ImageIcon(javaClass.getResource("/actions/forward.png")))
         val urlTextField = GTextFieldAction(initialUrl, "Web address",
             ImageIcon(javaClass.getResource("/actions/refresh.png")),
-            jbCefBrowser,
-            this.width)
+            jbCefBrowser)
         val refreshButton = GRefreshAction(jbCefBrowser, ImageIcon(javaClass.getResource("/actions/refresh.png")))
 
         jbCefBrowser.cefBrowser.client.addDisplayHandler(CefUrlChangeHandler { url -> urlTextField.setText(url ?: "") })

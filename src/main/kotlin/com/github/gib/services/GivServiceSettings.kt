@@ -44,6 +44,4 @@ class GivServiceSettings : PersistentStateComponent<GivServiceSettings.State> {
     override fun loadState(state: State) = synchronized(lock) {
         myState = state
     }
-
-
 }
