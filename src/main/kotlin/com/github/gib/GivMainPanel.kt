@@ -1,47 +1,55 @@
 package com.github.gib
 
+import com.github.gib.actions.GBackAction
+import com.github.gib.actions.GForwardAction
+import com.github.gib.actions.GRefreshAction
+import com.github.gib.actions.GTextFieldAction
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.ActionPlaces
+import com.intellij.openapi.actionSystem.Constraints
+import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.SimpleToolWindowPanel
-import com.intellij.ui.IdeBorderFactory
-import com.intellij.ui.SideBorder
 import com.intellij.ui.jcef.JBCefBrowser
-import com.intellij.ui.layout.panel
-import com.intellij.util.ui.UIUtil
-import java.awt.BorderLayout
-import javax.swing.JPanel
-import javax.swing.JTextField
+import javax.swing.ImageIcon
+
 
 @Suppress("UnstableApiUsage")
-class GivMainPanel : SimpleToolWindowPanel(true, true), Disposable {
+class GivMainPanel(private val project: Project, private val initialUrl: String) : SimpleToolWindowPanel(true, true),
+    Disposable {
 
-    /**
-     * Maybe change this to something else
-     */
-    private val url = "https://youtube.com"
+    private val jbCefBrowser: JBCefBrowser = JBCefBrowser(initialUrl)
 
     init {
-        initGivPanel()
+        toolbar = ActionManager.getInstance()
+            .createActionToolbar(ActionPlaces.MAIN_TOOLBAR, buildToolbar(), true).component
+        setContent(jbCefBrowser.component)
+
     }
 
-    private fun initGivPanel() {
-        val jbCefBrowser = JBCefBrowser(url)
-//        val myDevTools: CefBrowser = jbCefBrowser.getCefBrowser().getDevTools()
-//        val myDevToolsBrowser = JBCefBrowser(myDevTools, jbCefBrowser.getJBCefClient())
-//        myDevToolsBrowser.age
+    private fun buildToolbar(): DefaultActionGroup {
+        val toolbar = DefaultActionGroup()
+        val backButton = GBackAction(jbCefBrowser, ImageIcon(javaClass.getResource("/actions/back.png")))
+        val forwardButton = GForwardAction(jbCefBrowser, ImageIcon(javaClass.getResource("/actions/forward.png")))
+        val urlTextField = GTextFieldAction(initialUrl, "Web address",
+            ImageIcon(javaClass.getResource("/actions/refresh.png")),
+            jbCefBrowser,
+            this.width)
+        val refreshButton = GRefreshAction(jbCefBrowser, ImageIcon(javaClass.getResource("/actions/refresh.png")))
 
-        val divPanel = JPanel(BorderLayout())
-        divPanel.border = IdeBorderFactory.createBorder(UIUtil.getBoundsColor(), SideBorder.ALL)
-        divPanel.add(jbCefBrowser.component, BorderLayout.CENTER)
-        setContent(divPanel)
+        jbCefBrowser.cefBrowser.client.addDisplayHandler(CefUrlChangeHandler { url -> urlTextField.setText(url ?: "") })
 
-        val myUrlBar = JTextField(url)
-        val panel = panel {
-            row { myUrlBar() }
-        }
+        toolbar.add(backButton)
+        toolbar.add(forwardButton)
+        toolbar.add(refreshButton)
+        toolbar.add(urlTextField, Constraints.LAST)
 
-        myUrlBar.addActionListener { jbCefBrowser.loadURL(myUrlBar.text) }
-        divPanel.add(panel, BorderLayout.NORTH)
+        return toolbar
     }
 
-    override fun dispose() {}
+
+    override fun dispose() {
+        jbCefBrowser.dispose()
+    }
 }
