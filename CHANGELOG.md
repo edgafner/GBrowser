@@ -6,6 +6,7 @@
 - Default Home Page in Settings
 - Url Text field with history
 - Support IJ 211
+- Action for favorite Bookmarks in the tool bar
 ## [1.0.7]
 ### Added
 - Back ,Forward and Refresh Buttons
