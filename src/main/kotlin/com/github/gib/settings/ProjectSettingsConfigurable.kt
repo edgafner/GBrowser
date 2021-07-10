@@ -19,16 +19,15 @@ class ProjectSettingsConfigurable : SearchableConfigurable {
     }
 
     override fun isModified(): Boolean {
-        val settings: GivServiceSettings = GivServiceSettings.instance()
-        return projectSettingsComponent!!.getHomePageText() != settings.getLastSaveHomePage()
+        return projectSettingsComponent!!.isModified()
     }
 
     override fun apply() {
-        GivServiceSettings.instance().saveHomePage(projectSettingsComponent!!.getHomePageText())
+        projectSettingsComponent!!.apply()
     }
 
     override fun reset() {
-        projectSettingsComponent!!.setHomePageText(GivServiceSettings.instance().getLastSaveHomePage())
+        projectSettingsComponent!!.reset()
 
     }
 
