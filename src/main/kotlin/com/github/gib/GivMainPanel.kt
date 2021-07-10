@@ -1,9 +1,7 @@
 package com.github.gib
 
-import com.github.gib.actions.GBackAction
-import com.github.gib.actions.GForwardAction
-import com.github.gib.actions.GRefreshAction
-import com.github.gib.actions.GTextFieldAction
+import com.github.gib.actions.*
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionPlaces
@@ -31,17 +29,23 @@ class GivMainPanel(private val initialUrl: String) : SimpleToolWindowPanel(true,
         val toolbar = DefaultActionGroup()
         val backButton = GBackAction(jbCefBrowser, ImageIcon(javaClass.getResource("/actions/back.png")))
         val forwardButton = GForwardAction(jbCefBrowser, ImageIcon(javaClass.getResource("/actions/forward.png")))
+        val refreshButton = GRefreshAction(jbCefBrowser, ImageIcon(javaClass.getResource("/actions/refresh.png")))
+        val homeButton = GHomeAction(jbCefBrowser, AllIcons.Nodes.HomeFolder)
+
         val urlTextField = GTextFieldAction(initialUrl, "Web address",
             ImageIcon(javaClass.getResource("/actions/refresh.png")),
             jbCefBrowser)
-        val refreshButton = GRefreshAction(jbCefBrowser, ImageIcon(javaClass.getResource("/actions/refresh.png")))
+
 
         jbCefBrowser.cefBrowser.client.addDisplayHandler(CefUrlChangeHandler { url -> urlTextField.setText(url ?: "") })
 
         toolbar.add(backButton)
         toolbar.add(forwardButton)
         toolbar.add(refreshButton)
-        toolbar.add(urlTextField, Constraints.LAST)
+        toolbar.add(homeButton)
+        toolbar.addSeparator()
+        toolbar.add(urlTextField)
+        toolbar.addSeparator()
 
         return toolbar
     }

@@ -1,28 +1,22 @@
 # GIB
 
 ![Build](https://github.com/Jonatha1983/GIB/workflows/Build/badge.svg)
-[![Version](https://img.shields.io/jetbrains/plugin/v/PLUGIN_ID.svg)](https://plugins.jetbrains.com/plugin/PLUGIN_ID)
-[![Downloads](https://img.shields.io/jetbrains/plugin/d/PLUGIN_ID.svg)](https://plugins.jetbrains.com/plugin/PLUGIN_ID)
+[![Version](https://img.shields.io/jetbrains/plugin/v/14458-gideabrowser.svg)](https://plugins.jetbrains.com/plugin/14458-gideabrowser)
+[![Downloads](https://img.shields.io/jetbrains/plugin/d/14458-gideabrowser.svg)](https://plugins.jetbrains.com/plugin/14458-gideabrowser)
 
-## G. Idea Browser
+## Idea Browser Tool Window
 
 <!-- Plugin description -->
-Embedded Web Browser in a ToolWindow. 
-Watch YouTube coding session directly in the IDE.
-
-The goal of this project is to add more browser capability inside the IDE. 
+All started from the need to have a Good Embedded Browser window inside the IDE, especially annoyed by jumping back and forth when doing some online tutorials
+from YouTube.
+ 
 <!-- Plugin description end -->
 
-## Installation
+## Contribute 
 
-- Using IDE built-in plugin system:
-  
-  <kbd>Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>Marketplace</kbd> > <kbd>Search for "GIdeaBrowser"</kbd> >
-  <kbd>Install Plugin</kbd>
-  
-- Manually:
+Feel free to clone and open prs with various features so we can all enjoy missing Browser functionality.
 
-  Download the [latest release](https://github.com/Jonatha1983/GIB/releases/latest) and install it manually using
-  <kbd>Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd>
+
+
 
  
