@@ -14,7 +14,7 @@ from YouTube.
 
 ## Contribute 
 
-Feel free to clone and open prs with various features so we can all enjoy missing Browser functionality.
+Please feel free to clone & open PullRequests with various features. Still missing lots of Web Browser functionality that can help.
 
 
 
