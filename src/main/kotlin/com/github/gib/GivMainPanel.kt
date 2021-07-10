@@ -31,6 +31,9 @@ class GivMainPanel(private val initialUrl: String) : SimpleToolWindowPanel(true,
         val forwardButton = GForwardAction(jbCefBrowser, ImageIcon(javaClass.getResource("/actions/forward.png")))
         val refreshButton = GRefreshAction(jbCefBrowser, ImageIcon(javaClass.getResource("/actions/refresh.png")))
         val homeButton = GHomeAction(jbCefBrowser, AllIcons.Nodes.HomeFolder)
+        val bookMarkFavorites = GFavoritesMenuAction()
+        bookMarkFavorites.jbCefBrowser = jbCefBrowser
+
 
         val urlTextField = GTextFieldAction(initialUrl, "Web address",
             ImageIcon(javaClass.getResource("/actions/refresh.png")),
@@ -43,9 +46,9 @@ class GivMainPanel(private val initialUrl: String) : SimpleToolWindowPanel(true,
         toolbar.add(forwardButton)
         toolbar.add(refreshButton)
         toolbar.add(homeButton)
+        toolbar.add(bookMarkFavorites)
         toolbar.addSeparator()
         toolbar.add(urlTextField)
-        toolbar.addSeparator()
 
         return toolbar
     }

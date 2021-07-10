@@ -25,8 +25,8 @@ class GTextFieldAction(text: String, description: String, icon: Icon, private va
 
     init {
         urlTextField.text = text
-        urlTextField.minimumSize = JBDimension(400, 32)
-        urlTextField.preferredSize = JBDimension(400, 32)
+        urlTextField.minimumSize = JBDimension(450, 32)
+        urlTextField.preferredSize = JBDimension(450, 32)
 
         urlTextField.addKeyboardListener(object : KeyAdapter() {
             override fun keyPressed(e: KeyEvent) {
