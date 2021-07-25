@@ -1,12 +1,19 @@
 # Changelog
 
 ## [Unreleased]
+## [1.0.13]
+### Added
+- Fix url text
+- Add bookmarks with right click
+- Fix devtool
+
+## [1.0.12]
 ### Added
 - Back ,Forward, Refresh and home Buttons
 - Default Home Page in Settings
 - Url Text field with history
 - Support IJ 211
-- Action for favorite Bookmarks in the tool bar
+- Action for favorite Bookmarks in the toolbar
 ## [1.0.7]
 ### Added
 - Back ,Forward and Refresh Buttons

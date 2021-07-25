@@ -9,22 +9,16 @@ import com.intellij.ui.jcef.JBCefBrowser
 
 class GFavoritesMenuAction : DefaultActionGroup(), DumbAware {
 
-    var jbCefBrowser: JBCefBrowser? = null
-
 
     override fun update(e: AnActionEvent) {
         e.presentation.isEnabled = childrenCount <= 0
         e.presentation.icon = AllIcons.Nodes.Favorite
-        val instance = GivServiceSettings.instance()
-        if (jbCefBrowser != null) {
-            updateView(instance)
-        }
 
     }
 
-    private fun updateView(settings: GivServiceSettings) {
+    fun updateView(settings: GivServiceSettings, jbCefBrowser: JBCefBrowser) {
         removeAll()
-        addAll(settings.getFavorites().map { GFavoriteWebAction(it.first, it.second, jbCefBrowser!!) })
+        addAll(settings.getFavorites().map { GFavoriteWebAction(it.first, it.second, jbCefBrowser) })
     }
 
 }

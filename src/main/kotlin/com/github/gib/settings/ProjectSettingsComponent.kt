@@ -1,6 +1,8 @@
 package com.github.gib.settings
 
+import com.github.gib.SettingsChangedAction
 import com.github.gib.services.GivServiceSettings
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.ui.SideBorder
 import com.intellij.ui.TableUtil
@@ -13,9 +15,7 @@ import com.intellij.util.ui.*
 import javax.swing.JComponent
 import javax.swing.JPanel
 
-
 class ProjectSettingsComponent {
-
     private val myMainPanel: JPanel
     private var tableModel: ListTableModel<FavoritesWeb>
     private val table: TableView<FavoritesWeb>
@@ -36,7 +36,8 @@ class ProjectSettingsComponent {
         scrollPanel.putClientProperty(UIUtil.KEEP_BORDER_SIDES, SideBorder.ALL)
 
         val tablePanel =
-            UI.PanelFactory.panel(scrollPanel).withComment("Add and Remove favorites web pages").resizeY(true)
+            UI.PanelFactory.panel(scrollPanel).withLabel("Bookmarks").withComment("Add and Remove favorites web pages")
+                .resizeY(true).moveLabelOnTop()
                 .createPanel()
         myMainPanel = FormBuilder.createFormBuilder()
             .addLabeledComponent(JBLabel("GIdea default home page"), homePageText, 1, false)
@@ -96,6 +97,8 @@ class ProjectSettingsComponent {
     fun apply() {
         givServiceSettings.saveHomePage(getHomePageText())
         givServiceSettings.addToFavorites(tableModel.items.map { it.webUrl })
+        val bus = ApplicationManager.getApplication().messageBus
+        bus.syncPublisher(SettingsChangedAction.TOPIC).settingsChanged()
     }
 
     fun reset() {
