@@ -1,5 +1,6 @@
 package com.github.gib.services
 
+import com.github.gib.SettingsChangedAction
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
@@ -43,6 +44,12 @@ class GivServiceSettings : PersistentStateComponent<GivServiceSettings.State> {
             myState.favorites.add(Pair.create(it,
                 JBImageIcon(ImageIO.read(URL("https://www.google.com/s2/favicons?domain=$it")))))
         }
+    }
+
+    fun addFavorite(webToFavorite: String) = synchronized(lock) {
+        myState.favorites.add(Pair.create(webToFavorite,
+            JBImageIcon(ImageIO.read(URL("https://www.google.com/s2/favicons?domain=$webToFavorite")))))
+
     }
 
     class State {

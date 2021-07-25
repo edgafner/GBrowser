@@ -9,7 +9,7 @@ import javax.swing.table.DefaultTableCellRenderer
 import javax.swing.table.TableCellRenderer
 
 
-class WebUrlColumnInfo : ColumnInfo<FavoritesWeb, String>("Favorites Web URLs") {
+class WebUrlColumnInfo : ColumnInfo<FavoritesWeb, String>("") {
 
     override fun valueOf(item: FavoritesWeb): String {
         return item.webUrl
