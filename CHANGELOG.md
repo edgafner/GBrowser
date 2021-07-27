@@ -1,6 +1,7 @@
 # Changelog
 
 ## [Unreleased]
+## [1.0.14]
 ### Added
 - Fix url text
 - Add bookmarks with right click
