@@ -1,6 +1,12 @@
 # Changelog
 
 ## [Unreleased]
+### Added
+- Fix url text
+- Add bookmarks with right click
+- Fix devtool
+
+
 ## [1.0.13]
 ### Added
 - Fix url text

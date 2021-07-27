@@ -23,7 +23,7 @@ class GBCefBrowser(url: String) : JBCefBrowser(url) {
     private var myDevtoolsFrame: JDialog? = null
 
     init {
-        myCefClient.addContextMenuHandler(DefaultCefContextMenuHandler(), this.cefBrowser)
+        getJBCefClient().addContextMenuHandler(DefaultCefContextMenuHandler(), this.cefBrowser)
     }
 
     override fun openDevtools() {
@@ -41,7 +41,7 @@ class GBCefBrowser(url: String) : JBCefBrowser(url) {
             bounds.width / 2,
             bounds.height / 2)
         myDevtoolsFrame!!.layout = BorderLayout()
-        val devTools = JBCefBrowser(myCefBrowser.devTools, myCefClient)
+        val devTools = JBCefBrowser(getCefBrowser().devTools, getJBCefClient())
         myDevtoolsFrame!!.add(devTools.component, BorderLayout.CENTER)
         myDevtoolsFrame!!.addWindowListener(object : WindowAdapter() {
             override fun windowClosed(e: WindowEvent) {
