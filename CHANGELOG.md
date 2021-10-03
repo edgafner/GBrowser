@@ -1,14 +1,16 @@
 # Changelog
 
 ## [Unreleased]
+
+## [1.0.15]
 ### Added
 - Support for IJ2021.3
+
 ## [1.0.14]
 ### Added
 - Fix url text
 - Add bookmarks with right click
 - Fix devtool
-
 
 ## [1.0.13]
 ### Added
@@ -23,20 +25,13 @@
 - Url Text field with history
 - Support IJ 211
 - Action for favorite Bookmarks in the toolbar
+
 ## [1.0.7]
 ### Added
 - Back ,Forward and Refresh Buttons
 - Default Home Page in Settings 
-- Support IJ 211 
+- Support IJ 211
+
 ## [1.0.3]
 -- First Jetbrains Public
-### Added
-### Changed
-
-### Deprecated
-
-### Removed
-
-### Fixed
-
-### Security
+-- First Jetbrains Public
