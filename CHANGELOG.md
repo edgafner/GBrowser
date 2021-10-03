@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Added
+- Support for IJ2021.3
 ## [1.0.14]
 ### Added
 - Fix url text
