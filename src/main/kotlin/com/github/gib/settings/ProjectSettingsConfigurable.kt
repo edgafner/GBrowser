@@ -1,6 +1,5 @@
 package com.github.gib.settings
 
-import com.github.gib.services.GivServiceSettings
 import com.intellij.openapi.options.SearchableConfigurable
 import javax.swing.JComponent
 
