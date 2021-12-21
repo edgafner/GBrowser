@@ -1,8 +1,9 @@
 # Changelog
 
 ## [Unreleased]
+
+## [1.0.18]
 ### Changed
-- Qodana and Gradle version
 
 ## [1.0.15]
 ### Added
