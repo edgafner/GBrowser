@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.gafner.giv</id>
     <name>GIdeaBrowser</name>
-    <vendor email="jgafner@gmail.com">JGAFNER</vendor>
+    <vendor email="meirgafner@gmail.com">Meir</vendor>
 
     <description><![CDATA[
     Embedded Web Browser in a ToolWindow.<br>
