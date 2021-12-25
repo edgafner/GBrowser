@@ -2,6 +2,7 @@ package com.github.gib.gcef
 
 import com.github.gib.SettingsChangedAction
 import com.github.gib.services.GivServiceSettings
+import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.jcef.JBCefBrowser
@@ -69,6 +70,7 @@ class GBCefBrowser(url: String) : JBCefBrowser(url) {
                                          model: CefMenuModel) {
 
             model.addItem(28501, "Add to Bookmarks")
+            model.addItem(28502, "Open In Browser")
         }
 
         override fun onContextMenuCommand(browser: CefBrowser,
@@ -78,6 +80,9 @@ class GBCefBrowser(url: String) : JBCefBrowser(url) {
                                           eventFlags: Int): Boolean {
             if (commandId == 28501) {
                 addToBookmarks(browser)
+                return true
+            } else if (commandId == 28502) {
+                BrowserUtil.browse(browser.url)
                 return true
             }
             return false
