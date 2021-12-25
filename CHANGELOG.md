@@ -2,7 +2,10 @@
 
 ## [Unreleased]
 
-## [1.0.17]
+
+## [1.0.18]
+## Log4j requested changes 
+
 ### Changed
 
 ## [1.0.15]
