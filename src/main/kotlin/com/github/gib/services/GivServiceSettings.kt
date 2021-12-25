@@ -53,7 +53,7 @@ class GivServiceSettings : PersistentStateComponent<GivServiceSettings.State> {
     }
 
     class State {
-        var homePage: String = "https://plugins.jetbrains.com/plugin/14458-gideabrowser"
+        var homePage: String = "https://plugins.jetbrains.com/plugin/18269-queryflag"
         val favorites = mutableListOf<Pair<String, JBImageIcon>>()
     }
 
