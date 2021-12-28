@@ -1,8 +1,9 @@
 # Changelog
 
 ## [Unreleased]
+
+## [1.0.22]
 ### Added
-- Zoom in and out actions
 
 ## [1.0.21]
 ### Added
