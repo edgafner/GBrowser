@@ -25,11 +25,13 @@ class GivMainPanel(private val initialUrl: String) : SimpleToolWindowPanel(true,
     private val jbCefBrowser: JBCefBrowser = GBCefBrowser(initialUrl)
 
     init {
-        toolbar =
-            ActionManager.getInstance()
-                .createActionToolbar(ActionPlaces.CONTEXT_TOOLBAR, buildToolbar(), true).component
-        setContent(jbCefBrowser.component)
+        val toolbar = ActionManager.getInstance()
+            .createActionToolbar(ActionPlaces.CONTEXT_TOOLBAR, buildToolbar(), true).apply {
+                targetComponent = this@GivMainPanel
+            }
 
+        setContent(jbCefBrowser.component)
+        setToolbar(toolbar.component)
     }
 
     private fun buildToolbar(): DefaultActionGroup {

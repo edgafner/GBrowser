@@ -1,8 +1,12 @@
 # Changelog
 
 ## [Unreleased]
+### Added
+- Support for open in Browser in right click
+
 ### Changed
-- Qodana and Gradle version
+- Log4j requested changes 
+- Change the default home page for the new QueryFlag plugin
 
 ## [1.0.15]
 ### Added
