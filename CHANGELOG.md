@@ -1,9 +1,12 @@
 # Changelog
 
 ## [Unreleased]
+### Added
+- Zoom in and out actions
 
 ## [1.0.21]
 ### Added
+- Support for Open in Browser
 
 ## [1.0.15]
 ### Added
