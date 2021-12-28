@@ -1,12 +1,9 @@
 # Changelog
 
 ## [Unreleased]
-### Added
-- Support for open in Browser in right click
 
-### Changed
-- Log4j requested changes 
-- Change the default home page for the new QueryFlag plugin
+## [1.0.21]
+### Added
 
 ## [1.0.15]
 ### Added
