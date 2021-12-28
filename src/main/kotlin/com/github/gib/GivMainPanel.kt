@@ -12,9 +12,6 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.ui.SimpleToolWindowPanel
 import com.intellij.ui.jcef.JBCefBrowser
-import net.miginfocom.layout.AC
-import net.miginfocom.layout.LC
-import net.miginfocom.swing.MigLayout
 import javax.swing.ImageIcon
 
 
@@ -42,6 +39,10 @@ class GivMainPanel(private val initialUrl: String) : SimpleToolWindowPanel(true,
         val homeButton = GHomeAction(jbCefBrowser, AllIcons.Nodes.HomeFolder)
         val bookMarkFavorites = GFavoritesMenuAction()
 
+        val zoomInButton = GZoomInAction(jbCefBrowser, AllIcons.General.ZoomIn)
+        val zoomOutButton = GZoomOutAction(jbCefBrowser, AllIcons.General.ZoomOut)
+
+
         val bus = ApplicationManager.getApplication().messageBus
         bus.connect().subscribe(SettingsChangedAction.TOPIC, object : SettingsChangedAction {
             override fun settingsChanged() {
@@ -63,10 +64,14 @@ class GivMainPanel(private val initialUrl: String) : SimpleToolWindowPanel(true,
         toolbar.add(bookMarkFavorites)
         toolbar.addSeparator()
         toolbar.add(urlTextField, Constraints.LAST)
+        toolbar.addSeparator()
+        toolbar.add(zoomOutButton)
+        toolbar.add(zoomInButton)
 
 
         return toolbar
     }
+
 
     override fun dispose() {
         jbCefBrowser.dispose()

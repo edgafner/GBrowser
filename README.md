@@ -7,8 +7,7 @@
 ## Idea Browser Tool Window
 
 <!-- Plugin description -->
-All started from the need to have a Good Embedded Browser window inside the IDE, especially annoyed by jumping back and forth when doing some online tutorials
-from YouTube.
+An embedded web Browser window within your IDE. Cut the context swich of jumping back and forth when doing some web staff.
  
 <!-- Plugin description end -->
 

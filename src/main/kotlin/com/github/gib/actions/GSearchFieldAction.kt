@@ -81,9 +81,9 @@ class GSearchFieldAction(
         panel.apply {
             isOpaque = false
             layout = MigLayout(LC().gridGap("0", "0").insets("0", "0", "0", "0").fillX())
-            panel.add(urlTextField, CC().width("300").growX().pushX())
+            panel.add(urlTextField, CC().width("300").pushX())
         }
-        panel.preferredSize = JBDimension(400, 32)
+        panel.preferredSize = JBDimension(350, 32)
     }
 
     override fun actionPerformed(e: AnActionEvent) {
