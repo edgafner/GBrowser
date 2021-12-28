@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - Support for open in Browser in right click
+- Support for zoom in and zoom out
 
 ### Changed
 - Log4j requested changes 
