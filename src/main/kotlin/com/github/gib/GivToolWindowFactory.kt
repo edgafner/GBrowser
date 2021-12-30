@@ -24,4 +24,8 @@ class GivToolWindowFactory : ToolWindowFactory, DumbAware {
         contentManager.addContent(content)
     }
 
+    companion object{
+        const val GIDEA_BROWSER_TOOL_WINDOW_ID = "GIdeaBrowser"
+    }
+
 }

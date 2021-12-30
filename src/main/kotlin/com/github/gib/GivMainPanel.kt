@@ -39,9 +39,8 @@ class GivMainPanel(private val initialUrl: String) : SimpleToolWindowPanel(true,
         val homeButton = GHomeAction(jbCefBrowser, AllIcons.Nodes.HomeFolder)
         val bookMarkFavorites = GFavoritesMenuAction()
 
-        val zoomInButton = GZoomInAction(jbCefBrowser, AllIcons.General.ZoomIn)
-        val zoomOutButton = GZoomOutAction(jbCefBrowser, AllIcons.General.ZoomOut)
-
+        val gCustomizeActionGroup = GCustomizeActionGroup(jbCefBrowser)
+        val findButton = GFindAction(jbCefBrowser, AllIcons.Actions.Find)
 
         val bus = ApplicationManager.getApplication().messageBus
         bus.connect().subscribe(SettingsChangedAction.TOPIC, object : SettingsChangedAction {
@@ -63,10 +62,11 @@ class GivMainPanel(private val initialUrl: String) : SimpleToolWindowPanel(true,
         toolbar.add(homeButton)
         toolbar.add(bookMarkFavorites)
         toolbar.addSeparator()
-        toolbar.add(urlTextField, Constraints.LAST)
+        toolbar.add(urlTextField)
         toolbar.addSeparator()
-        toolbar.add(zoomOutButton)
-        toolbar.add(zoomInButton)
+        toolbar.add(gCustomizeActionGroup, Constraints.LAST)
+        toolbar.add(findButton)
+
 
 
         return toolbar

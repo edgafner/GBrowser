@@ -1,10 +1,10 @@
 package com.github.gib.services
 
-import com.github.gib.MyBundle
+import com.github.gib.GIdeaBrowserBundle
 
 class MyApplicationService {
 
     init {
-        println(MyBundle.message("applicationService"))
+        println(GIdeaBrowserBundle.message("applicationService"))
     }
 }
