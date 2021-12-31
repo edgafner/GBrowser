@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 import java.util.*
+import javax.swing.Action
 import javax.swing.JComponent
 import javax.swing.JTextField
 import javax.swing.SwingUtilities
@@ -20,10 +21,12 @@ class FindDialog(val project: Project, private val jbCefBrowser: JBCefBrowser) :
 
 
     init {
-        title = "";
-        isModal = false;
-        isResizable = false;
-        setUndecorated(true);
+        title = ""
+        isModal = false
+        isResizable = false
+        setUndecorated(true)
+
+        init()
     }
 
     override fun createCenterPanel(): JComponent {
@@ -71,7 +74,9 @@ class FindDialog(val project: Project, private val jbCefBrowser: JBCefBrowser) :
 
     }
 
-
+    override fun createActions(): Array<Action> {
+        return emptyArray()
+    }
 
 
 }
