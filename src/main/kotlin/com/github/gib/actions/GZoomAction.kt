@@ -58,7 +58,7 @@ class GFindAction(private val jbCefBrowser: JBCefBrowser, icon: Icon) : AnAction
         }
 
         findDialog = FindDialog(e.project!!,jbCefBrowser)
-        findDialog!!.setDialogLocation(e)
+        findDialog!!.setDialogLocation()
         findDialog!!.show()
 
     }
