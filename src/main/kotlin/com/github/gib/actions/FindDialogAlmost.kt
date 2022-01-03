@@ -1,11 +1,16 @@
 package com.github.gib.actions
 
 import com.intellij.icons.AllIcons
+import com.intellij.ide.plugins.newui.HorizontalLayout
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.popup.IconButton
 import com.intellij.ui.InplaceButton
+import com.intellij.ui.OnePixelSplitter
+import com.intellij.ui.components.panels.NonOpaquePanel
+import com.intellij.ui.components.panels.Wrapper
 import com.intellij.ui.jcef.JBCefBrowser
+import com.intellij.util.ui.JBUI
 import java.awt.event.ItemListener
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
@@ -15,18 +20,19 @@ import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 
 
-class FindDialog(val project: Project, private val jbCefBrowser: JBCefBrowser) :
+class FindDialogAlmost(val project: Project, private val jbCefBrowser: JBCefBrowser) :
     DialogWrapper(project, false, false) {
 
-    private val myFindComponent: SearchPanel
+
+    private val myFindComponent: OnePixelSplitter
 
     init {
         title = ""
         isModal = false
         isResizable = false
         setUndecorated(true)
-        myFindComponent = createComponent()
 
+        myFindComponent = createComponent()
         init()
     }
 
@@ -55,9 +61,14 @@ class FindDialog(val project: Project, private val jbCefBrowser: JBCefBrowser) :
         jbCefBrowser.cefBrowser.find(0, text, next, false, true)
     }
 
-    private fun createComponent(): SearchPanel {
+    private fun createComponent(): OnePixelSplitter {
         val searchPanel = SearchPanel()
+        val jTextField = JTextField(20)
+        jTextField.isEditable = true
+        searchPanel.setContent(jTextField)
         searchPanel.requestFocus()
+        val mySplitter = OnePixelSplitter(false)
+
         searchPanel.addDocumentChangeListener(object : DocumentListener {
             override fun insertUpdate(e: DocumentEvent) {
                 textUpdated()
@@ -72,93 +83,92 @@ class FindDialog(val project: Project, private val jbCefBrowser: JBCefBrowser) :
             }
 
             private fun textUpdated() {
-                findText(myFindComponent.text)
+                findText(searchPanel.text)
             }
         })
         searchPanel.addKeyListener(object : KeyAdapter() {
             override fun keyPressed(keyEvent: KeyEvent) {
                 if (keyEvent.keyCode == KeyEvent.VK_ESCAPE) {
-                    myFindComponent.close()
+                    close()
                     close(0)
                 } else if (keyEvent.keyCode == KeyEvent.VK_ENTER || keyEvent.keyCode == KeyEvent.VK_UP) {
-                    findText(myFindComponent.text, true)
+                    findText(searchPanel.text, true)
                 } else if (keyEvent.keyCode == KeyEvent.VK_DOWN) {
-                    findText(myFindComponent.text)
+                    findText(searchPanel.text)
                 } else {
                     super.keyPressed(keyEvent)
                 }
             }
         })
 
-        return searchPanel
+        val rightPanel: JPanel = NonOpaquePanel(HorizontalLayout(JBUI.scale(1)))
+        rightPanel.add(createNextButton(searchPanel))
+        rightPanel.add(createPrevButton(searchPanel))
+        rightPanel.add(createCloseButton())
+        mySplitter.firstComponent = searchPanel
+        mySplitter.secondComponent = rightPanel
+        return mySplitter
     }
 
-    inner class SearchPanel : JPanel() {
-        private val myTextField = JTextField(15)
-        private val prev: InplaceButton
-        private val next: InplaceButton
-        private val close: InplaceButton
+    private fun createNextButton(searchPanel: SearchPanel): InplaceButton {
+        return InplaceButton(IconButton("Next", AllIcons.General.ChevronDown, AllIcons.General.ArrowDown)) {
+            findText(searchPanel.text, true)
+        }
+    }
+
+    private fun createPrevButton(searchPanel: SearchPanel): InplaceButton {
+        return InplaceButton(IconButton("Previous", AllIcons.General.ChevronUp, AllIcons.General.ArrowUp)) {
+            findText(searchPanel.text, false)
+        }
+    }
+
+    private fun createCloseButton(): InplaceButton {
+        return InplaceButton(IconButton("Close", AllIcons.Actions.Close, AllIcons.Actions.CloseHovered)) {
+            close()
+        }
+    }
+
+    private fun close() {
+        jbCefBrowser.cefBrowser.stopFinding(true)
+        close(0)
+    }
+
+    inner class SearchPanel : Wrapper() {
+
+
         private val ignoreCaseCheckBox = JCheckBox("Ignore Case", true)
 
 
-        private fun createNextButton(): InplaceButton {
-            return InplaceButton(IconButton("Next", AllIcons.General.ChevronDown, AllIcons.General.ArrowDown)) {
-                findText(text, true)
-            }
-        }
-
-        private fun createPrevButton(): InplaceButton {
-            return InplaceButton(IconButton("Previous", AllIcons.General.ChevronUp, AllIcons.General.ArrowUp)) {
-                findText(text, false)
-            }
-        }
-
-        private fun createCloseButton(): InplaceButton {
-            return InplaceButton(IconButton("Close", AllIcons.Actions.Close, AllIcons.Actions.CloseHovered)) {
-                close()
-            }
-        }
-
-        fun close() {
-            jbCefBrowser.cefBrowser.stopFinding(true)
-            close(0)
-        }
-
         val text: String
-            get() = myTextField.text
+            get() = (targetComponent as JTextField).text
 
         fun ignoreCase(): Boolean {
             return ignoreCaseCheckBox.isSelected
         }
 
         override fun requestFocus() {
-            myTextField.requestFocus()
+            targetComponent.requestFocus()
         }
 
         fun addDocumentChangeListener(listener: DocumentListener) {
-            myTextField.document.addDocumentListener(listener)
+            (targetComponent as JTextField).document.addDocumentListener(listener)
         }
 
         override fun addKeyListener(listener: KeyListener) {
-            myTextField.addKeyListener(listener)
+            (targetComponent as JTextField).addKeyListener(listener)
         }
 
         fun addIgnoreCaseListener(listener: ItemListener) {
             ignoreCaseCheckBox.addItemListener(listener)
         }
 
-        init {
-            next = createNextButton()
-            prev = createPrevButton()
-            close = createCloseButton()
-            myTextField.isEditable = true
-            add(myTextField)
-//            add(ignoreCaseCheckBox)
-            add(next)
-            add(prev)
-            add(close)
-            isOpaque = true
-        }
+//        init {
+//
+//            myTextField.isEditable = true
+//            add(myTextField)
+//            isOpaque = true
+//        }
 
     }
 }
+

@@ -10,21 +10,19 @@ import com.intellij.ui.jcef.JBCefBrowser
 import com.intellij.util.ui.JBDimension
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.StartupUiUtil
-import com.intellij.util.ui.UIUtil
-import java.awt.event.KeyEvent
-import javax.swing.*
-import javax.swing.border.Border
-import javax.swing.border.CompoundBorder
-import java.awt.BorderLayout
 import net.miginfocom.layout.CC
 import net.miginfocom.layout.LC
 import net.miginfocom.swing.MigLayout
-
+import java.awt.event.KeyEvent
+import javax.swing.Icon
+import javax.swing.JComponent
 import javax.swing.JPanel
+import javax.swing.border.Border
+import javax.swing.border.CompoundBorder
 
 
 class GSearchFieldAction(
-    val text: String,
+    text: String,
     description: String,
     icon: Icon,
     private val jbCefBrowser: JBCefBrowser,
@@ -61,10 +59,7 @@ class GSearchFieldAction(
     }
 
     init {
-
-//        urlTextField.preferredSize = JBDimension(280, 32)
         urlTextField.setHistorySize(10)
-
 
         val border = urlTextField.border
         val emptyBorder: Border = JBUI.Borders.empty(3, 0, 2, 0)
@@ -77,11 +72,10 @@ class GSearchFieldAction(
         }
 
 
-
         panel.apply {
             isOpaque = false
             layout = MigLayout(LC().gridGap("0", "0").insets("0", "0", "0", "0").fillX())
-            panel.add(urlTextField, CC().width("300").pushX())
+            panel.add(urlTextField, CC().width("320").pushX().growX())
         }
         panel.preferredSize = JBDimension(350, 32)
     }
