@@ -132,6 +132,7 @@ class FindDialog(val project: Project, private val jbCefBrowser: JBCefBrowser) :
         val text: String
             get() = myTextField.text
 
+        @Suppress("unused")
         fun ignoreCase(): Boolean {
             return ignoreCaseCheckBox.isSelected
         }
