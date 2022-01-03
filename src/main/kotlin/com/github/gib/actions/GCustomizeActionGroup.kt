@@ -6,7 +6,6 @@ import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.project.DumbAware
-import com.intellij.openapi.util.IconLoader
 import com.intellij.ui.jcef.JBCefBrowser
 
 

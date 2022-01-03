@@ -77,15 +77,20 @@ class FindDialog(val project: Project, private val jbCefBrowser: JBCefBrowser) :
         })
         searchPanel.addKeyListener(object : KeyAdapter() {
             override fun keyPressed(keyEvent: KeyEvent) {
-                if (keyEvent.keyCode == KeyEvent.VK_ESCAPE) {
-                    myFindComponent.close()
-                    close(0)
-                } else if (keyEvent.keyCode == KeyEvent.VK_ENTER || keyEvent.keyCode == KeyEvent.VK_UP) {
-                    findText(myFindComponent.text, true)
-                } else if (keyEvent.keyCode == KeyEvent.VK_DOWN) {
-                    findText(myFindComponent.text)
-                } else {
-                    super.keyPressed(keyEvent)
+                when (keyEvent.keyCode) {
+                    KeyEvent.VK_ESCAPE -> {
+                        myFindComponent.close()
+                        close(0)
+                    }
+                    KeyEvent.VK_ENTER, KeyEvent.VK_UP -> {
+                        findText(myFindComponent.text, true)
+                    }
+                    KeyEvent.VK_DOWN -> {
+                        findText(myFindComponent.text)
+                    }
+                    else -> {
+                        super.keyPressed(keyEvent)
+                    }
                 }
             }
         })
@@ -143,6 +148,7 @@ class FindDialog(val project: Project, private val jbCefBrowser: JBCefBrowser) :
             myTextField.addKeyListener(listener)
         }
 
+        @Suppress("unused")
         fun addIgnoreCaseListener(listener: ItemListener) {
             ignoreCaseCheckBox.addItemListener(listener)
         }

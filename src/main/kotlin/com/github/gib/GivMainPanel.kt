@@ -7,11 +7,9 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.ui.SimpleToolWindowPanel
-import com.intellij.ui.OnePixelSplitter
 import com.intellij.ui.jcef.JBCefBrowser
 import com.intellij.ui.jcef.JBCefBrowserBase.ErrorPage
 import org.cef.handler.CefLoadHandler
-import java.lang.Boolean
 import javax.swing.ImageIcon
 import kotlin.String
 import kotlin.Suppress
@@ -37,11 +35,10 @@ class GivMainPanel(private val initialUrl: String) : SimpleToolWindowPanel(true,
                 errorText,
                 failedUrl)
         }
-        jbCefBrowser.setProperty(JBCefBrowser.Properties.FOCUS_ON_SHOW, Boolean.TRUE)
+        jbCefBrowser.setProperty(JBCefBrowser.Properties.FOCUS_ON_SHOW, true)
 
         setContent(jbCefBrowser.component)
         setToolbar(toolbar.component)
-
 
 
     }
