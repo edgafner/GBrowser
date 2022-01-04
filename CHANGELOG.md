@@ -1,18 +1,9 @@
 # Changelog
 
 ## [Unreleased]
+
+## [1.0.23]
 ### Added
-- Add Zoom In & Out actions
-- Add Find Action
-- Initial work to support cookies' manager in the browser
-
-### Changed
-- Set Devtools enable by default
-- Toolwindow is now at left side by default
-
-### Fixed
-- Fix the issue with the devtools
-- Fix the issue with adding to favorites
 
 ## [1.0.21]
 ### Added
