@@ -2,7 +2,8 @@
 
 ## [Unreleased]
 ### Added
-- Zoom in and out actions
+- Add Zoom In & Out actions
+- Add Find Action
 
 ## [1.0.21]
 ### Added

@@ -4,16 +4,16 @@ import com.github.gib.actions.*
 import com.github.gib.services.GivServiceSettings
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.ActionPlaces
+import com.intellij.openapi.actionSystem.Constraints
+import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.ui.SimpleToolWindowPanel
 import com.intellij.ui.jcef.JBCefBrowser
 import com.intellij.ui.jcef.JBCefBrowserBase.ErrorPage
 import org.cef.handler.CefLoadHandler
 import javax.swing.ImageIcon
-import kotlin.String
-import kotlin.Suppress
-import kotlin.apply
 
 
 @Suppress("UnstableApiUsage")
@@ -77,7 +77,6 @@ class GivMainPanel(private val initialUrl: String) : SimpleToolWindowPanel(true,
         toolbar.addSeparator()
         toolbar.add(urlTextField)
         toolbar.addSeparator()
-        toolbar.add(EmptyAction(false))
         toolbar.add(gCustomizeActionGroup, Constraints.LAST)
 
         return toolbar
