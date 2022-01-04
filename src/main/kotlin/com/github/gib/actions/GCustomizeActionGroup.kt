@@ -36,7 +36,7 @@ class GCustomizeActionGroup(jbCefBrowser: JBCefBrowser, givMainPanel: GivMainPan
         actions += findButton
         actions += Separator()
         // Maybe we should disable this for now
-        actions += cookiesButton
+//        actions += cookiesButton
     }
 
 

@@ -27,7 +27,7 @@
 
 
 
-        <toolWindow id="GIdeaBrowser" icon="/icons/youtube.svg" anchor="right"
+        <toolWindow id="GIdeaBrowser" icon="/icons/youtube.svg" anchor="left"
                     factoryClass="com.github.gib.GivToolWindowFactory"/>
 
     </extensions>
