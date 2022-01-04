@@ -55,6 +55,7 @@ class GFindAction(private val jbCefBrowser: JBCefBrowser, icon: Icon) : AnAction
     }
 }
 
+@Suppress("ComponentNotRegistered", "unused")
 class GCookiesAction(private val jbCefBrowser: JBCefBrowser,
                      icon: Icon,
                      private val givMainPanel: GivMainPanel) : AnAction("Cookie Manager", "", icon) {
