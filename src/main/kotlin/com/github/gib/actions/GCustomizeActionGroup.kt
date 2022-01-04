@@ -1,6 +1,5 @@
 package com.github.gib.actions
 
-import com.github.gib.GivMainPanel
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.impl.ActionButton
@@ -9,7 +8,7 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.ui.jcef.JBCefBrowser
 
 
-class GCustomizeActionGroup(jbCefBrowser: JBCefBrowser, givMainPanel: GivMainPanel) :
+class GCustomizeActionGroup(jbCefBrowser: JBCefBrowser) :
     ActionGroup("Customize and Control", "Customize and Control", AllIcons.Actions.More), DumbAware {
 
     private var actions: Collection<AnAction> = emptyList()
@@ -25,7 +24,7 @@ class GCustomizeActionGroup(jbCefBrowser: JBCefBrowser, givMainPanel: GivMainPan
 
 //        val cookieIcon = IconLoader.getIcon("/icons/cookie.png", javaClass)
 
-        val cookiesButton = GCookiesAction(jbCefBrowser, AllIcons.Nodes.EmptyNode, givMainPanel)
+//        val cookiesButton = GCookiesAction(jbCefBrowser, AllIcons.Nodes.EmptyNode, givMainPanel)
 
         findButton.registerCustomShortcutSet(KeymapUtil.getActiveKeymapShortcuts(IdeActions.ACTION_FIND),
             jbCefBrowser.component)
