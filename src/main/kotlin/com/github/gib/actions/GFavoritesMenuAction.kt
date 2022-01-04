@@ -7,8 +7,11 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.project.DumbAware
 import com.intellij.ui.jcef.JBCefBrowser
 
-class GFavoritesMenuAction : DefaultActionGroup(), DumbAware {
+class GFavoritesMenuAction(val jbCefBrowser: JBCefBrowser) : DefaultActionGroup(), DumbAware {
 
+    init {
+        updateView()
+    }
 
     override fun update(e: AnActionEvent) {
         e.presentation.isEnabled = childrenCount <= 0
@@ -16,9 +19,10 @@ class GFavoritesMenuAction : DefaultActionGroup(), DumbAware {
 
     }
 
-    fun updateView(settings: GivServiceSettings, jbCefBrowser: JBCefBrowser) {
+    fun updateView() {
         removeAll()
-        addAll(settings.getFavorites().map { GFavoriteWebAction(it.first, it.second, jbCefBrowser) })
+        addAll(GivServiceSettings.instance().getFavorites()
+            .map { GFavoriteWebAction(it.first, it.second, jbCefBrowser) })
     }
 
 }

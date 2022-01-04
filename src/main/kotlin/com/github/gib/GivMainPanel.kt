@@ -1,7 +1,7 @@
 package com.github.gib
 
 import com.github.gib.actions.*
-import com.github.gib.services.GivServiceSettings
+import com.github.gib.gcef.GBCefBrowser
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
@@ -19,10 +19,7 @@ import javax.swing.ImageIcon
 @Suppress("UnstableApiUsage")
 class GivMainPanel(private val initialUrl: String) : SimpleToolWindowPanel(true, true), Disposable {
 
-    private val jbCefBrowser: JBCefBrowser =
-        JBCefBrowser.createBuilder().setOffScreenRendering(false).setUrl(initialUrl).setEnableOpenDevToolsMenuItem(true)
-
-            .createBrowser()
+    private val jbCefBrowser: JBCefBrowser = GBCefBrowser(initialUrl)
 
     init {
         val toolbar =
@@ -36,6 +33,7 @@ class GivMainPanel(private val initialUrl: String) : SimpleToolWindowPanel(true,
                 failedUrl)
         }
         jbCefBrowser.setProperty(JBCefBrowser.Properties.FOCUS_ON_SHOW, true)
+        jbCefBrowser.setProperty(JBCefBrowser.Properties.FOCUS_ON_NAVIGATION, true)
 
         setContent(jbCefBrowser.component)
         setToolbar(toolbar.component)
@@ -49,15 +47,14 @@ class GivMainPanel(private val initialUrl: String) : SimpleToolWindowPanel(true,
         val forwardButton = GForwardAction(jbCefBrowser, ImageIcon(javaClass.getResource("/actions/forward.png")))
         val refreshButton = GRefreshAction(jbCefBrowser, ImageIcon(javaClass.getResource("/actions/refresh.png")))
         val homeButton = GHomeAction(jbCefBrowser, AllIcons.Nodes.HomeFolder)
-        val bookMarkFavorites = GFavoritesMenuAction()
-
-        val gCustomizeActionGroup = GCustomizeActionGroup(jbCefBrowser, this)
+        val bookMarkFavorites = GFavoritesMenuAction(jbCefBrowser)
+        val gCustomizeActionGroup = GCustomizeActionGroup(jbCefBrowser)
 
 
         val bus = ApplicationManager.getApplication().messageBus
         bus.connect().subscribe(SettingsChangedAction.TOPIC, object : SettingsChangedAction {
             override fun settingsChanged() {
-                bookMarkFavorites.updateView(GivServiceSettings.instance(), jbCefBrowser)
+                bookMarkFavorites.updateView()
             }
         })
 
