@@ -4,7 +4,7 @@
 ### Added
 - Add Zoom In & Out actions
 - Add Find Action
-- Initial work to support cookies manager in the browser
+- Initial work to support cookies' manager in the browser
 
 ### Changed
 - Set Devtools enable by default
