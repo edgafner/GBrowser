@@ -1,7 +1,6 @@
 package com.github.gib
 
 import com.github.gib.actions.*
-import com.github.gib.gcef.GBCefBrowser
 import com.github.gib.services.GivServiceSettings
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.Disposable
@@ -12,23 +11,36 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.ui.SimpleToolWindowPanel
 import com.intellij.ui.jcef.JBCefBrowser
+import com.intellij.ui.jcef.JBCefBrowserBase.ErrorPage
+import org.cef.handler.CefLoadHandler
 import javax.swing.ImageIcon
 
 
 @Suppress("UnstableApiUsage")
-class GivMainPanel(private val initialUrl: String) : SimpleToolWindowPanel(true, true),
-    Disposable {
+class GivMainPanel(private val initialUrl: String) : SimpleToolWindowPanel(true, true), Disposable {
 
-    private val jbCefBrowser: JBCefBrowser = GBCefBrowser(initialUrl)
+    private val jbCefBrowser: JBCefBrowser =
+        JBCefBrowser.createBuilder().setOffScreenRendering(false).setUrl(initialUrl).setEnableOpenDevToolsMenuItem(true)
+
+            .createBrowser()
 
     init {
-        val toolbar = ActionManager.getInstance()
-            .createActionToolbar(ActionPlaces.CONTEXT_TOOLBAR, buildToolbar(), true).apply {
+        val toolbar =
+            ActionManager.getInstance().createActionToolbar(ActionPlaces.CONTEXT_TOOLBAR, buildToolbar(), true).apply {
                 targetComponent = this@GivMainPanel
             }
 
+        jbCefBrowser.setErrorPage { errorCode, errorText, failedUrl ->
+            if (errorCode == CefLoadHandler.ErrorCode.ERR_ABORTED) null else ErrorPage.DEFAULT.create(errorCode,
+                errorText,
+                failedUrl)
+        }
+        jbCefBrowser.setProperty(JBCefBrowser.Properties.FOCUS_ON_SHOW, true)
+
         setContent(jbCefBrowser.component)
         setToolbar(toolbar.component)
+
+
     }
 
     private fun buildToolbar(): DefaultActionGroup {
@@ -39,8 +51,7 @@ class GivMainPanel(private val initialUrl: String) : SimpleToolWindowPanel(true,
         val homeButton = GHomeAction(jbCefBrowser, AllIcons.Nodes.HomeFolder)
         val bookMarkFavorites = GFavoritesMenuAction()
 
-        val zoomInButton = GZoomInAction(jbCefBrowser, AllIcons.General.ZoomIn)
-        val zoomOutButton = GZoomOutAction(jbCefBrowser, AllIcons.General.ZoomOut)
+        val gCustomizeActionGroup = GCustomizeActionGroup(jbCefBrowser, this)
 
 
         val bus = ApplicationManager.getApplication().messageBus
@@ -50,7 +61,8 @@ class GivMainPanel(private val initialUrl: String) : SimpleToolWindowPanel(true,
             }
         })
 
-        val urlTextField = GSearchFieldAction(initialUrl, "Web address",
+        val urlTextField = GSearchFieldAction(initialUrl,
+            "Web address",
             ImageIcon(javaClass.getResource("/actions/refresh.png")),
             jbCefBrowser)
 
@@ -63,11 +75,9 @@ class GivMainPanel(private val initialUrl: String) : SimpleToolWindowPanel(true,
         toolbar.add(homeButton)
         toolbar.add(bookMarkFavorites)
         toolbar.addSeparator()
-        toolbar.add(urlTextField, Constraints.LAST)
+        toolbar.add(urlTextField)
         toolbar.addSeparator()
-        toolbar.add(zoomOutButton)
-        toolbar.add(zoomInButton)
-
+        toolbar.add(gCustomizeActionGroup, Constraints.LAST)
 
         return toolbar
     }

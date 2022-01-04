@@ -1,9 +1,10 @@
 # Changelog
 
 ## [Unreleased]
-
-## [1.0.22]
 ### Added
+- Add Zoom In & Out actions
+- Add Find Action
+- Initial work to support cookies manager in the browser
 
 ## [1.0.21]
 ### Added

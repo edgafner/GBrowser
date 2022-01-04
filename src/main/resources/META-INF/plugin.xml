@@ -13,6 +13,8 @@
     <depends>com.intellij.modules.platform</depends>
     <idea-version since-build="203"/>
 
+    <resource-bundle>messages.GIdeaBrowserBundle</resource-bundle>
+
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
 
@@ -25,13 +27,14 @@
 
 
 
-        <toolWindow id="GIdeaBrowser" icon="/icons/youtube.svg" anchor="right"
+        <toolWindow id="GIdeaBrowser" icon="/icons/youtube.svg" anchor="left"
                     factoryClass="com.github.gib.GivToolWindowFactory"/>
 
     </extensions>
 
     <actions>
         <!-- Add your actions here -->
+
 
     </actions>
 
