@@ -99,9 +99,7 @@ class GCookieManagerDialog(parent: JPanel, val jbCefBrowser: JBCefBrowser) : Dia
 
         override fun getColumnClass(columnIndex: Int): Class<*> {
             if (rowData.size > 0) {
-                if (rowData[0][columnIndex] != null) {
-                    return rowData[0][columnIndex].javaClass
-                }
+                return rowData[0][columnIndex].javaClass
             }
             return Any::class.java
         }
