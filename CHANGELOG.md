@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+- Support for IC-222 versiosn
+
 
 ## [1.0.24]
 ### Added
