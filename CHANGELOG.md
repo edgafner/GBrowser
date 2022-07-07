@@ -1,6 +1,10 @@
 # Changelog
 
 ## [Unreleased]
+- Support for IC-222 versiosn
+
+
+## [1.0.24]
 ### Added
 - Add Zoom In & Out actions
 - Add Find Action
@@ -14,8 +18,8 @@
 - Fix the issue with the devtools
 - Fix the issue with adding to favorites
 - Fix the change log job to be run as part of the release process
+
 ## [1.0.23]
-### Added
 
 ## [1.0.21]
 ### Added
