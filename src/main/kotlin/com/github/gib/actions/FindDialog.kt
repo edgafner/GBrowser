@@ -82,12 +82,15 @@ class FindDialog(val project: Project, private val jbCefBrowser: JBCefBrowser) :
                         myFindComponent.close()
                         close(0)
                     }
+
                     KeyEvent.VK_ENTER, KeyEvent.VK_UP -> {
                         findText(myFindComponent.text, true)
                     }
+
                     KeyEvent.VK_DOWN -> {
                         findText(myFindComponent.text)
                     }
+
                     else -> {
                         super.keyPressed(keyEvent)
                     }
