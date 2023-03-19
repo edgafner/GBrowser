@@ -52,7 +52,7 @@ class FindDialog(val project: Project, private val jbCefBrowser: JBCefBrowser) :
     }
 
     private fun findText(text: String, next: Boolean = false) {
-        jbCefBrowser.cefBrowser.find( text, next, false, true)
+        jbCefBrowser.cefBrowser.find( 0,text, next, false, true)
     }
 
     private fun createComponent(): SearchPanel {
