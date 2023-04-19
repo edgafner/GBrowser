@@ -1,8 +1,8 @@
 .gradle
 .idea
+.qodana
 build
 
 **/.DS_Store
-/.qodana/
 /CHANGELOG.md.orig
 **/CHANGELOG.md.orig

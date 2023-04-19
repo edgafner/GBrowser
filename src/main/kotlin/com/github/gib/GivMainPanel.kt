@@ -13,10 +13,8 @@ import com.intellij.openapi.ui.SimpleToolWindowPanel
 import com.intellij.ui.jcef.JBCefBrowser
 import com.intellij.ui.jcef.JBCefBrowserBase.ErrorPage
 import org.cef.handler.CefLoadHandler
-import javax.swing.ImageIcon
 
 
-@Suppress("UnstableApiUsage")
 class GivMainPanel(private val initialUrl: String) : SimpleToolWindowPanel(true, true), Disposable {
 
     private val jbCefBrowser: JBCefBrowser = GBCefBrowser(initialUrl)
@@ -43,9 +41,9 @@ class GivMainPanel(private val initialUrl: String) : SimpleToolWindowPanel(true,
 
     private fun buildToolbar(): DefaultActionGroup {
         val toolbar = DefaultActionGroup()
-        val backButton = GBackAction(jbCefBrowser, ImageIcon(javaClass.getResource("/actions/back.png")))
-        val forwardButton = GForwardAction(jbCefBrowser, ImageIcon(javaClass.getResource("/actions/forward.png")))
-        val refreshButton = GRefreshAction(jbCefBrowser, ImageIcon(javaClass.getResource("/actions/refresh.png")))
+        val backButton = GBackAction(jbCefBrowser, AllIcons.Actions.Back )
+        val forwardButton = GForwardAction(jbCefBrowser, AllIcons.Actions.Forward)
+        val refreshButton = GRefreshAction(jbCefBrowser, AllIcons.Actions.Refresh)
         val homeButton = GHomeAction(jbCefBrowser, AllIcons.Nodes.HomeFolder)
         val bookMarkFavorites = GFavoritesMenuAction(jbCefBrowser)
         val gCustomizeActionGroup = GCustomizeActionGroup(jbCefBrowser)
@@ -60,7 +58,7 @@ class GivMainPanel(private val initialUrl: String) : SimpleToolWindowPanel(true,
 
         val urlTextField = GSearchFieldAction(initialUrl,
             "Web address",
-            ImageIcon(javaClass.getResource("/actions/refresh.png")),
+            AllIcons.Actions.Refresh,
             jbCefBrowser)
 
 

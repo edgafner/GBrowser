@@ -1,8 +1,9 @@
 # Changelog
 
 ## [Unreleased]
-- Support for IC-223 versiosn
-- Support for IC-222 versiosn
+- Support for IC-231 version
+- Support for IC-223 version
+- Support for IC-222 version
 
 
 ## [1.0.24]

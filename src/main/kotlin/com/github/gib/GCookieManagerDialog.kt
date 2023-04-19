@@ -38,7 +38,7 @@ class GCookieManagerDialog(parent: JPanel, val jbCefBrowser: JBCefBrowser) : Dia
             button(myDeleteCookiesButtonText) {
                 if (myJBCefCookieManager.deleteCookies(true)) {
                     val cookies = myJBCefCookieManager.cookies
-                    cookies?.let { update(it) }
+                    cookies.let { update(it) }
                 }
             }
         }
