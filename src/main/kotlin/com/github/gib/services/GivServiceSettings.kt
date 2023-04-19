@@ -45,7 +45,6 @@ class GivServiceSettings : PersistentStateComponent<GivServiceSettings.State> {
         }
     }
 
-    @Suppress("unused")
     fun addFavorite(webToFavorite: String) = synchronized(lock) {
         myState.favorites.add(Pair.create(webToFavorite,
             JBImageIcon(ImageIO.read(URL("https://www.google.com/s2/favicons?domain=$webToFavorite")))))

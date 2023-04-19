@@ -7,7 +7,7 @@
 ## Idea Browser Tool Window
 
 <!-- Plugin description -->
-An embedded web Browser window within your IDE. Cut the context swich of jumping back and forth when doing some web staff.
+An embedded web Browser window within your IDE. Cut the context switch of jumping back and forth when doing some web staff.
  
 <!-- Plugin description end -->
 

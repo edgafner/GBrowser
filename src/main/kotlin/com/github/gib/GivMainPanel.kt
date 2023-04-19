@@ -13,10 +13,8 @@ import com.intellij.openapi.ui.SimpleToolWindowPanel
 import com.intellij.ui.jcef.JBCefBrowser
 import com.intellij.ui.jcef.JBCefBrowserBase.ErrorPage
 import org.cef.handler.CefLoadHandler
-import javax.swing.ImageIcon
 
 
-@Suppress("UnstableApiUsage")
 class GivMainPanel(private val initialUrl: String) : SimpleToolWindowPanel(true, true), Disposable {
 
     private val jbCefBrowser: JBCefBrowser = GBCefBrowser(initialUrl)

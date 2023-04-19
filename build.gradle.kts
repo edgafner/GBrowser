@@ -1,6 +1,5 @@
 import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.changelog.Changelog
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 fun properties(key: String) = providers.gradleProperty(key)
 fun environment(key: String) = providers.environmentVariable(key)
