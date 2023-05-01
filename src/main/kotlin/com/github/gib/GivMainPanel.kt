@@ -2,6 +2,7 @@ package com.github.gib
 
 import com.github.gib.actions.*
 import com.github.gib.gcef.GBCefBrowser
+import com.github.gib.gcef.GBRequestHandler
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
@@ -32,6 +33,8 @@ class GivMainPanel(private val initialUrl: String) : SimpleToolWindowPanel(true,
         }
         jbCefBrowser.setProperty(JBCefBrowser.Properties.FOCUS_ON_SHOW, true)
         jbCefBrowser.setProperty(JBCefBrowser.Properties.FOCUS_ON_NAVIGATION, true)
+        jbCefBrowser.cefBrowser.client.removeRequestHandler()
+        jbCefBrowser.cefBrowser.client.addRequestHandler(GBRequestHandler())
 
         setContent(jbCefBrowser.component)
         setToolbar(toolbar.component)

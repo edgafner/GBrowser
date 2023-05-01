@@ -28,8 +28,22 @@ class GivServiceSettings : PersistentStateComponent<GivServiceSettings.State> {
         myState.homePage = homePage
     }
 
+    fun saveUserAgent(userAgent: String) = synchronized(lock) {
+        myState.userAgent = userAgent
+    }
+    fun saveOverrideUserAgent(overrideUserAgent: Boolean) = synchronized(lock) {
+        myState.overrideUserAgent = overrideUserAgent
+    }
+
     fun getLastSaveHomePage(): String {
         return myState.homePage
+    }
+    fun getLastSaveUserAgent(): String {
+        return myState.userAgent
+    }
+
+    fun getLastSaveOverrideUserAgent(): Boolean {
+        return myState.overrideUserAgent
     }
 
     fun getFavorites(): MutableList<Pair<String, JBImageIcon>> {
@@ -53,6 +67,8 @@ class GivServiceSettings : PersistentStateComponent<GivServiceSettings.State> {
 
     class State {
         var homePage: String = "https://plugins.jetbrains.com/plugin/18269-queryflag"
+        var overrideUserAgent: Boolean = false
+        var userAgent: String = ""
         val favorites = mutableListOf<Pair<String, JBImageIcon>>()
     }
 

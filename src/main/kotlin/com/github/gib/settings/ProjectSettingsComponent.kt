@@ -7,6 +7,7 @@ import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.ui.SideBorder
 import com.intellij.ui.TableUtil
 import com.intellij.ui.ToolbarDecorator
+import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTextField
@@ -21,6 +22,8 @@ class ProjectSettingsComponent {
     private val table: TableView<FavoritesWeb>
     private val givServiceSettings = GivServiceSettings.instance()
     private val homePageText = JBTextField(givServiceSettings.getLastSaveHomePage())
+    private val overrideUserAgentCB = JBCheckBox("Override user agent", givServiceSettings.getLastSaveOverrideUserAgent())
+    private val userAgentText = JBTextField(givServiceSettings.getLastSaveUserAgent())
 
     init {
 
@@ -41,6 +44,8 @@ class ProjectSettingsComponent {
                 .createPanel()
         myMainPanel = FormBuilder.createFormBuilder()
             .addLabeledComponent(JBLabel("GIdea default home page"), homePageText, 1, false)
+            .addComponent(overrideUserAgentCB)
+            .addLabeledComponent(JBLabel("User agent"), userAgentText, 1, false)
             .addComponent(tablePanel)
             .addComponentFillVertically(JPanel(), 0)
             .panel
@@ -89,13 +94,24 @@ class ProjectSettingsComponent {
         return homePageText.text
     }
 
+    private fun getOverrideUserAgentIsSelected(): Boolean {
+        return overrideUserAgentCB.isSelected
+    }
+    private fun getUserAgentText(): String {
+        return userAgentText.text
+    }
+
     fun isModified(): Boolean {
         return tableModel.items.map { it.webUrl } != givServiceSettings.getFavorites().map { it.first } ||
-            homePageText.text != givServiceSettings.getLastSaveHomePage()
+            homePageText.text != givServiceSettings.getLastSaveHomePage() ||
+            overrideUserAgentCB.isSelected != givServiceSettings.getLastSaveOverrideUserAgent() ||
+            userAgentText.text != givServiceSettings.getLastSaveUserAgent()
     }
 
     fun apply() {
         givServiceSettings.saveHomePage(getHomePageText())
+        givServiceSettings.saveOverrideUserAgent(getOverrideUserAgentIsSelected())
+        givServiceSettings.saveUserAgent(getUserAgentText())
         givServiceSettings.addToFavorites(tableModel.items.map { it.webUrl })
         val bus = ApplicationManager.getApplication().messageBus
         bus.syncPublisher(SettingsChangedAction.TOPIC).settingsChanged()
@@ -103,6 +119,8 @@ class ProjectSettingsComponent {
 
     fun reset() {
         homePageText.text = givServiceSettings.getLastSaveHomePage()
+        overrideUserAgentCB.isSelected = givServiceSettings.getLastSaveOverrideUserAgent()
+        userAgentText.text = givServiceSettings.getLastSaveUserAgent()
         tableModel.items = givServiceSettings.getFavorites().map { FavoritesWeb(it.first) }
         tableModel.fireTableDataChanged()
     }
