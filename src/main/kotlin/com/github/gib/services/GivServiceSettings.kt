@@ -1,5 +1,6 @@
 package com.github.gib.services
 
+import com.github.gib.settings.HeadersOverwrite
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
@@ -36,6 +37,10 @@ class GivServiceSettings : PersistentStateComponent<GivServiceSettings.State> {
         return myState.favorites
     }
 
+    fun getHeadersOverwrite(): List<HeadersOverwrite> {
+        return myState.headersOverwrite
+    }
+
 
     fun addToFavorites(webToFavorite: List<String>) = synchronized(lock) {
         myState.favorites.removeAll { true }
@@ -51,9 +56,14 @@ class GivServiceSettings : PersistentStateComponent<GivServiceSettings.State> {
 
     }
 
+    fun addToHeadersOverwrite(headersOverwrite: List<HeadersOverwrite>) = synchronized(lock) {
+        myState.headersOverwrite = headersOverwrite
+    }
+
     class State {
         var homePage: String = "https://plugins.jetbrains.com/plugin/18269-queryflag"
         val favorites = mutableListOf<Pair<String, JBImageIcon>>()
+        var headersOverwrite = List<HeadersOverwrite>(0) { HeadersOverwrite("", "","",false) }
     }
 
     override fun getState(): State = synchronized(lock) {
