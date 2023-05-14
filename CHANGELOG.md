@@ -1,6 +1,7 @@
 # Changelog
 
 ## [Unreleased]
+- Support to override user agent string
 
 ## [1.0.31] - 2023-04-19
 - Support for IC-231 version
