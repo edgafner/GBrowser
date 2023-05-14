@@ -1,7 +1,12 @@
 # Changelog
 
 ## [Unreleased]
+
+## [1.0.32] - 2023-05-14
 - Support to override user agent string
+- Changelog update - `v1.0.31` by @github-actions in https://github.com/Jonatha1983/GIdeaBrowser/pull/62
+- Add the option to set headers by @Majed6 in https://github.com/Jonatha1983/GIdeaBrowser/pull/64
+- @Majed6 made their first contribution in https://github.com/Jonatha1983/GIdeaBrowser/pull/64
 
 ## [1.0.31] - 2023-04-19
 - Support for IC-231 version
@@ -70,7 +75,8 @@
 -- First Jetbrains Public
 -- First Jetbrains Public
 
-[Unreleased]: https://github.com/Jonatha1983/GIdeaBrowser/compare/v1.0.31...HEAD
+[Unreleased]: https://github.com/Jonatha1983/GIdeaBrowser/compare/v1.0.32...HEAD
+[1.0.32]: https://github.com/Jonatha1983/GIdeaBrowser/compare/v1.0.31...v1.0.32
 [1.0.31]: https://github.com/Jonatha1983/GIdeaBrowser/compare/v1.0.24...v1.0.31
 [1.0.24]: https://github.com/Jonatha1983/GIdeaBrowser/compare/v1.0.23...v1.0.24
 [1.0.23]: https://github.com/Jonatha1983/GIdeaBrowser/compare/v1.0.21...v1.0.23
