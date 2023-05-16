@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+
+## [1.0.36] - 2023-05-16
 - Fix the issue with the persistent web favorites
 - Transferred the project to the new organization
 
@@ -77,7 +79,8 @@
 -- First Jetbrains Public
 -- First Jetbrains Public
 
-[Unreleased]: https://github.com/Jonatha1983/GIdeaBrowser/compare/v1.0.32...HEAD
+[Unreleased]: https://github.com/edgafner/GIdeaBrowser/compare/v1.0.36...HEAD
+[1.0.36]: https://github.com/edgafner/GIdeaBrowser/compare/v1.0.32...v1.0.36
 [1.0.32]: https://github.com/Jonatha1983/GIdeaBrowser/compare/v1.0.31...v1.0.32
 [1.0.31]: https://github.com/Jonatha1983/GIdeaBrowser/compare/v1.0.24...v1.0.31
 [1.0.24]: https://github.com/Jonatha1983/GIdeaBrowser/compare/v1.0.23...v1.0.24
