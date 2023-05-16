@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.gafner.giv</id>
     <name>GIdeaBrowser</name>
-    <vendor email="meirgafner@gmail.com">Meir</vendor>
+    <vendor email="jgafner@dorkag.com">Dorkag</vendor>
 
     <description><![CDATA[
     Embedded Web Browser in a ToolWindow.<br>
@@ -11,7 +11,6 @@
     <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->
     <depends>com.intellij.modules.platform</depends>
-    <idea-version since-build="203"/>
 
     <resource-bundle>messages.GIdeaBrowserBundle</resource-bundle>
 
