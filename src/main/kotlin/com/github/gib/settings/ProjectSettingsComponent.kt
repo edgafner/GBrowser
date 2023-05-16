@@ -94,7 +94,7 @@ class ProjectSettingsComponent {
         val items = mutableListOf<Any>()
         items.addAll(tableView.items)
         items.add(item)
-        tableModel.items = items
+        tableModel.items= items
         val index = tableModel.rowCount - 1
         val selectionModel = tableView.selectionModel
         selectionModel.clearSelection()

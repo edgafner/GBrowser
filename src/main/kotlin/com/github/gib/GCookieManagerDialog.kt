@@ -1,10 +1,10 @@
 package com.github.gib
 
 import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.ui.dsl.builder.AlignX
+import com.intellij.ui.dsl.builder.AlignY
 import com.intellij.ui.dsl.builder.BottomGap
 import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
-import com.intellij.ui.dsl.gridLayout.VerticalAlign
 import com.intellij.ui.jcef.JBCefBrowser
 import com.intellij.ui.jcef.JBCefCookie
 import com.intellij.ui.jcef.JBCefCookieManager
@@ -30,16 +30,17 @@ class GCookieManagerDialog(parent: JPanel, val jbCefBrowser: JBCefBrowser) : Dia
             cookieTable.fillsViewportHeight = true
             val component = JScrollPane(cookieTable)
             component.preferredSize = JBUI.size(500, 300)
-            cell(component).horizontalAlign(HorizontalAlign.FILL).verticalAlign(VerticalAlign.FILL)
+            cell(component)
+                .align(AlignX.FILL).align(AlignY.FILL)
 
         }.bottomGap(BottomGap.MEDIUM)
         separator()
         row {
             button(myDeleteCookiesButtonText) {
-                if (myJBCefCookieManager.deleteCookies(true)) {
-                    val cookies = myJBCefCookieManager.cookies
-                    cookies.let { update(it) }
+                myJBCefCookieManager.deleteCookies(null, null).let {
+                    myJBCefCookieManager.getCookies(null, false).get().let { update(it) }
                 }
+
             }
         }
     }.withBorder(JBUI.Borders.empty(5)).withPreferredSize(600, 400)
@@ -65,12 +66,14 @@ class GCookieManagerDialog(parent: JPanel, val jbCefBrowser: JBCefBrowser) : Dia
 
         fun show(cefCookies: List<JBCefCookie>) {
             for (cookie in cefCookies) {
-                val entry = arrayOf<Any>(cookie.name,
+                val entry = arrayOf<Any>(
+                    cookie.name,
                     cookie.value,
                     cookie.domain,
                     cookie.path,
                     cookie.isSecure,
-                    cookie.isHttpOnly)
+                    cookie.isHttpOnly
+                )
                 val row = rowData.size
                 rowData.add(entry)
                 fireTableRowsInserted(row, row)
