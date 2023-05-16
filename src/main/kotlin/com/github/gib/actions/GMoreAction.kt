@@ -63,8 +63,8 @@ class GCookiesAction(private val jbCefBrowser: JBCefBrowser,
     override fun actionPerformed(e: AnActionEvent) {
         val myCookieManagerDialog = GCookieManagerDialog(givMainPanel, jbCefBrowser)
         if (myCookieManagerDialog.showAndGet()) {
-            val cookies = jbCefBrowser.jbCefCookieManager.cookies
-            if (cookies != null) {
+            val cookies = jbCefBrowser.jbCefCookieManager.getCookies(null, false).get()
+            if (cookies.isNotEmpty()) {
                 myCookieManagerDialog.update(cookies)
             }
         }

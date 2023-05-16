@@ -18,13 +18,13 @@
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
 
-<!--        <projectService serviceImplementation="com.github.gib.GivToolWindow"/>-->
+        <!--        <projectService serviceImplementation="com.github.gib.GivToolWindow"/>-->
 
-            <applicationService serviceImplementation="com.github.gib.services.GivServiceSettings"/>
-            <projectConfigurable parentId="tools" instance="com.github.gib.settings.ProjectSettingsConfigurable"
-                                 id="com.github.gib.settings.ProjectSettingsConfigurable" displayName="GIdea Embedded Browser"
-                                 nonDefaultProject="true"/>
-
+        <applicationService serviceImplementation="com.github.gib.services.GivServiceSettings"/>
+        <projectConfigurable parentId="tools" instance="com.github.gib.settings.ProjectSettingsConfigurable"
+                             id="com.github.gib.settings.ProjectSettingsConfigurable"
+                             displayName="GIdea Embedded Browser"
+        />
 
 
         <toolWindow id="GIdeaBrowser" icon="/icons/youtube.svg" anchor="left"

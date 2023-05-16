@@ -41,7 +41,7 @@ class GBCefBrowser(url: String?) :
             bounds.height / 2)
         myDevtoolsFrame!!.layout = BorderLayout()
         val devTools =
-            createBuilder().setCefBrowser(cefBrowser.devTools).setClient(jbCefClient).createBrowser()
+            createBuilder().setCefBrowser(cefBrowser.devTools).setClient(jbCefClient).build()
         myDevtoolsFrame!!.add(devTools.component, BorderLayout.CENTER)
         myDevtoolsFrame!!.addWindowListener(object : WindowAdapter() {
             override fun windowClosed(e: WindowEvent) {

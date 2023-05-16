@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+- Fix the issue with the persistent web favorites
+- Transferred the project to the new organization
 
 ## [1.0.32] - 2023-05-14
 - Support to override user agent string
