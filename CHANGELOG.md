@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Changed
+- Vendor Name in plugin's marketplace page 
+
 ## [1.0.36] - 2023-05-16
 - Fix the issue with the persistent web favorites
 - Transferred the project to the new organization
