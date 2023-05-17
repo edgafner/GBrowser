@@ -2,8 +2,10 @@
 
 ## [Unreleased]
 
+## [1.0.37] - 2023-05-17
+
 ### Changed
-- Vendor Name in plugin's marketplace page 
+- Vendor Name in plugin's marketplace page
 
 ## [1.0.36] - 2023-05-16
 - Fix the issue with the persistent web favorites
@@ -82,7 +84,8 @@
 -- First Jetbrains Public
 -- First Jetbrains Public
 
-[Unreleased]: https://github.com/edgafner/GIdeaBrowser/compare/v1.0.36...HEAD
+[Unreleased]: https://github.com/edgafner/GIdeaBrowser/compare/v1.0.37...HEAD
+[1.0.37]: https://github.com/edgafner/GIdeaBrowser/compare/v1.0.36...v1.0.37
 [1.0.36]: https://github.com/edgafner/GIdeaBrowser/compare/v1.0.32...v1.0.36
 [1.0.32]: https://github.com/Jonatha1983/GIdeaBrowser/compare/v1.0.31...v1.0.32
 [1.0.31]: https://github.com/Jonatha1983/GIdeaBrowser/compare/v1.0.24...v1.0.31
