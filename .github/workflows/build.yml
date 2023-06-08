@@ -56,6 +56,7 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17'
+          cache: gradle
 
       # Set environment variables
       - name: Export Properties
@@ -116,7 +117,7 @@ jobs:
 
       # Run Qodana inspections
       - name: Qodana - Code Inspection
-        uses: JetBrains/qodana-action@v2022.3.4
+        uses: JetBrains/qodana-action@v2023.1.0
 
       # Prepare plugin archive content for creating artifact
       - name: Prepare Plugin Artifact
