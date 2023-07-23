@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Added
+- Tests, Qodana and Code coverage
 
 ## [1.0.38] - 2023-06-08
 
