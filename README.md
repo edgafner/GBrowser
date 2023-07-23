@@ -1,6 +1,7 @@
 # GIB
 
 ![Build](https://github.com/Jonatha1983/GIB/workflows/Build/badge.svg)
+[![codecov](https://codecov.io/github/edgafner/GIdeaBrowser/branch/main/graph/badge.svg?token=FNLVYK2SJY)](https://codecov.io/github/edgafner/GIdeaBrowser)
 [![Version](https://img.shields.io/jetbrains/plugin/v/14458-gideabrowser.svg)](https://plugins.jetbrains.com/plugin/14458-gideabrowser)
 [![Downloads](https://img.shields.io/jetbrains/plugin/d/14458-gideabrowser.svg)](https://plugins.jetbrains.com/plugin/14458-gideabrowser)
 

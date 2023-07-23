@@ -3,7 +3,6 @@ package com.github.gib.settings
 import com.intellij.util.ui.ColumnInfo
 import org.jetbrains.annotations.NotNull
 import java.awt.Component
-import javax.swing.BorderFactory
 import javax.swing.JCheckBox
 import javax.swing.JTable
 import javax.swing.table.DefaultTableCellRenderer

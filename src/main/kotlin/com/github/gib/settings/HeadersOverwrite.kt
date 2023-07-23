@@ -5,6 +5,7 @@ import java.util.*
 
 class HeadersOverwrite : Serializable {
     companion object {
+        @Suppress("ConstPropertyName")
         const val serialVersionUID = 3523235970041806118L
     }
 
