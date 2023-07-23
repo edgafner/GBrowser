@@ -99,13 +99,6 @@ jobs:
           path: ./build/distributions/content/*/*
 
 
-      - name: Upload Obfuscation Mapping
-        uses: actions/upload-artifact@v3
-        with:
-          name: Obfuscation Mapping
-          path: ./build/mapping.txt
-
-
   # Run tests and upload a code coverage report
   test:
     name: Test
