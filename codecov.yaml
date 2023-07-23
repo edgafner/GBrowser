@@ -1,0 +1,32 @@
+codecov:
+  bot: "azd-codecov"
+  require_ci_to_pass: true
+comment:
+  behavior: default
+  layout: " diff, files"
+coverage:
+  precision: 2
+  range:
+    - 60.0
+    - 80.0
+  round: down
+  status:
+    changes: false
+    default_rules:
+      flag_coverage_not_uploaded_behavior: include
+    patch: true
+    project: true
+github_checks:
+  annotations: true
+flag_management:
+  individual_flags:
+    - name: unitest
+      statuses:
+        - type: project
+          target: 20%
+          threshold: 15%
+    - name: integration
+      statuses:
+        - type: project
+          target: 20%
+          threshold: 1%

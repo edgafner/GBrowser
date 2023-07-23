@@ -1,6 +1,7 @@
 package com.github.gib.actions
 
 import com.github.gib.services.GivServiceSettings
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAware
@@ -13,6 +14,8 @@ class GHomeAction(private val jbCefBrowser: JBCefBrowser, icon: Icon) : AnAction
     override fun update(e: AnActionEvent) {
         e.presentation.isEnabled = true
     }
+
+    override fun getActionUpdateThread() = ActionUpdateThread.EDT
 
     override fun actionPerformed(e: AnActionEvent) {
         jbCefBrowser.loadURL(GivServiceSettings.instance().getLastSaveHomePage())

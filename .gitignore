@@ -2,7 +2,11 @@
 .idea
 .qodana
 build
+/.idea/
 
 **/.DS_Store
 /CHANGELOG.md.orig
 **/CHANGELOG.md.orig
+**/*.orig
+.DS_Store
+/.run/
