@@ -15,7 +15,6 @@ plugins {
   kotlin("plugin.serialization") version "1.9.0"
 }
 
-
 group = properties("pluginGroup").get()
 version = properties("pluginVersion").get()
 
