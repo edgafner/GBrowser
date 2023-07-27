@@ -1,8 +1,14 @@
 # Changelog
 
 ## [Unreleased]
+
+## [1.0.40] - 2023-07-25
+
+### Fixed
+- Persistence bookmarks when closing and reopening a project
+
 ### Added
-- Tests, Qodana and Code coverage
+- Tests, Qodana, and Code coverage
 
 ## [1.0.38] - 2023-06-08
 
@@ -105,7 +111,8 @@
 -- First Jetbrains Public
 -- First Jetbrains Public
 
-[Unreleased]: https://github.com/edgafner/GIdeaBrowser/compare/v1.0.38...HEAD
+[Unreleased]: https://github.com/edgafner/GIdeaBrowser/compare/v1.0.40...HEAD
+[1.0.40]: https://github.com/edgafner/GIdeaBrowser/compare/v1.0.38...v1.0.40
 [1.0.38]: https://github.com/edgafner/GIdeaBrowser/compare/v1.0.37...v1.0.38
 [1.0.37]: https://github.com/edgafner/GIdeaBrowser/compare/v1.0.36...v1.0.37
 [1.0.36]: https://github.com/edgafner/GIdeaBrowser/compare/v1.0.32...v1.0.36
