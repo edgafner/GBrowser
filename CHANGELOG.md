@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Added
+- Internal IDE dependencies alignments 
+
 ## [1.0.40] - 2023-07-25
 
 ### Fixed

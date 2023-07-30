@@ -1,5 +1,5 @@
 codecov:
-  bot: "gideabrowser-codecov"
+  bot: "azd-codecov"
   require_ci_to_pass: true
 comment:
   behavior: default
