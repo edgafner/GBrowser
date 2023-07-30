@@ -2,8 +2,10 @@
 
 ## [Unreleased]
 
+## [1.0.41] - 2023-07-30
+
 ### Added
-- Internal IDE dependencies alignments 
+- Internal IDE dependencies alignments
 
 ## [1.0.40] - 2023-07-25
 
@@ -114,7 +116,8 @@
 -- First Jetbrains Public
 -- First Jetbrains Public
 
-[Unreleased]: https://github.com/edgafner/GIdeaBrowser/compare/v1.0.40...HEAD
+[Unreleased]: https://github.com/edgafner/GIdeaBrowser/compare/v1.0.41...HEAD
+[1.0.41]: https://github.com/edgafner/GIdeaBrowser/compare/v1.0.40...v1.0.41
 [1.0.40]: https://github.com/edgafner/GIdeaBrowser/compare/v1.0.38...v1.0.40
 [1.0.38]: https://github.com/edgafner/GIdeaBrowser/compare/v1.0.37...v1.0.38
 [1.0.37]: https://github.com/edgafner/GIdeaBrowser/compare/v1.0.36...v1.0.37
