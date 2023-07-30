@@ -172,7 +172,6 @@ jobs:
         uses: JetBrains/qodana-action@v2023.2.1
         with:
           cache-default-branch-only: true
-          args: --baseline, ${{ github.workspace }}/src/main/resources/qodana.sarif.json
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
           QODANA_SHOW_REPORT: true
