@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+### Fixed
+- Bug crash periodically
+
+### Added
+- Test for the new feature
+
 ## [1.0.41] - 2023-07-30
 
 ### Added
