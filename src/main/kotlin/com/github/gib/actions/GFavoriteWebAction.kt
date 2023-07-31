@@ -7,10 +7,11 @@ import javax.swing.Icon
 
 
 class GFavoriteWebAction(private val webUrl: String, icon: Icon, private val jbCefBrowser: JBCefBrowser) :
-    AnAction(icon) {
+  AnAction({ webUrl }, icon) {
 
-    override fun actionPerformed(e: AnActionEvent) {
-        jbCefBrowser.cefBrowser.loadURL(webUrl)
-    }
+  override fun actionPerformed(e: AnActionEvent) {
+    jbCefBrowser.cefBrowser.loadURL(webUrl)
+  }
+
 
 }
