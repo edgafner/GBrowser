@@ -28,8 +28,13 @@ class GFavoritesMenuAction(val jbCefBrowser: JBCefBrowser) : DefaultActionGroup(
   fun updateView() {
     removeAll()
     GivServiceSettings.instance().getFavorites().forEach {
-      val imageIo = JBImageIcon(ImageIO.read(URL("https://www.google.com/s2/favicons?domain=${it.webUrl}")))
-      add(GFavoriteWebAction(it.webUrl, imageIo, jbCefBrowser))
+      try {
+        val imageIo = JBImageIcon(ImageIO.read(URL("https://www.google.com/s2/favicons?domain=${it.webUrl}")))
+        add(GFavoriteWebAction(it.webUrl, imageIo, jbCefBrowser))
+      } catch (e: Exception) {
+        // The image is not persisted anyway, so we can just ignore it
+        add(GFavoriteWebAction(it.webUrl, AllIcons.General.Web, jbCefBrowser))
+      }
     }
   }
 
