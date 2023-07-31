@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.0.43] - 2023-07-31
+
 ### Fixed
 - Bug crash periodically
 
@@ -122,7 +124,8 @@
 -- First Jetbrains Public
 -- First Jetbrains Public
 
-[Unreleased]: https://github.com/edgafner/GIdeaBrowser/compare/v1.0.41...HEAD
+[Unreleased]: https://github.com/edgafner/GIdeaBrowser/compare/v1.0.43...HEAD
+[1.0.43]: https://github.com/edgafner/GIdeaBrowser/compare/v1.0.41...v1.0.43
 [1.0.41]: https://github.com/edgafner/GIdeaBrowser/compare/v1.0.40...v1.0.41
 [1.0.40]: https://github.com/edgafner/GIdeaBrowser/compare/v1.0.38...v1.0.40
 [1.0.38]: https://github.com/edgafner/GIdeaBrowser/compare/v1.0.37...v1.0.38
