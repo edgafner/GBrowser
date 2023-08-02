@@ -1,13 +1,12 @@
 .gradle
 .idea
+!.idea/icon.png
 .qodana
 build
-/.idea/
 
 **/.DS_Store
 /CHANGELOG.md.orig
 **/CHANGELOG.md.orig
-/.idea/
 /.qodana/
 **/*.orig
 .DS_Store
