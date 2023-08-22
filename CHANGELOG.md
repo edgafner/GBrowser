@@ -1,6 +1,9 @@
 # Changelog
 
 ## [Unreleased]
+
+## [1.0.44] - 2023-08-22
+
 ### Fixed
 - Remove deprecated `org.jetbrains.intellij` dependency
 
@@ -126,7 +129,8 @@
 -- First Jetbrains Public
 -- First Jetbrains Public
 
-[Unreleased]: https://github.com/edgafner/GIdeaBrowser/compare/v1.0.43...HEAD
+[Unreleased]: https://github.com/edgafner/GIdeaBrowser/compare/v1.0.44...HEAD
+[1.0.44]: https://github.com/edgafner/GIdeaBrowser/compare/v1.0.43...v1.0.44
 [1.0.43]: https://github.com/edgafner/GIdeaBrowser/compare/v1.0.41...v1.0.43
 [1.0.41]: https://github.com/edgafner/GIdeaBrowser/compare/v1.0.40...v1.0.41
 [1.0.40]: https://github.com/edgafner/GIdeaBrowser/compare/v1.0.38...v1.0.40
