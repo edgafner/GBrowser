@@ -10,6 +10,9 @@ import com.intellij.ui.ToolbarDecorator
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTextField
+import com.intellij.ui.dsl.builder.Align
+import com.intellij.ui.dsl.builder.LabelPosition.TOP
+import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.table.TableView
 import com.intellij.util.ui.*
 import javax.swing.JComponent
@@ -39,10 +42,20 @@ class ProjectSettingsComponent {
     favoritesWebScrollPanel.preferredSize = JBUI.size(400, 200)
     favoritesWebScrollPanel.putClientProperty(UIUtil.KEEP_BORDER_SIDES, SideBorder.ALL)
 
-    val favoritesWebTablePanel =
-      UI.PanelFactory.panel(favoritesWebScrollPanel).withLabel("Bookmarks").withComment("Add and Remove favorites web pages")
-        .resizeY(true).moveLabelOnTop()
-        .createPanel()
+    val favoritesWebTablePanel = panel {
+      row {
+        cell(favoritesWebScrollPanel)
+          .label("Bookmarks", TOP)
+          .comment("Add and Remove favorites web pages")
+          .align(Align.FILL)
+      }
+    }.apply {
+      // Border is required to have more space - otherwise there could be issues with focus ring.
+      // `getRegularPanelInsets()` is used to simplify border calculation for dialogs where this panel is used.
+      border = JBEmptyBorder(UIUtil.getRegularPanelInsets())
+
+    }
+
 
 
     val uriRegex = UriRegexColumnInfo()
@@ -60,16 +73,23 @@ class ProjectSettingsComponent {
     headersOverwriteScrollPanel.preferredSize = JBUI.size(400, 200)
     headersOverwriteScrollPanel.putClientProperty(UIUtil.KEEP_BORDER_SIDES, SideBorder.ALL)
 
-    val headersOverwriteTablePanel =
-      UI.PanelFactory.panel(headersOverwriteScrollPanel)
-        .withLabel("Headers")
-        .withComment("Add and Remove headers. The overwrite column is used to overwrite the header if it already exists in the request.",
-                     false)
-        .resizeY(true).moveLabelOnTop()
-        .createPanel()
+    val headersOverwriteTablePanel = panel {
+      row {
+        cell(headersOverwriteScrollPanel)
+          .label("Headers", TOP)
+          .comment("Add and Remove headers. The overwrite column is used to overwrite the header if it already exists in the request.")
+          .align(Align.FILL)
+      }.resizableRow()
+    }.apply {
+      // Border is required to have more space - otherwise there could be issues with focus ring.
+      // `getRegularPanelInsets()` is used to simplify border calculation for dialogs where this panel is used.
+      border = JBEmptyBorder(UIUtil.getRegularPanelInsets())
+
+    }
+
 
     myMainPanel = FormBuilder.createFormBuilder()
-      .addLabeledComponent(JBLabel("GIdea default home page"), homePageText, 1, false)
+      .addLabeledComponent(JBLabel("GBrowser default home page"), homePageText, 1, false)
       .addComponent(favoritesWebTablePanel)
       .addComponent(headersOverwriteTablePanel)
       .addComponentFillVertically(JPanel(), 0)

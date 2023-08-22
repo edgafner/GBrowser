@@ -31,7 +31,7 @@ class ProjectSettingsConfigurable : SearchableConfigurable {
     }
 
     override fun getDisplayName(): String {
-        return "GIdea Embedded Browser"
+        return "GBrowser"
     }
 
     override fun getId(): String {

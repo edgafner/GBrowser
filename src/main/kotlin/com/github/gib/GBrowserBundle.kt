@@ -5,10 +5,10 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.PropertyKey
 
 @NonNls
-private const val BUNDLE = "messages.GIdeaBrowserBundle"
+private const val BUNDLE = "messages.GBrowserBundle"
 
 @Suppress("unused")
-object GIdeaBrowserBundle : AbstractBundle(BUNDLE) {
+object GBrowserBundle : AbstractBundle(BUNDLE) {
 
     @Suppress("SpreadOperator")
     @JvmStatic

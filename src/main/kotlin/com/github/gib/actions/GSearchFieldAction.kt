@@ -61,7 +61,7 @@ class GSearchFieldAction(text: String, description: String, icon: Icon, private 
     val border = urlTextField.border
     val emptyBorder: Border = JBUI.Borders.empty(3, 0, 2, 0)
     if (border is CompoundBorder) {
-      if (!StartupUiUtil.isUnderDarcula()) {
+      if (!StartupUiUtil.isUnderDarcula) {
         urlTextField.border = CompoundBorder(emptyBorder, border.insideBorder)
       }
     }
