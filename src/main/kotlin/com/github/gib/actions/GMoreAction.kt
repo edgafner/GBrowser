@@ -1,7 +1,7 @@
 package com.github.gib.actions
 
 import com.github.gib.GCookieManagerDialog
-import com.github.gib.GIdeaBrowserBundle
+import com.github.gib.GBrowserBundle
 import com.github.gib.GivMainPanel
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
@@ -13,7 +13,7 @@ import javax.swing.Icon
 var zoomLevel = 0.0
 
 class GZoomOutAction(private val jbCefBrowser: JBCefBrowser, icon: Icon) :
-    AnAction(GIdeaBrowserBundle.message("actions.zoom.out.text"), "", icon), DumbAware {
+  AnAction(GBrowserBundle.message("actions.zoom.out.text"), "", icon), DumbAware {
 
     override fun update(e: AnActionEvent) {
         e.presentation.isEnabled = true
@@ -27,7 +27,7 @@ class GZoomOutAction(private val jbCefBrowser: JBCefBrowser, icon: Icon) :
 }
 
 class GZoomInAction(private val jbCefBrowser: JBCefBrowser, icon: Icon) :
-    AnAction(GIdeaBrowserBundle.message("actions.zoom.in.text"), "", icon), DumbAware {
+  AnAction(GBrowserBundle.message("actions.zoom.in.text"), "", icon), DumbAware {
 
 
     override fun update(e: AnActionEvent) {

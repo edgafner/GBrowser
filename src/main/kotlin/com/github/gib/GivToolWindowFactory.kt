@@ -23,7 +23,7 @@ class GivToolWindowFactory : ToolWindowFactory, DumbAware {
 
     companion object{
         @Suppress("unused")
-        const val GIDEA_BROWSER_TOOL_WINDOW_ID = "GIdeaBrowser"
+        const val GBROWSER_TOOL_WINDOW_ID = "GBrowser"
     }
 
 }

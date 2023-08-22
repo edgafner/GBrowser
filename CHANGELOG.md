@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Fixed
+- Remove deprecated `org.jetbrains.intellij` dependency
 
 ## [1.0.43] - 2023-07-31
 
