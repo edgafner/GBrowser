@@ -26,7 +26,7 @@
         />
 
 
-        <toolWindow id="GBrowser" icon="/icons/youtube.svg" anchor="left"
+        <toolWindow id="GBrowser" icon="/icons/gbrowser.svg" anchor="left"
                     factoryClass="com.github.gib.GivToolWindowFactory"/>
 
     </extensions>
