@@ -45,7 +45,7 @@ jobs:
 
        # Setup Gradle
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2.7.0
+        uses: gradle/gradle-build-action@v2.7.1
 
 
       # Run IDEA prepared for UI testing
