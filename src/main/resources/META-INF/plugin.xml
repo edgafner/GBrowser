@@ -1,6 +1,6 @@
 <idea-plugin>
     <id>com.gafner.giv</id>
-    <name>GIdeaBrowser</name>
+    <name>GBrowser</name>
     <vendor email="jgafner@dorkag.com">Dorkag</vendor>
 
     <description><![CDATA[
@@ -26,7 +26,7 @@
         />
 
 
-        <toolWindow id="GIdeaBrowser" icon="/icons/youtube.svg" anchor="left"
+        <toolWindow id="GBrowser" icon="/icons/youtube.svg" anchor="left"
                     factoryClass="com.github.gib.GivToolWindowFactory"/>
 
     </extensions>
