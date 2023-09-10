@@ -1,9 +1,9 @@
 # GIB
 
-[![Build](https://github.com/edgafner/GIdeaBrowser/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/edgafner/GIdeaBrowser/actions/workflows/build.yml)
-[![codecov](https://codecov.io/github/edgafner/GIdeaBrowser/branch/main/graph/badge.svg?token=FNLVYK2SJY)](https://codecov.io/github/edgafner/GIdeaBrowser)
-[![Version](https://img.shields.io/jetbrains/plugin/v/14458-gideabrowser.svg)](https://plugins.jetbrains.com/plugin/14458-gideabrowser)
-[![Downloads](https://img.shields.io/jetbrains/plugin/d/14458-gideabrowser.svg)](https://plugins.jetbrains.com/plugin/14458-gideabrowser)
+[![Build](https://github.com/edgafner/GBrowser/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/edgafner/GBrowser/actions/workflows/build.yml)
+[![codecov](https://codecov.io/github/edgafner/GBrowser/branch/main/graph/badge.svg?token=FNLVYK2SJY)](https://codecov.io/github/edgafner/GBrowser)
+[![Version](https://img.shields.io/jetbrains/plugin/v/14458-gbrowser.svg)](https://plugins.jetbrains.com/plugin/14458-gbrowser)
+[![Downloads](https://img.shields.io/jetbrains/plugin/d/14458-gbrowser.svg)](https://plugins.jetbrains.com/plugin/14458-gbrowser)
 
 ## Idea Browser Tool Window
 
