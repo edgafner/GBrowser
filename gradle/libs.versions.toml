@@ -12,7 +12,7 @@ changelog = "2.2.0"
 gradleIntelliJPlugin = "1.15.0"
 qodana = "0.1.13"
 kover = "0.7.3"
-koinPrevVersion = "3.4.3"
+koinPrevVersion = "3.5.0"
 
 [libraries]
 annotations = { group = "org.jetbrains", name = "annotations", version.ref = "annotations" }
