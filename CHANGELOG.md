@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Support for 233
+
 ### Changed
 
 - Update dependencies
