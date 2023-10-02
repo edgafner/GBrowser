@@ -8,7 +8,7 @@ on:
 
 jobs:
   # Prepare and publish the plugin to the Marketplace repository -
-  pre-release:
+  prerelease:
     name: Publish To EAP Plugin
     runs-on: ubuntu-latest
     if: ${{ github.ref == 'refs/heads/pre-release-workflow' }}
