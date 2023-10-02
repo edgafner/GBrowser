@@ -11,7 +11,6 @@ jobs:
   prerelease:
     name: Publish To EAP Plugin
     runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/pre-release-workflow' }}
     permissions:
       contents: write
       pull-requests: write
