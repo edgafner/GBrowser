@@ -9,7 +9,6 @@ import com.intellij.ui.SearchTextField
 import com.intellij.ui.jcef.JBCefBrowser
 import com.intellij.util.ui.JBDimension
 import com.intellij.util.ui.JBUI
-import com.intellij.util.ui.StartupUiUtil
 import net.miginfocom.layout.CC
 import net.miginfocom.layout.LC
 import net.miginfocom.swing.MigLayout
@@ -17,6 +16,7 @@ import java.awt.event.KeyEvent
 import javax.swing.Icon
 import javax.swing.JComponent
 import javax.swing.JPanel
+import javax.swing.UIManager
 import javax.swing.border.Border
 import javax.swing.border.CompoundBorder
 
@@ -61,7 +61,9 @@ class GSearchFieldAction(text: String, description: String, icon: Icon, private 
     val border = urlTextField.border
     val emptyBorder: Border = JBUI.Borders.empty(3, 0, 2, 0)
     if (border is CompoundBorder) {
-      if (!StartupUiUtil.isDarkTheme) {
+      val lookAndFeelDefaults = UIManager.getLookAndFeelDefaults()
+      val isDarkMode = lookAndFeelDefaults == null || lookAndFeelDefaults.getBoolean("ui.theme.is.dark")
+      if (!isDarkMode) {
         urlTextField.border = CompoundBorder(emptyBorder, border.insideBorder)
       }
     }

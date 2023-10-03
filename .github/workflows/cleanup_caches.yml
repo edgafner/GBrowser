@@ -1,0 +1,23 @@
+name: cleanup all caches
+on:
+  workflow_dispatch:
+
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Cleanup
+        run: |
+          gh extension install actions/gh-actions-cache
+          
+          ## Setting this to not fail the workflow while deleting cache keys. 
+          set +e
+          echo "Deleting caches..."
+          gh actions-cache delete --all
+          echo "Done"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
