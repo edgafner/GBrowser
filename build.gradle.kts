@@ -49,6 +49,7 @@ intellij {
 changelog {
   groups.empty()
   repositoryUrl = properties("pluginRepositoryUrl")
+  headerParserRegex.set("""(\d+\.\d+\.\d+)""".toRegex())
 }
 
 // Configure Gradle Qodana Plugin - read more: https://github.com/JetBrains/gradle-qodana-plugin
