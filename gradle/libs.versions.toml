@@ -1,6 +1,6 @@
 [versions]
 # libraries
-annotations = "24.0.1"
+annotations = "24.1.0"
 kotest = "5.7.2"
 
 # plugins
