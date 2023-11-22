@@ -1,7 +1,7 @@
 [versions]
 # libraries
 annotations = "24.1.0"
-kotest = "5.7.2"
+kotest = "5.8.0"
 
 # plugins
 dokka = "1.9.0"
