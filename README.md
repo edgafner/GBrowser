@@ -1,4 +1,4 @@
-# GIB
+# GBrowser 
 
 [![Build](https://github.com/edgafner/GBrowser/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/edgafner/GBrowser/actions/workflows/build.yml)
 [![codecov](https://codecov.io/github/edgafner/GBrowser/branch/main/graph/badge.svg?token=FNLVYK2SJY)](https://codecov.io/github/edgafner/GBrowser)
