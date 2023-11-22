@@ -1,11 +1,11 @@
 [versions]
 # libraries
-annotations = "24.0.1"
-kotest = "5.7.2"
+annotations = "24.1.0"
+kotest = "5.8.0"
 
 # plugins
 dokka = "1.9.10"
-kotlin = "1.9.10"
+kotlin = "1.9.20"
 kotlinTest = "1.7.3"
 mockkTest = "1.13.8"
 changelog = "2.2.0"
