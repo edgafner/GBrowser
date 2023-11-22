@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Dependency updates
+
 ## [2023.9.34] - 2023-10-03
 
 ### Added
