@@ -5,7 +5,7 @@ kotest = "5.8.0"
 
 # plugins
 dokka = "1.9.0"
-kotlin = "1.9.20"
+kotlin = "1.9.21"
 kotlinTest = "1.7.3"
 mockkTest = "1.13.8"
 changelog = "2.2.0"
