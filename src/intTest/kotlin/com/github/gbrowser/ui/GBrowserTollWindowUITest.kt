@@ -111,16 +111,11 @@ class GBrowserTollWindowUITest {
 
           }
           else {
-            textField(byXpath("//div[@class='TextFieldWithProcessing']")).text = ""
-            textField(byXpath("//div[@class='TextFieldWithProcessing']")).click()
-            keyboard {
-              enterText("https://www.google.com")
+            textField(byXpath("//div[@class='TextFieldWithProcessing']")).text = "https://www.google.com"
+            textField(byXpath("//div[@class='TextFieldWithProcessing']")).keyboard {
               enter()
             }
           }
-
-
-
 
           Thread.sleep(5_000)
           rightClick()
