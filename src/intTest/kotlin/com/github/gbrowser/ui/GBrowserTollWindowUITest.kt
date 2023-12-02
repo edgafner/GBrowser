@@ -16,8 +16,10 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.io.TempDir
 import java.awt.event.KeyEvent.*
+import java.io.File
 import java.nio.file.Path
 import java.time.Duration.ofMinutes
+import javax.imageio.ImageIO
 
 @ExtendWith(RemoteRobotExtension::class)
 @UITest
@@ -89,6 +91,7 @@ class GBrowserTollWindowUITest {
 
       Thread.sleep(5_000)
 
+      ImageIO.write(remoteRobot.getScreenshot(), "png", File("build/reports", "open_tool_window.png"))
       if (remoteRobot.isMac()) {
         keyboard {
           hotKey(VK_META, VK_N)
@@ -99,6 +102,8 @@ class GBrowserTollWindowUITest {
           hotKey(VK_CONTROL, VK_SHIFT, VK_TAB)
         }
       }
+
+      ImageIO.write(remoteRobot.getScreenshot(), "png", File("build/reports", "new_tab.png"))
 
 
       gBrowserToolWindow {
