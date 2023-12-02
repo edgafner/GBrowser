@@ -2,9 +2,9 @@ package com.github.gbrowser.ui.toolwindow.model
 
 import com.github.gbrowser.services.GivServiceSettings
 import com.github.gbrowser.ui.toolwindow.base.GBrowserToolwindowViewModel
+import com.github.gbrowser.util.mapScoped
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.project.Project
-import com.intellij.collaboration.async.mapScoped
 import com.intellij.util.childScope
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*

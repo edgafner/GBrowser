@@ -1,12 +1,12 @@
 package com.github.gbrowser.ui.toolwindow.base
 
 import com.github.gbrowser.ui.toolwindow.model.GBrowserViewModel
+import com.github.gbrowser.util.cancelledWith
 import com.intellij.collaboration.async.launchNow
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.content.*
-import com.intellij.collaboration.async.cancelledWith
 import com.intellij.openapi.wm.ex.ToolWindowManagerListener
 import com.intellij.util.childScope
 import com.intellij.util.namedChildScope
@@ -55,7 +55,6 @@ private class GBrowserToolwindowTabsManager<T : GBrowserTab, TVM : GBrowserTabVi
           manageProjectTabs(vm!!)
         }
         catch (e: Exception) {
-          val x = e.message
           withContext(NonCancellable) {
             contentManager.removeAllContents(true)
           }
