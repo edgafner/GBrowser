@@ -6,7 +6,6 @@ import com.github.gbrowser.extensions.RemoteRobotExtension
 import com.github.gbrowser.extensions.StepsLogger
 import com.github.gbrowser.fixture.*
 import com.intellij.remoterobot.RemoteRobot
-import com.intellij.remoterobot.fixtures.ComponentFixture
 import com.intellij.remoterobot.search.locators.byXpath
 import com.intellij.remoterobot.utils.keyboard
 import com.intellij.remoterobot.utils.waitFor
@@ -16,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.io.TempDir
+import java.awt.event.KeyEvent.*
 import java.nio.file.Path
 import java.time.Duration.ofMinutes
 
@@ -87,18 +87,18 @@ class GBrowserTollWindowUITest {
 
       showGBrowserToolWindow()
 
-
-      waitFor(ofMinutes(5)) { isDumbMode().not() } //waitForBackgroundTasks()
       Thread.sleep(5_000)
-      val th = find<ComponentFixture>(byXpath("//div[@class='ContentTabLabel' and @text='GBrowser']"))
-      click(th.locationOnScreen)
-      Thread.sleep(1_000)
 
-      val toolWindowHeader = find<ComponentFixture>(
-        byXpath("//div[@class='ToolWindowHeader']//div[@classhierarchy='javax.swing.JPanel -> javax.swing.JComponent']"))
-      moveMouse(toolWindowHeader.locationOnScreen)
-      button(byXpath("//div[@myicon='add.svg']")).click()
-      Thread.sleep(3_000)
+      if (remoteRobot.isMac()) {
+        keyboard {
+          hotKey(VK_META, VK_N)
+        }
+      }
+      else {
+        keyboard {
+          hotKey(VK_CONTROL, VK_SHIFT, VK_T)
+        }
+      }
 
 
       gBrowserToolWindow {
