@@ -103,21 +103,12 @@ class GBrowserTollWindowUITest {
 
       gBrowserToolWindow {
         gBrowserPRPanel {
-          if (remoteRobot.isMac()) {
-            textField(byXpath("//div[@class='TextFieldWithProcessing']")).text = "https://www.google.com"
-            textField(byXpath("//div[@class='TextFieldWithProcessing']")).keyboard {
-              enter()
-            }
-
-          }
-          else {
-            textField(byXpath("//div[@class='TextFieldWithProcessing']")).text = "https://www.google.com"
-            textField(byXpath("//div[@class='TextFieldWithProcessing']")).keyboard {
-              enter()
-            }
+          textField(byXpath("//div[@class='TextFieldWithProcessing']")).text = "https://www.google.com"
+          textField(byXpath("//div[@class='TextFieldWithProcessing']")).keyboard {
+            enter()
           }
 
-          Thread.sleep(5_000)
+          Thread.sleep(3_000)
           rightClick()
           keyboard {
             enterText("A")
