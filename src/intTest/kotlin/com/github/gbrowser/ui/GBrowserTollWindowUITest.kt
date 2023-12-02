@@ -114,7 +114,7 @@ class GBrowserTollWindowUITest {
           Thread.sleep(3_000)
           rightClick()
           keyboard {
-            enterText("A")
+            enterText("Adv")
             enter()
           }
         }
