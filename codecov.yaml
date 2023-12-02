@@ -3,7 +3,7 @@ codecov:
   require_ci_to_pass: true
 comment:
   behavior: default
-  layout: " diff, files"
+  layout: " diff, flags, files"
 coverage:
   precision: 2
   range:
