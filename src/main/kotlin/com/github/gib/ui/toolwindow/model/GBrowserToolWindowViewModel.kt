@@ -2,14 +2,11 @@ package com.github.gib.ui.toolwindow.model
 
 import com.github.gib.services.GivServiceSettings
 import com.github.gib.ui.toolwindow.base.GBrowserToolwindowViewModel
-import com.intellij.collaboration.async.mapScoped
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.project.Project
 import com.github.gib.uitl.childScope
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 
 @Service(Service.Level.PROJECT)
 class GBrowserToolWindowViewModel internal constructor(private val project: Project, parentCs: CoroutineScope) :
@@ -27,7 +24,6 @@ class GBrowserToolWindowViewModel internal constructor(private val project: Proj
   private val _activationRequests = MutableSharedFlow<Unit>(1)
   internal val activationRequests: Flow<Unit> = _activationRequests.asSharedFlow()
 
-  @Suppress("UnstableApiUsage")
   override val projectVm: StateFlow<GBrowserToolWindowProjectViewModel?> by lazy {
     MutableStateFlow(null).asStateFlow().mapScoped {
       GBrowserToolWindowProjectViewModel(project, this, settings)
@@ -48,4 +44,14 @@ class GBrowserToolWindowViewModel internal constructor(private val project: Proj
   }
 
 
+}
+
+@OptIn(ExperimentalCoroutinesApi::class)
+fun <T, R> Flow<T>.mapScoped(mapper: CoroutineScope.(T) -> R): Flow<R> {
+  return transformLatest { newValue ->
+    coroutineScope {
+      emit(mapper(newValue))
+      awaitCancellation()
+    }
+  }
 }

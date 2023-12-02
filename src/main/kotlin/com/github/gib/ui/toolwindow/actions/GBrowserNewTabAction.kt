@@ -11,9 +11,9 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.DumbAwareAction
 import java.util.*
 
-open class GBrowserNewTabAction : DumbAwareAction(GBrowserBundle.messagePointer("action.GBrowser.NewTab.text"),
-                                                  GBrowserBundle.messagePointer("action.GBrowser.NewTab.description"),
-                                                  { AllIcons.General.Add }) {
+open class GBrowserNewTabAction : DumbAwareAction("New Tab",
+                                                  "Create new session in new tab",
+                                                  AllIcons.General.Add) {
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
 
@@ -34,21 +34,10 @@ open class GBrowserNewTabAction : DumbAwareAction(GBrowserBundle.messagePointer(
     }
   }
 
-  //override fun actionPerformed(e: AnActionEvent) {
-  //  val project = e.project ?: return
-  //  GBrowserToolWindowManager.getInstance(project).createNewSession(requestFocus = true, deferSessionStartUntilUiShown = true)
-  //}
-
   override fun actionPerformed(e: AnActionEvent) = tryToCreatePullRequest(e)
 
-  companion object {
-    const val ACTION_ID: String = "GBrowser.NewTab"
-  }
 }
 
-//internal class GBrowserCreateBrowserNotificationAction : NotificationAction("Create a new tab") {
-//  override fun actionPerformed(e: AnActionEvent, notification: Notification) = tryToCreatePullRequest(e)
-//}
 
 private fun tryToCreatePullRequest(e: AnActionEvent) {
   return e.getRequiredData(PlatformDataKeys.PROJECT).service<GBrowserToolWindowViewModel>().activateAndAwaitProject {

@@ -1,37 +1,33 @@
 package com.github.gib
 
-import com.github.gib.actions.GBrowserActionKeys
 import com.github.gib.ui.toolwindow.GBrowserToolWindowTabComponentFactory
 import com.github.gib.ui.toolwindow.base.dontHideOnEmptyContent
-import com.github.gib.ui.toolwindow.base.manageReviewToolwindowTabs
+import com.github.gib.ui.toolwindow.base.manageBrowserToolwindowTabs
 import com.github.gib.ui.toolwindow.model.GBrowserToolWindowViewModel
 import com.github.gib.uitl.cancelOnDispose
-import com.intellij.openapi.actionSystem.CommonShortcuts
-import com.intellij.openapi.actionSystem.ex.ActionUtil
+import com.github.gib.uitl.childScope
+import com.github.gib.uitl.serviceAsync
+import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
-import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.openapi.wm.impl.content.ToolWindowContentUi
-
-import com.github.gib.uitl.childScope
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import kotlinx.coroutines.*
 
-@Suppress("UnstableApiUsage")
 class GBrowserToolWindowFactory : ToolWindowFactory, DumbAware {
 
   override suspend fun manage(toolWindow: ToolWindow, toolWindowManager: ToolWindowManager) {
     toolWindow.project.serviceAsync<GBrowserToolWindowController>().manageAvailability(toolWindow)
   }
 
-  override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) =
-    project.service<GBrowserToolWindowController>().manageContent(toolWindow)
+  override fun createToolWindowContent(project: Project,
+                                       toolWindow: ToolWindow) = project.service<GBrowserToolWindowController>().manageContent(toolWindow)
 
   override fun shouldBeAvailable(project: Project): Boolean = false
 
@@ -63,55 +59,20 @@ class GBrowserToolWindowFactory : ToolWindowFactory, DumbAware {
     @RequiresEdt
     fun manageContent(toolWindow: ToolWindow) {
       toolWindow.component.putClientProperty(ToolWindowContentUi.HIDE_ID_LABEL, "true")
+      toolWindow.dontHideOnEmptyContent()
 
       cs.launch {
         val vm = project.serviceAsync<GBrowserToolWindowViewModel>()
+        val componentFactory = GBrowserToolWindowTabComponentFactory(project)
 
-        coroutineScope {
-          toolWindow.contentManager.addDataProvider {
-            if (GBrowserActionKeys.GBROWSER_PROJECT_VM.`is`(it)) vm.projectVm.value
-            else null
-          }
-
-          // so it's not closed when all content is removed
-          toolWindow.dontHideOnEmptyContent()
-          val componentFactory = GBrowserToolWindowTabComponentFactory(project)
-          manageReviewToolwindowTabs(this, toolWindow, vm, componentFactory, "GBrowser")
-          val wrapper = ActionUtil.wrap("GBrowser.NewTab")
-          wrapper.registerCustomShortcutSet(CommonShortcuts.getNew(), toolWindow.component)
-          toolWindow.setTitleActions(listOf(wrapper))
-          //toolWindow.setAdditionalGearActions(DefaultActionGroup(GHPRSwitchRemoteAction()))
-
-          awaitCancellation()
-        }
+        manageBrowserToolwindowTabs(this, toolWindow, vm, componentFactory, "GBrowser")
+        val action = ActionManager.getInstance().getAction("GBrowser.NewTab")
+        val wrapper = if (action is ActionGroup) ActionGroupWrapper(action) else AnActionWrapper(action)
+        wrapper.registerCustomShortcutSet(CommonShortcuts.getNew(), toolWindow.component)
+        toolWindow.setTitleActions(listOf(wrapper))
+        awaitCancellation()
       }.cancelOnDispose(toolWindow.contentManager)
     }
   }
 
-  companion object {
-        @Suppress("unused")
-        const val GBROWSER_TOOL_WINDOW_ID = "GBrowser"
-      }
 }
-
-//  override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
-//    val gBrowserToolWindowManager = GBrowserToolWindowManager.getInstance(project)
-//    gBrowserToolWindowManager.initToolWindow(toolWindow as ToolWindowEx)
-//    //setupToolWindowContent(toolWindow)
-//  }
-//
-//
-//  private fun setupToolWindowContent(toolWindow: ToolWindow) {
-//    val contentManager = toolWindow.contentManager
-//    val rootComponent = GivMainPanel(GivServiceSettings.instance().getLastSaveHomePage())
-//    val content = contentManager.factory.createContent(rootComponent, null, false)
-//    contentManager.addContent(content)
-//  }
-//
-//
-//  companion object {
-//    @Suppress("unused")
-//    const val GBROWSER_TOOL_WINDOW_ID = "GBrowser"
-//  }
-//
-//}

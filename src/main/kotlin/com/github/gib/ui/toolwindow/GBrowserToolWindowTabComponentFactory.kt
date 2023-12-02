@@ -6,11 +6,11 @@ import com.github.gib.ui.toolwindow.base.GBrowserTabsComponentFactory
 import com.github.gib.ui.toolwindow.create.GBrowserCreateComponentHolder
 import com.github.gib.ui.toolwindow.model.GBrowserToolWindowProjectViewModel
 import com.github.gib.ui.toolwindow.model.GBrowserToolWindowTabViewModel
+import com.github.gib.uitl.nestedDisposable
 import com.intellij.collaboration.async.launchNow
-import com.intellij.collaboration.async.nestedDisposable
-import com.intellij.collaboration.ui.CollaborationToolsUIUtil
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.wm.IdeFocusManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.yield
 import javax.swing.Icon
@@ -47,7 +47,9 @@ internal class GBrowserToolWindowTabComponentFactory(private val project: Projec
       launchNow {
         tabVm.focusRequests.collect {
           yield()
-          CollaborationToolsUIUtil.focusPanel(comp)
+          val focusManager = IdeFocusManager.findInstanceByComponent(comp)
+          val toFocus = focusManager.getFocusTargetFor(comp) ?: return@collect
+          focusManager.doWhenFocusSettlesDown { focusManager.requestFocus(toFocus, true) }
         }
       }
     }

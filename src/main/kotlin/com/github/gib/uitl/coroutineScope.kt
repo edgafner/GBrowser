@@ -51,45 +51,6 @@ private class ChildScope(ctx: CoroutineContext, private val supervisor: Boolean)
   }
 }
 
-/**
- * Makes [this] scope job behave as if it was a child of [secondaryParent] job
- * as per the coroutine framework parent-child [Job] relation:
- * - child prevents completion of the parent;
- * - child failure is propagated to the parent (note, parent might not cancel itself if it's a supervisor);
- * - parent cancellation is propagated to the child.
- *
- * The [real parent][ChildHandle.parent] of [this] scope job is not changed.
- * It does not matter whether the job of [this] scope has a real parent.
- *
- * Example usage:
- * ```
- * val containerScope: CoroutineScope = ...
- * val pluginScope: CoroutineScope = ...
- * CoroutineScope(SupervisorJob()).also {
- *   it.attachAsChildTo(containerScope)
- *   it.attachAsChildTo(pluginScope)
- * }
- * ```
- */
-@OptIn(InternalCoroutinesApi::class)
-@Suppress("DEPRECATION_ERROR")
-fun CoroutineScope.attachAsChildTo(secondaryParent: CoroutineScope) {
-  val parentJob = secondaryParent.coroutineContext.job
-  val childJob = this.coroutineContext.job
-  // prevent parent completion while child is not completed
-  // propagate cancellation from parent to child
-  val handle = (parentJob as JobSupport).attachChild(childJob as ChildJob)
-  // propagate cancellation from child to parent
-  childJob.invokeOnCompletion(onCancelling = true) { throwable ->
-    if (throwable != null) {
-      parentJob.childCancelled(throwable)
-    }
-  }
-  childJob.invokeOnCompletion {
-    handle.dispose() // remove reference from parent to child
-  }
-}
-
 
 fun Job.cancelOnDispose(disposable: Disposable) {
   val childDisposable = Disposable { cancel("disposed") }
@@ -97,4 +58,23 @@ fun Job.cancelOnDispose(disposable: Disposable) {
   job.invokeOnCompletion {
     Disposer.dispose(childDisposable)
   }
+}
+
+@OptIn(InternalCoroutinesApi::class)
+fun CoroutineScope.nestedDisposable(): Disposable {
+  val job = coroutineContext[Job]
+  require(job != null) {
+    "Found no Job in context: $coroutineContext"
+  }
+  return Disposer.newDisposable().also {
+    job.invokeOnCompletion(onCancelling = true, handler = { _ ->
+      Disposer.dispose(it)
+    })
+  }
+}
+
+fun CoroutineScope.cancelledWith(disposable: Disposable): CoroutineScope = apply {
+  val job = coroutineContext[Job]
+  requireNotNull(job) { "Coroutine scope without a parent job $this" }
+  job.cancelOnDispose(disposable)
 }

@@ -1,6 +1,6 @@
 package com.github.gib.ui.toolwindow.base
 
-import com.intellij.collaboration.async.cancelledWith
+import com.github.gib.uitl.cancelledWith
 import com.intellij.collaboration.async.launchNow
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.Key
@@ -16,15 +16,15 @@ import org.jetbrains.annotations.Nls
  * Manages review toolwindow tabs and their content.
  * @see GBrowserToolwindowDataKeys
  */
-fun <T : GBrowserTab, TVM : GBrowserTabViewModel, PVM : GBrowserToolwindowProjectViewModel<T, TVM>> manageReviewToolwindowTabs(cs: CoroutineScope,
-                                                                                                                               toolwindow: ToolWindow,
-                                                                                                                               gbrowserToolwindowViewModel: GBrowserToolwindowViewModel<PVM>,
-                                                                                                                               tabComponentFactory: GBrowserTabsComponentFactory<TVM, PVM>,
-                                                                                                                               tabTitle: @Nls String) {
-  ReviewToolwindowTabsManager(cs, toolwindow, gbrowserToolwindowViewModel, tabComponentFactory, tabTitle)
+fun <T : GBrowserTab, TVM : GBrowserTabViewModel, PVM : GBrowserToolwindowProjectViewModel<T, TVM>> manageBrowserToolwindowTabs(cs: CoroutineScope,
+                                                                                                                                toolwindow: ToolWindow,
+                                                                                                                                gbrowserToolwindowViewModel: GBrowserToolwindowViewModel<PVM>,
+                                                                                                                                tabComponentFactory: GBrowserTabsComponentFactory<TVM, PVM>,
+                                                                                                                                tabTitle: @Nls String) {
+  GBrowserToolwindowTabsManager(cs, toolwindow, gbrowserToolwindowViewModel, tabComponentFactory, tabTitle)
 }
 
-private class ReviewToolwindowTabsManager<T : GBrowserTab, TVM : GBrowserTabViewModel, PVM : GBrowserToolwindowProjectViewModel<T, TVM>>(
+private class GBrowserToolwindowTabsManager<T : GBrowserTab, TVM : GBrowserTabViewModel, PVM : GBrowserToolwindowProjectViewModel<T, TVM>>(
   parentCs: CoroutineScope,
   toolwindow: ToolWindow,
   private val gbrowserToolwindowViewModel: GBrowserToolwindowViewModel<PVM>,
@@ -45,6 +45,7 @@ private class ReviewToolwindowTabsManager<T : GBrowserTab, TVM : GBrowserTabView
       }
     }
 
+    @Suppress("UnstableApiUsage")
     cs.launchNow {
       projectVm.collectLatest { vm ->
         try {
@@ -139,7 +140,7 @@ private class ReviewToolwindowTabsManager<T : GBrowserTab, TVM : GBrowserTabView
     content.displayName = ""
     content.description = ""
 
-    content.component = tabComponentFactory.createTabComponent(contentCs, projectVm, tabVm, content::setIcon,contentCs)
+    content.component = tabComponentFactory.createTabComponent(contentCs, projectVm, tabVm, content::setIcon, contentCs)
 
     content.putUserData(REVIEW_TAB_KEY, tab)
     content.putUserData(REVIEW_TAB_VM_KEY, tabVm)
