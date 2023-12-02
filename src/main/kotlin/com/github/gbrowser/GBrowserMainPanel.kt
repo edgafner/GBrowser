@@ -18,23 +18,21 @@ import org.cef.handler.CefLoadHandler
 import javax.swing.Icon
 
 
-class GivMainPanel(private val initialUrl: String,
-                   private val callback: (Icon) -> Unit,
-                   private val  contentCs: CoroutineScope) : SimpleToolWindowPanel(true, true), Disposable {
+class GBrowserMainPanel(private val initialUrl: String,
+                        private val callback: (Icon) -> Unit,
+                        private val contentCs: CoroutineScope) : SimpleToolWindowPanel(true, true), Disposable {
 
   private val jbCefBrowser: JBCefBrowser = GBCefBrowser(initialUrl)
 
 
   init {
     val toolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.CONTEXT_TOOLBAR, buildToolbar(), true).apply {
-      targetComponent = this@GivMainPanel
+      targetComponent = this@GBrowserMainPanel
     }
 
     jbCefBrowser.setErrorPage { errorCode, errorText, failedUrl ->
       if (errorCode == CefLoadHandler.ErrorCode.ERR_ABORTED) null
-      else ErrorPage.DEFAULT.create(
-        errorCode, errorText, failedUrl
-      )
+      else ErrorPage.DEFAULT.create(errorCode, errorText, failedUrl)
     }
     jbCefBrowser.setProperty(JBCefBrowser.Properties.FOCUS_ON_SHOW, true)
     jbCefBrowser.setProperty(JBCefBrowser.Properties.FOCUS_ON_NAVIGATION, true)
@@ -64,7 +62,7 @@ class GivMainPanel(private val initialUrl: String,
       }
     })
 
-    val urlTextField = GSearchFieldAction(initialUrl, "Web address", AllIcons.Actions.Refresh, jbCefBrowser,callback,contentCs)
+    val urlTextField = GSearchFieldAction(initialUrl, "Web address", AllIcons.Actions.Refresh, jbCefBrowser, callback, contentCs)
 
     jbCefBrowser.cefBrowser.client.addDisplayHandler(CefUrlChangeHandler { url -> urlTextField.setText(url ?: "") })
 

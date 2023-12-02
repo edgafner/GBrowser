@@ -1,8 +1,8 @@
 package com.github.gbrowser.actions
 
 import com.github.gbrowser.GCookieManagerDialog
-import com.github.gbrowser.GBrowserBundle
-import com.github.gbrowser.GivMainPanel
+import com.github.gbrowser.i18n.GBrowserBundle
+import com.github.gbrowser.GBrowserMainPanel
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -15,66 +15,66 @@ var zoomLevel = 0.0
 class GZoomOutAction(private val jbCefBrowser: JBCefBrowser, icon: Icon) :
   AnAction(GBrowserBundle.message("actions.zoom.out.text"), "", icon), DumbAware {
 
-    override fun update(e: AnActionEvent) {
-        e.presentation.isEnabled = true
-    }
+  override fun update(e: AnActionEvent) {
+    e.presentation.isEnabled = true
+  }
 
-    override fun getActionUpdateThread() = ActionUpdateThread.EDT
+  override fun getActionUpdateThread() = ActionUpdateThread.EDT
 
-    override fun actionPerformed(e: AnActionEvent) {
-        jbCefBrowser.cefBrowser.zoomLevel = --zoomLevel
-    }
+  override fun actionPerformed(e: AnActionEvent) {
+    jbCefBrowser.cefBrowser.zoomLevel = --zoomLevel
+  }
 }
 
 class GZoomInAction(private val jbCefBrowser: JBCefBrowser, icon: Icon) :
   AnAction(GBrowserBundle.message("actions.zoom.in.text"), "", icon), DumbAware {
 
 
-    override fun update(e: AnActionEvent) {
-        e.presentation.isEnabled = true
-    }
+  override fun update(e: AnActionEvent) {
+    e.presentation.isEnabled = true
+  }
 
-    override fun getActionUpdateThread() = ActionUpdateThread.EDT
+  override fun getActionUpdateThread() = ActionUpdateThread.EDT
 
-    override fun actionPerformed(e: AnActionEvent) {
-        jbCefBrowser.cefBrowser.zoomLevel = ++zoomLevel
+  override fun actionPerformed(e: AnActionEvent) {
+    jbCefBrowser.cefBrowser.zoomLevel = ++zoomLevel
 
 
-    }
+  }
 }
 
 class GFindAction(private val jbCefBrowser: JBCefBrowser, icon: Icon) : AnAction("Find...", "", icon), DumbAware {
 
-    override fun update(e: AnActionEvent) {
-        e.presentation.isEnabled = true
+  override fun update(e: AnActionEvent) {
+    e.presentation.isEnabled = true
+  }
+
+  override fun getActionUpdateThread() = ActionUpdateThread.EDT
+
+  override fun actionPerformed(e: AnActionEvent) {
+    val findDialog = FindDialog(e.project!!, jbCefBrowser)
+
+    if (!findDialog.isVisible) {
+      findDialog.setDialogLocation()
     }
 
-    override fun getActionUpdateThread() = ActionUpdateThread.EDT
-
-    override fun actionPerformed(e: AnActionEvent) {
-        val findDialog = FindDialog(e.project!!, jbCefBrowser)
-
-        if (!findDialog.isVisible) {
-            findDialog.setDialogLocation()
-        }
-
-        findDialog.show()
-    }
+    findDialog.show()
+  }
 }
 
 @Suppress("ComponentNotRegistered", "unused")
 class GCookiesAction(private val jbCefBrowser: JBCefBrowser,
                      icon: Icon,
-                     private val givMainPanel: GivMainPanel) : AnAction("Cookie Manager", "", icon) {
+                     private val gbrowserMainPanel: GBrowserMainPanel) : AnAction("Cookie Manager", "", icon) {
 
-    override fun actionPerformed(e: AnActionEvent) {
-        val myCookieManagerDialog = GCookieManagerDialog(givMainPanel, jbCefBrowser)
-        if (myCookieManagerDialog.showAndGet()) {
-            val cookies = jbCefBrowser.jbCefCookieManager.getCookies(null, false).get()
-            if (cookies.isNotEmpty()) {
-                myCookieManagerDialog.update(cookies)
-            }
-        }
+  override fun actionPerformed(e: AnActionEvent) {
+    val myCookieManagerDialog = GCookieManagerDialog(gbrowserMainPanel, jbCefBrowser)
+    if (myCookieManagerDialog.showAndGet()) {
+      val cookies = jbCefBrowser.jbCefCookieManager.getCookies(null, false).get()
+      if (cookies.isNotEmpty()) {
+        myCookieManagerDialog.update(cookies)
+      }
     }
+  }
 }
 

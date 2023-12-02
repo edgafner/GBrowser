@@ -1,6 +1,6 @@
 package com.github.gbrowser.ui.toolwindow.create
 
-import com.github.gbrowser.GivMainPanel
+import com.github.gbrowser.GBrowserMainPanel
 import com.github.gbrowser.services.GivServiceSettings
 import com.github.gbrowser.ui.toolwindow.GBrowserViewTabsFactory
 import com.github.gbrowser.ui.toolwindow.model.GBrowserToolWindowProjectViewModel
@@ -26,7 +26,7 @@ internal class GBrowserCreateComponentHolder(private val actionManager: ActionMa
   }
 
   val component by lazy {
-    val infoComponent = GivMainPanel(settings.getLastSaveHomePage(), callBack,contentCs)
+    val infoComponent = GBrowserMainPanel(settings.getLastSaveHomePage(), callBack, contentCs)
     GBrowserViewTabsFactory(project, uiDisposable).create(infoComponent).component
   }
 

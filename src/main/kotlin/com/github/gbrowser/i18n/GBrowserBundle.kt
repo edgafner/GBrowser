@@ -1,4 +1,4 @@
-package com.github.gbrowser
+package com.github.gbrowser.i18n
 
 import com.intellij.DynamicBundle
 import org.jetbrains.annotations.NonNls
@@ -7,6 +7,7 @@ import java.util.function.Supplier
 
 @NonNls
 private const val BUNDLE = "messages.GBrowserBundle"
+
 
 @Suppress("unused")
 object GBrowserBundle : DynamicBundle(BUNDLE) {
@@ -17,6 +18,5 @@ object GBrowserBundle : DynamicBundle(BUNDLE) {
 
   @Suppress("SpreadOperator")
   @JvmStatic
-  fun messagePointer(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): Supplier<String> =
-    getLazyMessage(key, *params)
+  fun messagePointer(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): Supplier<String> = getLazyMessage(key, *params)
 }
