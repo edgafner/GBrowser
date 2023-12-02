@@ -5,7 +5,7 @@ import com.github.gbrowser.ui.toolwindow.GBrowserToolWindowTab
 import com.github.gbrowser.ui.toolwindow.base.GBrowserToolwindowProjectViewModel
 import com.github.gbrowser.ui.toolwindow.base.GBrowserToolwindowTabs
 import com.intellij.openapi.project.Project
-import com.github.gbrowser.uitl.childScope
+import com.intellij.util.childScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,10 +16,13 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 
+@Suppress("UnstableApiUsage")
 class GBrowserToolWindowProjectViewModel internal constructor(project: Project,
                                                               parentCs: CoroutineScope,
                                                               private val settings: GivServiceSettings) : GBrowserToolwindowProjectViewModel<GBrowserToolWindowTab, GBrowserToolWindowTabViewModel> {
   private val cs = parentCs.childScope()
+
+  override val browserVm: GBrowserViewModel = GBrowserViewModelImpl()
 
 
   override val projectName: String = project.name

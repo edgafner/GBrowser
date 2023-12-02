@@ -9,7 +9,11 @@
 
 name: Run UI Tests
 on:
-  workflow_dispatch
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+  # Trigger the workflow on any pull request
+  pull_request:
 
 jobs:
 
@@ -22,10 +26,11 @@ jobs:
           - os: ubuntu-latest
             runIde: |
               export DISPLAY=:99.0
-              Xvfb -ac :99 -screen 0 1920x1080x16 &
-              gradle runIdeForUiTests &
-          - os: windows-latest
-            runIde: start gradlew.bat runIdeForUiTests
+              Xvfb -ac :99 -screen 0 1920x1080x24 &
+              sleep 10
+              ./gradlew runIdeForUiTests &
+#          - os: windows-latest
+#            runIde: start gradlew.bat runIdeForUiTests
           - os: macos-latest
             runIde: ./gradlew runIdeForUiTests &
 
@@ -43,7 +48,7 @@ jobs:
           distribution: zulu
           java-version: 17
 
-       # Setup Gradle
+      # Setup Gradle
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2.10.0
         with:
@@ -59,9 +64,29 @@ jobs:
         uses: jtalk/url-health-check-action@v3
         with:
           url: http://127.0.0.1:8082
-          max-attempts: 15
+          max-attempts: 18
           retry-delay: 30s
 
-      # Run tests
+          # Run tests
       - name: Tests
-        run: ./gradlew test
+        run: ./gradlew integrationTest -PrunUiTests=true
+
+      - uses: GuillaumeFalourd/wait-sleep-action@v1
+        with:
+          time: '10'
+
+      # Collect Tests Result of failed tests
+      - name: Collect Tests Result
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: tests-result-${{ matrix.os }}
+          path: ${{ github.workspace }}/build/reports
+
+      - name: Upload Code Coverage Report
+        uses: codecov/codecov-action@v3
+        with:
+          files: ${{ github.workspace }}/build/reports/jacoco/runIdeUiCodeCoverageReport/runIdeUiCodeCoverageReport.xml
+          flags: integration-${{ matrix.os }}
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

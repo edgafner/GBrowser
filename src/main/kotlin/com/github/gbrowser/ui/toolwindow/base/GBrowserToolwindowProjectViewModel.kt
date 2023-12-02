@@ -1,5 +1,6 @@
 package com.github.gbrowser.ui.toolwindow.base
 
+import com.github.gbrowser.ui.toolwindow.model.GBrowserViewModel
 import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.annotations.Nls
 
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.Nls
  */
 interface GBrowserToolwindowProjectViewModel<T : GBrowserTab, TVM : GBrowserTabViewModel> {
 
+  val browserVm: GBrowserViewModel
   /**
    * Presentable name for the project which context is hold here.
    * Used in toolwindow UI places like review list tab title.

@@ -13,6 +13,7 @@ gradleIntelliJPlugin = "1.16.1"
 qodana = "0.1.13"
 kover = "0.7.5"
 koinPrevVersion = "3.5.0"
+koinKotestExtension = "1.3.0"
 
 [libraries]
 annotations = { group = "org.jetbrains", name = "annotations", version.ref = "annotations" }
@@ -21,8 +22,10 @@ kotest-assertion = { group = "io.kotest", name = "kotest-assertions-core", versi
 kotest-property = { group = "io.kotest", name = "kotest-property", version.ref = "kotest" }
 korutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinTest" }
 mockk-test = { group = "io.mockk", name = "mockk", version.ref = "mockkTest" }
+mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version = "5.1.0" }
 io-insert-koin = { group = "io.insert-koin", name = "koin-test", version.ref = "koinPrevVersion" }
 io-insert-koin-junit = { group = "io.insert-koin", name = "koin-test-junit5", version.ref = "koinPrevVersion" }
+io-kotest-extensions = { group = "io.kotest.extensions", name = "kotest-extensions-koin", version.ref = "koinKotestExtension" }
 
 [plugins]
 changelog = { id = "org.jetbrains.changelog", version.ref = "changelog" }
@@ -33,4 +36,4 @@ kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 qodana = { id = "org.jetbrains.qodana", version.ref = "qodana" }
 
 [bundles]
-kTest = ["kotest-runner", "kotest-assertion", "kotest-property", "korutines-test", "mockk-test", "io-insert-koin", "io-insert-koin-junit"]
+kTest = ["kotest-runner", "kotest-assertion", "kotest-property", "korutines-test", "mockk-test", "mockito-kotlin", "io-insert-koin", "io-insert-koin-junit", "io-kotest-extensions"]

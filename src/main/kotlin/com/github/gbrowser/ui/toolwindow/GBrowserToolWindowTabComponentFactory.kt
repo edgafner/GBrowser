@@ -6,8 +6,8 @@ import com.github.gbrowser.ui.toolwindow.base.GBrowserTabsComponentFactory
 import com.github.gbrowser.ui.toolwindow.create.GBrowserCreateComponentHolder
 import com.github.gbrowser.ui.toolwindow.model.GBrowserToolWindowProjectViewModel
 import com.github.gbrowser.ui.toolwindow.model.GBrowserToolWindowTabViewModel
-import com.github.gbrowser.uitl.nestedDisposable
 import com.intellij.collaboration.async.launchNow
+import com.intellij.collaboration.async.nestedDisposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.IdeFocusManager
 import kotlinx.coroutines.CoroutineScope

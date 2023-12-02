@@ -3,16 +3,10 @@
     <name>GBrowser</name>
     <vendor email="jgafner@dorkag.com">Dorkag</vendor>
 
-    <description><![CDATA[
-    Embedded Web Browser in a ToolWindow.<br>
-    Watch YouTube coding session directly in the IDE<br>
-    ]]></description>
-
-    <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
-         on how to target different products -->
-    <depends>com.intellij.modules.platform</depends>
 
     <resource-bundle>messages.GBrowserBundle</resource-bundle>
+    <depends>com.intellij.modules.platform</depends>
+
 
     <extensions defaultExtensionNs="com.intellij">
 
@@ -22,9 +16,13 @@
                              displayName="GBrowser"/>
 
 
-        <toolWindow id="GBrowser" icon="/icons/gbrowser.svg" anchor="left" canCloseContents="true"
-                    factoryClass="com.github.gbrowser.GBrowserToolWindowFactory"/>
+        <toolWindow id="GBrowser" icon="com.github.gbrowser.GBrowserIcons.GBrowserLogo"
+                    anchor="left"
+                    factoryClass="com.github.gbrowser.GBrowserToolWindowFactory"
+                    canCloseContents="true"/>
 
+
+        <iconMapper mappingFile="GBrowserIconMappings.json"/>
     </extensions>
 
     <actions>

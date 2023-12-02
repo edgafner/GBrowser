@@ -10,7 +10,7 @@ import com.intellij.openapi.components.Storage
 import com.intellij.openapi.diagnostic.logger
 
 @State(name = "GivServiceSettings", storages = [Storage(value = "gbrowser.xml")], category = SettingsCategory.TOOLS)
-class GivServiceSettings : PersistentStateComponent<GivServiceSettings.State> {
+internal class GivServiceSettings : PersistentStateComponent<GivServiceSettings.State> {
 
   private val lock = Any()
   private var myState = State()

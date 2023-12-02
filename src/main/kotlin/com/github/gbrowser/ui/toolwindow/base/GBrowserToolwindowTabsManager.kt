@@ -1,13 +1,15 @@
 package com.github.gbrowser.ui.toolwindow.base
 
-import com.github.gbrowser.uitl.cancelledWith
+import com.github.gbrowser.ui.toolwindow.model.GBrowserViewModel
 import com.intellij.collaboration.async.launchNow
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.content.*
-import com.github.gbrowser.uitl.childScope
-import com.github.gbrowser.uitl.namedChildScope
+import com.intellij.collaboration.async.cancelledWith
+import com.intellij.openapi.wm.ex.ToolWindowManagerListener
+import com.intellij.util.childScope
+import com.intellij.util.namedChildScope
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import org.jetbrains.annotations.Nls
@@ -24,9 +26,10 @@ fun <T : GBrowserTab, TVM : GBrowserTabViewModel, PVM : GBrowserToolwindowProjec
   GBrowserToolwindowTabsManager(cs, toolwindow, gbrowserToolwindowViewModel, tabComponentFactory, tabTitle)
 }
 
+@Suppress("UnstableApiUsage")
 private class GBrowserToolwindowTabsManager<T : GBrowserTab, TVM : GBrowserTabViewModel, PVM : GBrowserToolwindowProjectViewModel<T, TVM>>(
   parentCs: CoroutineScope,
-  toolwindow: ToolWindow,
+  private val toolwindow: ToolWindow,
   private val gbrowserToolwindowViewModel: GBrowserToolwindowViewModel<PVM>,
   private val tabComponentFactory: GBrowserTabsComponentFactory<TVM, PVM>,
   private val tabTitle: @Nls String) {
@@ -52,6 +55,7 @@ private class GBrowserToolwindowTabsManager<T : GBrowserTab, TVM : GBrowserTabVi
           manageProjectTabs(vm!!)
         }
         catch (e: Exception) {
+          val x = e.message
           withContext(NonCancellable) {
             contentManager.removeAllContents(true)
           }
@@ -66,8 +70,8 @@ private class GBrowserToolwindowTabsManager<T : GBrowserTab, TVM : GBrowserTabVi
       contentManager.addContent(mainContent)
       contentManager.setSelectedContent(mainContent)
     }
-    //refreshReviewListOnTabSelection(projectVm.listVm, contentManager, mainContent)
-    //refreshListOnToolwindowShow(projectVm.listVm, toolwindow, mainContent)
+    refreshReviewListOnTabSelection(projectVm.browserVm, contentManager, mainContent)
+    refreshListOnToolwindowShow(projectVm.browserVm, toolwindow, mainContent)
 
     currentCoroutineContext().ensureActive()
 
@@ -146,6 +150,7 @@ private class GBrowserToolwindowTabsManager<T : GBrowserTab, TVM : GBrowserTabVi
     content.putUserData(REVIEW_TAB_VM_KEY, tabVm)
   }
 
+  @Suppress("UnstableApiUsage")
   private fun createDisposableContent(debugName: String, modifier: (Content, CoroutineScope) -> Unit): Content {
     val factory = ContentFactory.getInstance()
     return factory.createContent(null, tabTitle, false).apply {
@@ -157,15 +162,11 @@ private class GBrowserToolwindowTabsManager<T : GBrowserTab, TVM : GBrowserTabVi
 
   private fun createTabDebugName(name: String) = "GBrowser Toolwindow Tab [$name]"
 
-  @Suppress("PrivatePropertyName")
   private val REVIEW_TAB_KEY: Key<T> = Key.create("com.github.gbrowser.ui.toolwindow.base.tab")
-
-  @Suppress("PrivatePropertyName")
   private val REVIEW_TAB_VM_KEY: Key<TVM> = Key.create("com.github.gbrowser.ui.toolwindow.base.tab.vm")
 }
 
 
-/*
 private fun refreshReviewListOnTabSelection(listVm: GBrowserViewModel, contentManager: ContentManager, content: Content) {
   val listener = object : ContentManagerListener {
     override fun selectionChanged(event: ContentManagerEvent) {
@@ -191,4 +192,4 @@ private fun refreshListOnToolwindowShow(listVm: GBrowserViewModel, toolwindow: T
       }
     }
   })
-}*/
+}
