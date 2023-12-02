@@ -25,7 +25,6 @@ class FindDialog(project: Project, private val jbCefBrowser: JBCefBrowser) : Dia
     isResizable = false
     setUndecorated(true)
     myFindComponent = createComponent()
-
     init()
   }
 
@@ -161,8 +160,7 @@ class FindDialog(project: Project, private val jbCefBrowser: JBCefBrowser) : Dia
       prev = createPrevButton()
       close = createCloseButton()
       myTextField.isEditable = true
-      add(myTextField)
-      //            add(ignoreCaseCheckBox)
+      add(myTextField) //            add(ignoreCaseCheckBox)
       add(next)
       add(prev)
       add(close)

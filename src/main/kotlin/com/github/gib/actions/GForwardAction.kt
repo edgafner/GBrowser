@@ -14,7 +14,6 @@ class GForwardAction(private val jbCefBrowser: JBCefBrowser, icon: Icon) : AnAct
       e.presentation.isEnabled = false
       return
     }
-    super.update(e)
   }
 
   override fun getActionUpdateThread() = ActionUpdateThread.EDT

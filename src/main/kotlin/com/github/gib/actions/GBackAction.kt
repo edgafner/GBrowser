@@ -15,7 +15,6 @@ class GBackAction(private val jbCefBrowser: JBCefBrowser, icon: Icon) : AnAction
       e.presentation.isEnabled = false
       return
     }
-    super.update(e)
   }
 
   override fun getActionUpdateThread() = ActionUpdateThread.EDT

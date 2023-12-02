@@ -1,0 +1,100 @@
+package com.github.gib.uitl
+
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
+
+
+fun requireNoJob(context: CoroutineContext) {
+  require(context[Job] == null) {
+    "Context must not specify a Job: $context"
+  }
+}
+
+
+fun CoroutineScope.childScope(context: CoroutineContext = EmptyCoroutineContext, supervisor: Boolean = true): CoroutineScope {
+  requireNoJob(context)
+  return ChildScope(coroutineContext + context, supervisor)
+}
+
+fun CoroutineScope.namedChildScope(
+  name: String,
+  context: CoroutineContext = EmptyCoroutineContext,
+  supervisor: Boolean = true,
+): CoroutineScope {
+  requireNoJob(context)
+  return ChildScope(coroutineContext + context + CoroutineName(name), supervisor)
+}
+
+/**
+ * This allows to see actual coroutine context (and name!)
+ * in the coroutine dump instead of "SupervisorJobImpl{Active}@598294b2".
+ *
+ * [See issue](https://github.com/Kotlin/kotlinx.coroutines/issues/3428)
+ */
+@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE", "CANNOT_OVERRIDE_INVISIBLE_MEMBER")
+private class ChildScope(ctx: CoroutineContext, private val supervisor: Boolean) : JobImpl(ctx[Job]), CoroutineScope {
+
+  override fun childCancelled(cause: Throwable): Boolean {
+    return !supervisor && super.childCancelled(cause)
+  }
+
+  override val coroutineContext: CoroutineContext = ctx + this
+
+  override fun toString(): String {
+    val coroutineName = coroutineContext[CoroutineName]?.name
+    return (if (coroutineName != null) "\"$coroutineName\":" else "") +
+           (if (supervisor) "supervisor:" else "") +
+           super.toString()
+  }
+}
+
+/**
+ * Makes [this] scope job behave as if it was a child of [secondaryParent] job
+ * as per the coroutine framework parent-child [Job] relation:
+ * - child prevents completion of the parent;
+ * - child failure is propagated to the parent (note, parent might not cancel itself if it's a supervisor);
+ * - parent cancellation is propagated to the child.
+ *
+ * The [real parent][ChildHandle.parent] of [this] scope job is not changed.
+ * It does not matter whether the job of [this] scope has a real parent.
+ *
+ * Example usage:
+ * ```
+ * val containerScope: CoroutineScope = ...
+ * val pluginScope: CoroutineScope = ...
+ * CoroutineScope(SupervisorJob()).also {
+ *   it.attachAsChildTo(containerScope)
+ *   it.attachAsChildTo(pluginScope)
+ * }
+ * ```
+ */
+@OptIn(InternalCoroutinesApi::class)
+@Suppress("DEPRECATION_ERROR")
+fun CoroutineScope.attachAsChildTo(secondaryParent: CoroutineScope) {
+  val parentJob = secondaryParent.coroutineContext.job
+  val childJob = this.coroutineContext.job
+  // prevent parent completion while child is not completed
+  // propagate cancellation from parent to child
+  val handle = (parentJob as JobSupport).attachChild(childJob as ChildJob)
+  // propagate cancellation from child to parent
+  childJob.invokeOnCompletion(onCancelling = true) { throwable ->
+    if (throwable != null) {
+      parentJob.childCancelled(throwable)
+    }
+  }
+  childJob.invokeOnCompletion {
+    handle.dispose() // remove reference from parent to child
+  }
+}
+
+
+fun Job.cancelOnDispose(disposable: Disposable) {
+  val childDisposable = Disposable { cancel("disposed") }
+  Disposer.register(disposable, childDisposable)
+  job.invokeOnCompletion {
+    Disposer.dispose(childDisposable)
+  }
+}
