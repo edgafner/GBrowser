@@ -22,6 +22,7 @@ import kotlinx.coroutines.*
 
 class GBrowserToolWindowFactory : ToolWindowFactory, DumbAware {
 
+  @Suppress("UnstableApiUsage")
   override suspend fun manage(toolWindow: ToolWindow, toolWindowManager: ToolWindowManager) {
     toolWindow.project.serviceAsync<GBrowserToolWindowController>().manageAvailability(toolWindow)
   }
