@@ -8,7 +8,6 @@ import com.github.gbrowser.ui.toolwindow.model.GBrowserToolWindowProjectViewMode
 import com.github.gbrowser.ui.toolwindow.model.GBrowserToolWindowTabViewModel
 import com.github.gbrowser.uitl.nestedDisposable
 import com.intellij.collaboration.async.launchNow
-import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.IdeFocusManager
 import kotlinx.coroutines.CoroutineScope
@@ -29,21 +28,17 @@ internal class GBrowserToolWindowTabComponentFactory(private val project: Projec
                                   callBack: (Icon) -> Unit,
                                   contentCs: CoroutineScope): JComponent {
     return when (tabVm) {
-      is GBrowserToolWindowTabViewModel.NewBrowserTab -> cs.createNewGBrowserComponent(projectVm, tabVm, callBack, contentCs)
+      is GBrowserToolWindowTabViewModel.NewBrowserTab -> cs.createNewGBrowserComponent(tabVm, callBack, contentCs)
     }
   }
 
 
   @Suppress("UnstableApiUsage")
-  private fun CoroutineScope.createNewGBrowserComponent(
-    projectVm: GBrowserToolWindowProjectViewModel,
-    tabVm: GBrowserToolWindowTabViewModel.NewBrowserTab,
-    callBack: (Icon) -> Unit,
-    contentCs: CoroutineScope,
-  ): JComponent {
+  private fun CoroutineScope.createNewGBrowserComponent(tabVm: GBrowserToolWindowTabViewModel.NewBrowserTab,
+                                                        callBack: (Icon) -> Unit,
+                                                        contentCs: CoroutineScope): JComponent {
     val settings = GivServiceSettings.instance()
-    return GBrowserCreateComponentHolder(ActionManager.getInstance(), project, projectVm, settings,
-                                         nestedDisposable(), callBack, contentCs).component.also { comp ->
+    return GBrowserCreateComponentHolder(project, settings, nestedDisposable(), callBack, contentCs).component.also { comp ->
       launchNow {
         tabVm.focusRequests.collect {
           yield()

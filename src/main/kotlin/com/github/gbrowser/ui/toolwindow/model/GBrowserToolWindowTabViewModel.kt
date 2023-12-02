@@ -1,10 +1,7 @@
 package com.github.gbrowser.ui.toolwindow.model
 
 import com.github.gbrowser.ui.toolwindow.base.GBrowserTabViewModel
-import com.intellij.openapi.project.Project
-import com.github.gbrowser.uitl.childScope
 import com.intellij.util.ui.JBImageIcon
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -16,9 +13,7 @@ import javax.swing.Icon
 sealed interface GBrowserToolWindowTabViewModel : GBrowserTabViewModel {
   suspend fun destroy()
 
-  class NewBrowserTab internal constructor(project: Project, parentCs: CoroutineScope, url: String) : GBrowserToolWindowTabViewModel {
-
-    private val cs = parentCs.childScope()
+  class NewBrowserTab internal constructor(url: String) : GBrowserToolWindowTabViewModel {
 
     override val displayName: String
       get() = UUID.randomUUID().toString()

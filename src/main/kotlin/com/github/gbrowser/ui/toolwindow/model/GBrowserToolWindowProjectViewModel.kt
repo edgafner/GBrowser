@@ -16,7 +16,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 
-class GBrowserToolWindowProjectViewModel internal constructor(private val project: Project,
+class GBrowserToolWindowProjectViewModel internal constructor(project: Project,
                                                               parentCs: CoroutineScope,
                                                               private val settings: GivServiceSettings) : GBrowserToolwindowProjectViewModel<GBrowserToolWindowTab, GBrowserToolWindowTabViewModel> {
   private val cs = parentCs.childScope()
@@ -53,7 +53,7 @@ class GBrowserToolWindowProjectViewModel internal constructor(private val projec
 
   @Suppress("UNUSED_PARAMETER")
   private fun createVm(tab: GBrowserToolWindowTab.NewBrowserTab): GBrowserToolWindowTabViewModel.NewBrowserTab = GBrowserToolWindowTabViewModel.NewBrowserTab(
-    project, cs, settings.getLastSaveHomePage())
+    settings.getLastSaveHomePage())
 
   override fun selectTab(tab: GBrowserToolWindowTab?) {
     cs.launch {

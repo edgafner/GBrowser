@@ -32,10 +32,6 @@ class GBrowserToolWindowViewModel internal constructor(private val project: Proj
   }
 
 
-  fun activate() {
-    _activationRequests.tryEmit(Unit)
-  }
-
   fun activateAndAwaitProject(action: GBrowserToolWindowProjectViewModel.() -> Unit) {
     cs.launch {
       _activationRequests.emit(Unit)
