@@ -105,6 +105,10 @@ class GBrowserTollWindowUITest {
         gBrowserPRPanel {
           if (remoteRobot.isMac()) {
             textField(byXpath("//div[@class='TextFieldWithProcessing']")).text = "https://www.google.com"
+            textField(byXpath("//div[@class='TextFieldWithProcessing']")).keyboard {
+              enter()
+            }
+
           }
           else {
             textField(byXpath("//div[@class='TextFieldWithProcessing']")).text = ""
