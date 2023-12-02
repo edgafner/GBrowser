@@ -15,24 +15,21 @@
     <resource-bundle>messages.GBrowserBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
-        <!-- Add your extensions here -->
 
-        <!--        <projectService serviceImplementation="com.github.gib.GivToolWindow"/>-->
-
-        <applicationService serviceImplementation="com.github.gib.services.GivServiceSettings"/>
-        <projectConfigurable parentId="tools" instance="com.github.gib.settings.ProjectSettingsConfigurable"
-                             id="com.github.gib.settings.ProjectSettingsConfigurable"
+        <applicationService serviceImplementation="com.github.gbrowser.services.GivServiceSettings"/>
+        <projectConfigurable parentId="tools" instance="com.github.gbrowser.settings.ProjectSettingsConfigurable"
+                             id="com.github.gbrowser.settings.ProjectSettingsConfigurable"
                              displayName="GBrowser"/>
 
 
         <toolWindow id="GBrowser" icon="/icons/gbrowser.svg" anchor="left" canCloseContents="true"
-                    factoryClass="com.github.gib.GBrowserToolWindowFactory"/>
+                    factoryClass="com.github.gbrowser.GBrowserToolWindowFactory"/>
 
     </extensions>
 
     <actions>
         <group id="GBrowserToolwindowActionGroup">
-            <action id="GBrowser.NewTab" class="com.github.gib.ui.toolwindow.actions.GBrowserNewTabAction">
+            <action id="GBrowser.NewTab" class="com.github.gbrowser.ui.toolwindow.actions.GBrowserNewTabAction">
                 <keyboard-shortcut first-keystroke="control shift T" keymap="$default"/>
                 <keyboard-shortcut first-keystroke="meta T" keymap="Mac OS X" replace-all="true"/>
                 <keyboard-shortcut first-keystroke="meta T" keymap="Mac OS X 10.5+" replace-all="true"/>
