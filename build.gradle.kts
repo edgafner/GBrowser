@@ -182,6 +182,9 @@ tasks {
     systemProperty("junit.jupiter.extensions.autodetection.enabled", true)
     systemProperty("robot-server.port", 8082)
     systemProperty("shared.indexes.download.auto.consent", true)
+    systemProperty("ide.browser.jcef.testMode.enabled", true)
+    systemProperty("ide.browser.jcef.enabled", true)
+    systemProperty("ide.browser.jcef.headless.enabled", true)
 
     jvmArgs("--add-opens=java.desktop/javax.swing.text=ALL-UNNAMED")
 
