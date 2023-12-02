@@ -28,9 +28,10 @@ jobs:
               export DISPLAY=:99.0
               Xvfb -ac :99 -screen 0 1920x1080x24 &
               sleep 10
-              ./gradlew runIdeForUiTests &
-#          - os: windows-latest
-#            runIde: start gradlew.bat runIdeForUiTests
+              mkdir -p ${{ github.workspace }}/build/log_ui_test
+              ./gradlew runIdeForUiTests > ${{ github.workspace }}/build/log_ui_test/idea.log &
+          #          - os: windows-latest
+          #            runIde: start gradlew.bat runIdeForUiTests
           - os: macos-latest
             runIde: ./gradlew runIdeForUiTests &
 
@@ -75,7 +76,11 @@ jobs:
         with:
           time: '10'
 
-      # Collect Tests Result of failed tests
+      - name: Copy logs
+        if: ${{ failure() }}
+        run: mv ${{ github.workspace }}/build/log_ui_test/ ${{ github.workspace }}/build/reports
+
+        # Collect Tests Result of failed tests
       - name: Collect Tests Result
         if: ${{ always() }}
         uses: actions/upload-artifact@v3
