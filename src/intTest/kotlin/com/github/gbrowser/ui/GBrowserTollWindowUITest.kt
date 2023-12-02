@@ -6,6 +6,7 @@ import com.github.gbrowser.extensions.RemoteRobotExtension
 import com.github.gbrowser.extensions.StepsLogger
 import com.github.gbrowser.fixture.*
 import com.intellij.remoterobot.RemoteRobot
+import com.intellij.remoterobot.fixtures.ComponentFixture
 import com.intellij.remoterobot.search.locators.byXpath
 import com.intellij.remoterobot.utils.keyboard
 import com.intellij.remoterobot.utils.waitFor
@@ -92,16 +93,13 @@ class GBrowserTollWindowUITest {
       Thread.sleep(5_000)
 
       ImageIO.write(remoteRobot.getScreenshot(), "png", File("build/reports", "open_tool_window.png"))
-      if (remoteRobot.isMac()) {
-        keyboard {
-          hotKey(VK_META, VK_N)
-        }
-      }
-      else {
-        keyboard {
-          hotKey(VK_CONTROL, VK_SHIFT, VK_TAB)
-        }
-      }
+      Thread.sleep(5_000)
+      val th = find<ComponentFixture>(byXpath("//div[@class='ContentTabLabel' and @text='GBrowser']"))
+      click(th.locationOnScreen)
+      Thread.sleep(1_000)
+
+      button(byXpath("//div[@myicon='add.svg']")).click()
+      Thread.sleep(3_000)
 
       ImageIO.write(remoteRobot.getScreenshot(), "png", File("build/reports", "new_tab.png"))
 
