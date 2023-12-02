@@ -96,7 +96,7 @@ class GBrowserTollWindowUITest {
       }
       else {
         keyboard {
-          hotKey(VK_CONTROL, VK_SHIFT, VK_T)
+          hotKey(VK_CONTROL, VK_SHIFT, VK_TAB)
         }
       }
 
