@@ -34,8 +34,6 @@
                 <keyboard-shortcut first-keystroke="meta T" keymap="Mac OS X" replace-all="true"/>
                 <keyboard-shortcut first-keystroke="meta T" keymap="Mac OS X 10.5+" replace-all="true"/>
             </action>
-            <!--            <action id="TerminalNewPredefinedSession" class="org.jetbrains.plugins.terminal.action.TerminalNewPredefinedSessionAction"-->
-            <!--                    icon="AllIcons.Toolbar.Expand"/>-->
         </group>
 
 
