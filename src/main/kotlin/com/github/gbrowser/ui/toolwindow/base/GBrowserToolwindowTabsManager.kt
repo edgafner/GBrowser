@@ -161,7 +161,9 @@ private class GBrowserToolwindowTabsManager<T : GBrowserTab, TVM : GBrowserTabVi
 
   private fun createTabDebugName(name: String) = "GBrowser Toolwindow Tab [$name]"
 
+  @Suppress("PrivatePropertyName")
   private val REVIEW_TAB_KEY: Key<T> = Key.create("com.github.gbrowser.ui.toolwindow.base.tab")
+  @Suppress("PrivatePropertyName")
   private val REVIEW_TAB_VM_KEY: Key<TVM> = Key.create("com.github.gbrowser.ui.toolwindow.base.tab.vm")
 }
 
