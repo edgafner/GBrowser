@@ -6,6 +6,7 @@ import com.github.gbrowser.extensions.RemoteRobotExtension
 import com.github.gbrowser.extensions.StepsLogger
 import com.github.gbrowser.fixture.*
 import com.intellij.remoterobot.RemoteRobot
+import com.intellij.remoterobot.fixtures.CommonContainerFixture
 import com.intellij.remoterobot.fixtures.ComponentFixture
 import com.intellij.remoterobot.search.locators.byXpath
 import com.intellij.remoterobot.stepsProcessing.step
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.io.TempDir
+import java.awt.event.KeyEvent.VK_END
 import java.nio.file.Path
 import java.time.Duration.ofMinutes
 
@@ -129,6 +131,18 @@ class GBrowserTollWindowUITest {
         actionMenu("New").click()
         actionMenuItem("Java Class").click()
         keyboard { enterText("App"); enter() }
+      }
+
+      with(textEditor()) {
+        step("Write a code") {
+          Thread.sleep(1_000)
+          editor.findText("App").click()
+          keyboard {
+            key(VK_END)
+            enter()
+          }
+          keyboard { enterText("\""); enterText("Hello from UI test") }
+        }
       }
 
       showGBrowserToolWindow()
