@@ -3,36 +3,39 @@
     <name>GBrowser</name>
     <vendor email="jgafner@dorkag.com">Dorkag</vendor>
 
-    <description><![CDATA[
-    Embedded Web Browser in a ToolWindow.<br>
-    Watch YouTube coding session directly in the IDE<br>
-    ]]></description>
-
-    <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
-         on how to target different products -->
-    <depends>com.intellij.modules.platform</depends>
 
     <resource-bundle>messages.GBrowserBundle</resource-bundle>
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.all</depends>
+
 
     <extensions defaultExtensionNs="com.intellij">
-        <!-- Add your extensions here -->
 
-        <!--        <projectService serviceImplementation="com.github.gib.GivToolWindow"/>-->
-
-        <applicationService serviceImplementation="com.github.gib.services.GivServiceSettings"/>
-        <projectConfigurable parentId="tools" instance="com.github.gib.settings.ProjectSettingsConfigurable"
-                             id="com.github.gib.settings.ProjectSettingsConfigurable"
-                             displayName="GBrowser"
-        />
+        <applicationService serviceImplementation="com.github.gbrowser.services.GivServiceSettings"/>
+        <projectConfigurable parentId="tools" instance="com.github.gbrowser.settings.ProjectSettingsConfigurable"
+                             id="com.github.gbrowser.settings.ProjectSettingsConfigurable"
+                             displayName="GBrowser"/>
 
 
-        <toolWindow id="GBrowser" icon="/icons/gbrowser.svg" anchor="left"
-                    factoryClass="com.github.gib.GivToolWindowFactory"/>
+        <toolWindow id="GBrowser" icon="com.github.gbrowser.GBrowserIcons.GBrowserLogo"
+                    anchor="left" doNotActivateOnStart="true"
+                    factoryClass="com.github.gbrowser.GBrowserToolWindowFactory"
+                    canCloseContents="true"/>
 
+
+        <iconMapper mappingFile="GBrowserIconMappings.json"/>
+
+        <errorHandler implementation="com.github.gbrowser.reports.GBrowserPluginErrorReportSubmitter"/>
     </extensions>
 
     <actions>
-        <!-- Add your actions here -->
+        <group id="GBrowserToolwindowActionGroup">
+            <action id="GBrowser.NewTab" class="com.github.gbrowser.ui.toolwindow.actions.GBrowserNewTabAction">
+                <keyboard-shortcut first-keystroke="control shift T" keymap="$default"/>
+                <keyboard-shortcut first-keystroke="meta T" keymap="Mac OS X" replace-all="true"/>
+                <keyboard-shortcut first-keystroke="meta T" keymap="Mac OS X 10.5+" replace-all="true"/>
+            </action>
+        </group>
 
 
     </actions>
