@@ -12,7 +12,6 @@ import com.intellij.util.ui.JBDimension
 import com.intellij.util.ui.JBImageIcon
 import com.intellij.util.ui.JBUI
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
 import net.miginfocom.layout.CC
 import net.miginfocom.layout.LC
@@ -42,7 +41,7 @@ class GSearchFieldAction(text: String,
         addCurrentTextToHistory()
         perform()
         val url = this.text
-        contentCs.launch(start = CoroutineStart.UNDISPATCHED) {
+        contentCs.launch {
           try {
             JBImageIcon(ImageIO.read(URL("https://www.google.com/s2/favicons?domain=${url}")))
           }
@@ -52,7 +51,6 @@ class GSearchFieldAction(text: String,
             callback(it)
           }
         }
-
       }
       return super.preprocessEventForTextField(e)
     }

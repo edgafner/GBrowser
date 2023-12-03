@@ -25,20 +25,18 @@ internal class GBrowserToolWindowTabComponentFactory(private val project: Projec
   override fun createTabComponent(cs: CoroutineScope,
                                   projectVm: GBrowserToolWindowProjectViewModel,
                                   tabVm: GBrowserToolWindowTabViewModel,
-                                  callBack: (Icon) -> Unit,
-                                  contentCs: CoroutineScope): JComponent {
+                                  callBack: (Icon) -> Unit): JComponent {
     return when (tabVm) {
-      is GBrowserToolWindowTabViewModel.NewBrowserTab -> cs.createNewGBrowserComponent(tabVm, callBack, contentCs)
+      is GBrowserToolWindowTabViewModel.NewBrowserTab -> cs.createNewGBrowserComponent(tabVm, callBack)
     }
   }
 
 
   @Suppress("UnstableApiUsage")
   private fun CoroutineScope.createNewGBrowserComponent(tabVm: GBrowserToolWindowTabViewModel.NewBrowserTab,
-                                                        callBack: (Icon) -> Unit,
-                                                        contentCs: CoroutineScope): JComponent {
-    val settings = GivServiceSettings.instance()
-    return GBrowserCreateComponentHolder(project, settings, nestedDisposable(), callBack, contentCs).component.also { comp ->
+                                                        callBack: (Icon) -> Unit): JComponent {
+
+    return GBrowserCreateComponentHolder(nestedDisposable(), callBack).component.also { comp ->
       launchNow {
         tabVm.focusRequests.collect {
           yield()

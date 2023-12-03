@@ -48,8 +48,7 @@ private class GBrowserToolwindowTabsManager<T : GBrowserTab, TVM : GBrowserTabVi
       }
     }
 
-    @Suppress("UnstableApiUsage")
-    cs.launchNow {
+    @Suppress("UnstableApiUsage") cs.launchNow {
       projectVm.collectLatest { vm ->
         try {
           manageProjectTabs(vm!!)
@@ -143,7 +142,7 @@ private class GBrowserToolwindowTabsManager<T : GBrowserTab, TVM : GBrowserTabVi
     content.displayName = ""
     content.description = ""
 
-    content.component = tabComponentFactory.createTabComponent(contentCs, projectVm, tabVm, content::setIcon, contentCs)
+    content.component = tabComponentFactory.createTabComponent(contentCs, projectVm, tabVm, content::setIcon)
 
     content.putUserData(REVIEW_TAB_KEY, tab)
     content.putUserData(REVIEW_TAB_VM_KEY, tabVm)
@@ -163,6 +162,7 @@ private class GBrowserToolwindowTabsManager<T : GBrowserTab, TVM : GBrowserTabVi
 
   @Suppress("PrivatePropertyName")
   private val REVIEW_TAB_KEY: Key<T> = Key.create("com.github.gbrowser.ui.toolwindow.base.tab")
+
   @Suppress("PrivatePropertyName")
   private val REVIEW_TAB_VM_KEY: Key<TVM> = Key.create("com.github.gbrowser.ui.toolwindow.base.tab.vm")
 }

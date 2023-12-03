@@ -20,7 +20,7 @@ interface GBrowserTabsComponentFactory<TVM : GBrowserTabViewModel, PVM : GBrowse
    *
    * @param cs scope that closes when tab is closed or context changed
    */
-  fun createTabComponent(cs: CoroutineScope, projectVm: PVM, tabVm: TVM, callBack: (Icon) -> Unit, contentCs: CoroutineScope): JComponent
+  fun createTabComponent(cs: CoroutineScope, projectVm: PVM, tabVm: TVM, callBack: (Icon) -> Unit): JComponent
 
 
 }

@@ -8,19 +8,18 @@ import com.github.gbrowser.fixture.*
 import com.intellij.remoterobot.RemoteRobot
 import com.intellij.remoterobot.fixtures.ComponentFixture
 import com.intellij.remoterobot.search.locators.byXpath
+import com.intellij.remoterobot.stepsProcessing.step
 import com.intellij.remoterobot.utils.keyboard
 import com.intellij.remoterobot.utils.waitFor
 import com.intellij.remoterobot.utils.waitForIgnoringError
+import org.assertj.swing.core.MouseButton
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.io.TempDir
-import java.awt.event.KeyEvent.*
-import java.io.File
 import java.nio.file.Path
 import java.time.Duration.ofMinutes
-import javax.imageio.ImageIO
 
 @ExtendWith(RemoteRobotExtension::class)
 @UITest
@@ -43,7 +42,8 @@ class GBrowserTollWindowUITest {
   @Suppress("JSUnresolvedReference")
   @AfterEach
   fun closeProject(remoteRobot: RemoteRobot) = with(remoteRobot) {
-    this.runJs("""
+    this.runJs(
+      """
             importClass(com.intellij.openapi.application.ApplicationManager)
 
             const actionId = "Exit";
@@ -56,16 +56,17 @@ class GBrowserTollWindowUITest {
                 }
             })
             ApplicationManager.getApplication().invokeLater(runAction)
-        """, true)
+        """, true
+    )
     try {
       idea {
 
-        dialog("Confirm Exit") {
+        dialogByXpath("//div[@title.key='exit.confirm.title' and @class='MyDialog']") {
           button("Exit").click()
         }
       }
-    }
-    catch (ignored: Exception) { // No confirm dialog
+    } catch (ignored: Exception) { // No confirm dialog
+
     }
   }
 
@@ -86,23 +87,18 @@ class GBrowserTollWindowUITest {
     idea {
       waitFor(ofMinutes(5)) { isDumbMode().not() }
 
-      Thread.sleep(10_000)
+      Thread.sleep(13_000)
 
       showGBrowserToolWindow()
 
-      Thread.sleep(5_000)
+      Thread.sleep(3_000)
 
-      ImageIO.write(remoteRobot.getScreenshot(), "png", File("build/reports", "open_tool_window.png"))
-      Thread.sleep(5_000)
       val th = find<ComponentFixture>(byXpath("//div[@class='ContentTabLabel' and @text='GBrowser']"))
       click(th.locationOnScreen)
       Thread.sleep(1_000)
 
       button(byXpath("//div[@myicon='add.svg']")).click()
       Thread.sleep(3_000)
-
-      ImageIO.write(remoteRobot.getScreenshot(), "png", File("build/reports", "new_tab.png"))
-
 
       gBrowserToolWindow {
         gBrowserPRPanel {
@@ -114,21 +110,34 @@ class GBrowserTollWindowUITest {
           Thread.sleep(3_000)
           rightClick()
           keyboard {
-            enterText("Adv")
+            enterText("A")
             enter()
           }
         }
       }
-      with(textEditor()) {
 
-        click()
+      showProjectToolWindow()
+
+      step("Create App file") {
+        with(projectViewTree) {
+          if (hasText("src").not()) {
+            findText(projectName).doubleClick()
+            waitFor { hasText("src") }
+          }
+          findText("src").click(MouseButton.RIGHT_BUTTON)
+        }
+        actionMenu("New").click()
+        actionMenuItem("Java Class").click()
+        keyboard { enterText("App"); enter() }
       }
+
+      showGBrowserToolWindow()
 
       gBrowserToolWindow {
         gBrowserPRPanel {
-          Thread.sleep(10_000)
+          Thread.sleep(3_000)
           button(byXpath("//div[@myicon='left.svg']")).isEnabled()
-          button(byXpath("//div[@accessiblename='https://www.google.com']")).isEnabled()
+          button(byXpath("//div[@accessiblename='https://www.google.com/']")).isEnabled()
 
         }
       }

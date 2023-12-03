@@ -79,6 +79,8 @@ class IdeaFrame(remoteRobot: RemoteRobot, remoteComponent: RemoteComponent) : Co
     }
   }
 
+
+
   fun showProjectToolWindow() {
     try {
       find<ContainerFixture>(byXpath("ProjectViewTree", "//div[@class='ProjectViewTree']"))

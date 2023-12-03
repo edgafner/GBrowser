@@ -66,7 +66,7 @@ internal class GivServiceSettings : PersistentStateComponent<GivServiceSettings.
   }
 
   class State {
-    var homePage: String = "https://www.dorkag.com/dorkag"
+    var homePage: String = "https://github.com/sponsors/edgafner"
     var favorites = mutableListOf<FavoritesWeb>()
     var headersOverwrite = List(0) { HeadersOverwrite("", "", "", false) }
   }

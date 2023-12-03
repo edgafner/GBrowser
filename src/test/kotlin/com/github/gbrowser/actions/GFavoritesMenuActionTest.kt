@@ -19,7 +19,7 @@ import org.koin.test.KoinTest
 class GFavoritesMenuActionTest : BehaviorSpec(), KoinTest {
 
   // Declare mockFavorites here, so it can be accessed in any nested scope
-  private val mockFavorites = mutableListOf(FavoritesWeb("https://www.dorkag.com"))
+  private val mockFavorites = mutableListOf(FavoritesWeb("https://github.com/sponsors/edgafner"))
 
   init {
 
@@ -61,7 +61,7 @@ class GFavoritesMenuActionTest : BehaviorSpec(), KoinTest {
 
         then("GFavoritesMenuAction should have the correct actions added") {
           gFavoritesMenuAction.childrenCount shouldBe 1
-          gFavoritesMenuAction.childActionsOrStubs[0].templateText shouldBe "https://www.dorkag.com"
+          gFavoritesMenuAction.childActionsOrStubs[0].templateText shouldBe "https://github.com/sponsors/edgafner"
         }
       }
     }
