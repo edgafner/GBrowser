@@ -5,7 +5,6 @@ import com.github.gbrowser.ui.toolwindow.base.dontHideOnEmptyContent
 import com.github.gbrowser.ui.toolwindow.base.manageBrowserToolwindowTabs
 import com.github.gbrowser.ui.toolwindow.model.GBrowserToolWindowViewModel
 import com.github.gbrowser.util.cancelOnDispose
-
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.runInEdt
@@ -35,11 +34,12 @@ internal class GBrowserToolWindowFactory(private val scope: CoroutineScope) : To
   }
 
   override fun shouldBeAvailable(project: Project): Boolean = false
+
 }
 
 @Suppress("UnstableApiUsage")
 @Service(Service.Level.PROJECT)
-private class GBrowserToolWindowController(private val project: Project, parentCs: CoroutineScope) {
+internal class GBrowserToolWindowController(private val project: Project, parentCs: CoroutineScope) {
   private val cs = parentCs.childScope(Dispatchers.Main)
 
   suspend fun manageAvailability(toolWindow: ToolWindow) {

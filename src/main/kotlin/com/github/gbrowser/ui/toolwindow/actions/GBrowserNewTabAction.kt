@@ -33,12 +33,12 @@ open class GBrowserNewTabAction : DumbAwareAction("New Tab",
     }
   }
 
-  override fun actionPerformed(e: AnActionEvent) = tryToCreatePullRequest(e)
+  override fun actionPerformed(e: AnActionEvent) = tryToCreateBrowserTab(e)
 
 }
 
 
-private fun tryToCreatePullRequest(e: AnActionEvent) {
+private fun tryToCreateBrowserTab(e: AnActionEvent) {
   return e.getRequiredData(PlatformDataKeys.PROJECT).service<GBrowserToolWindowViewModel>().activateAndAwaitProject {
     createNewGBrowserTab(UUID.randomUUID().toString())
   }

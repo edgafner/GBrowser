@@ -34,7 +34,7 @@ internal class GivServiceSettings : PersistentStateComponent<GivServiceSettings.
   }
 
   fun getFavorites(): MutableList<FavoritesWeb> {
-    return myState.favorites
+    return myState.favorites.distinctBy { it.webUrl }.toMutableList()
   }
 
   fun getHeadersOverwrite(): List<HeadersOverwrite> {
@@ -46,20 +46,21 @@ internal class GivServiceSettings : PersistentStateComponent<GivServiceSettings.
     myState.favorites.removeAll { true }
     try {
       myState.favorites.addAll(webToFavorite)
-    }
-    catch (e: Exception) {
+    } catch (e: Exception) {
       LOG.warn("Error adding favorite", e)
     }
   }
 
   fun addFavorite(webToFavorite: FavoritesWeb) = synchronized(lock) {
     try {
-      myState.favorites.add(webToFavorite)
-    }
-    catch (e: Exception) {
+      if (myState.favorites.none { it.webUrl == webToFavorite.webUrl }) {
+        myState.favorites.add(webToFavorite)
+      }
+    } catch (e: Exception) {
       LOG.warn("Error adding favorite", e)
     }
   }
+
 
   fun addToHeadersOverwrite(headersOverwrite: List<HeadersOverwrite>) = synchronized(lock) {
     myState.headersOverwrite = headersOverwrite

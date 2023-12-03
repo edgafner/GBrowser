@@ -3,7 +3,7 @@ package com.github.gbrowser.ui.toolwindow.base
 import org.jetbrains.annotations.NonNls
 
 /**
- * Represents a single closable tab in review toolwindow (e.g. review details tab).
+ * Represents a single closable tab in gbrowser toolwindow (e.g. gbrowser details tab).
  */
 interface GBrowserTab {
   /**

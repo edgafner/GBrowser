@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.collectLatest
 import org.jetbrains.annotations.Nls
 
 /**
- * Manages review toolwindow tabs and their content.
+ * Manages gbrowser toolwindow tabs and their content.
  * @see GBrowserToolwindowDataKeys
  */
 fun <T : GBrowserTab, TVM : GBrowserTabViewModel, PVM : GBrowserToolwindowProjectViewModel<T, TVM>> manageBrowserToolwindowTabs(cs: CoroutineScope,
@@ -68,22 +68,22 @@ private class GBrowserToolwindowTabsManager<T : GBrowserTab, TVM : GBrowserTabVi
       contentManager.addContent(mainContent)
       contentManager.setSelectedContent(mainContent)
     }
-    refreshReviewListOnTabSelection(projectVm.browserVm, contentManager, mainContent)
-    refreshListOnToolwindowShow(projectVm.browserVm, toolwindow, mainContent)
+    refreshTabOnTabSelection(projectVm.browserVm, contentManager, mainContent)
+    refreshOnToolwindowShow(projectVm.browserVm, toolwindow, mainContent)
 
     currentCoroutineContext().ensureActive()
 
     // required for backwards sync contentManager -> VM
     val syncListener = object : ContentManagerListener {
       override fun contentRemoved(event: ContentManagerEvent) {
-        event.content.getUserData(REVIEW_TAB_KEY)?.let {
+        event.content.getUserData(GBROWSER_TAB_KEY)?.let {
           projectVm.closeTab(it)
         }
       }
 
       override fun selectionChanged(event: ContentManagerEvent) {
         if (event.operation == ContentManagerEvent.ContentOperation.add) {
-          event.content.getUserData(REVIEW_TAB_KEY).let {
+          event.content.getUserData(GBROWSER_TAB_KEY).let {
             projectVm.selectTab(it)
           }
         }
@@ -94,7 +94,7 @@ private class GBrowserToolwindowTabsManager<T : GBrowserTab, TVM : GBrowserTabVi
       contentManager.removeContentManagerListener(syncListener)
       contentManager.contents.forEach { content ->
         if (content !== mainContent) {
-          val tab = content.getUserData(REVIEW_TAB_KEY)
+          val tab = content.getUserData(GBROWSER_TAB_KEY)
           if (tab == null || !tabsState.tabs.containsKey(tab)) {
             contentManager.removeContent(content, true)
           }
@@ -103,7 +103,7 @@ private class GBrowserToolwindowTabsManager<T : GBrowserTab, TVM : GBrowserTabVi
 
       for ((tabType, tabVm) in tabsState.tabs) {
         val existing = findTabContent(tabType)
-        if (existing == null || existing.getUserData(REVIEW_TAB_VM_KEY) !== tabVm) {
+        if (existing == null || existing.getUserData(GBROWSER_TAB_VM_KEY) !== tabVm) {
           closeExistingTabAndCreateNew(tabType, projectVm, tabVm)
         }
       }
@@ -114,7 +114,7 @@ private class GBrowserToolwindowTabsManager<T : GBrowserTab, TVM : GBrowserTabVi
     }
   }
 
-  private fun findTabContent(reviewTab: T): Content? = contentManager.contents.find { it.getUserData(REVIEW_TAB_KEY) == reviewTab }
+  private fun findTabContent(gBrowserTab: T): Content? = contentManager.contents.find { it.getUserData(GBROWSER_TAB_KEY) == gBrowserTab }
 
   private fun closeExistingTabAndCreateNew(tab: T, projectVm: PVM, tabVm: TVM) {
     val existingContent = findTabContent(tab)
@@ -144,8 +144,8 @@ private class GBrowserToolwindowTabsManager<T : GBrowserTab, TVM : GBrowserTabVi
 
     content.component = tabComponentFactory.createTabComponent(contentCs, projectVm, tabVm, content::setIcon)
 
-    content.putUserData(REVIEW_TAB_KEY, tab)
-    content.putUserData(REVIEW_TAB_VM_KEY, tabVm)
+    content.putUserData(GBROWSER_TAB_KEY, tab)
+    content.putUserData(GBROWSER_TAB_VM_KEY, tabVm)
   }
 
   @Suppress("UnstableApiUsage")
@@ -161,14 +161,14 @@ private class GBrowserToolwindowTabsManager<T : GBrowserTab, TVM : GBrowserTabVi
   private fun createTabDebugName(name: String) = "GBrowser Toolwindow Tab [$name]"
 
   @Suppress("PrivatePropertyName")
-  private val REVIEW_TAB_KEY: Key<T> = Key.create("com.github.gbrowser.ui.toolwindow.base.tab")
+  private val GBROWSER_TAB_KEY: Key<T> = Key.create("com.github.gbrowser.ui.toolwindow.base.tab")
 
   @Suppress("PrivatePropertyName")
-  private val REVIEW_TAB_VM_KEY: Key<TVM> = Key.create("com.github.gbrowser.ui.toolwindow.base.tab.vm")
+  private val GBROWSER_TAB_VM_KEY: Key<TVM> = Key.create("com.github.gbrowser.ui.toolwindow.base.tab.vm")
 }
 
 
-private fun refreshReviewListOnTabSelection(listVm: GBrowserViewModel, contentManager: ContentManager, content: Content) {
+private fun refreshTabOnTabSelection(listVm: GBrowserViewModel, contentManager: ContentManager, content: Content) {
   val listener = object : ContentManagerListener {
     override fun selectionChanged(event: ContentManagerEvent) {
       if (event.operation == ContentManagerEvent.ContentOperation.add && event.content === content) { // tab selected
@@ -182,7 +182,7 @@ private fun refreshReviewListOnTabSelection(listVm: GBrowserViewModel, contentMa
   }
 }
 
-private fun refreshListOnToolwindowShow(listVm: GBrowserViewModel, toolwindow: ToolWindow, content: Content) {
+private fun refreshOnToolwindowShow(listVm: GBrowserViewModel, toolwindow: ToolWindow, content: Content) {
   toolwindow.project.messageBus.connect(content).subscribe(ToolWindowManagerListener.TOPIC, object : ToolWindowManagerListener {
     override fun toolWindowShown(shownToolwindow: ToolWindow) {
       if (shownToolwindow.id == toolwindow.id) {

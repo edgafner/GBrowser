@@ -37,6 +37,14 @@
             </action>
         </group>
 
+<!--        <action id="com.github.gbrowser.actions.OpenFileInGBrowserAction"-->
+<!--                class="com.github.gbrowser.actions.OpenFileInGBrowserAction"-->
+<!--                text="Open in GBrowser"-->
+<!--                description="Open this file in GBrowser" icon="com.github.gbrowser.GBrowserIcons.GBrowserLogo">-->
+<!--&lt;!&ndash;            <add-to-group group-id="EditorPopupMenu" anchor="before" relative-to-action="EditorPopupMenu1"/>&ndash;&gt;-->
+<!--            <add-to-group group-id="RevealGroup" anchor="last"/>-->
+<!--        </action>-->
+
 
     </actions>
 
