@@ -53,7 +53,8 @@ dependencies {
 
   intTestImplementation("com.intellij.remoterobot:remote-fixtures:0.11.20")
   @Suppress("VulnerableLibrariesLocal", "RedundantSuppression") intTestImplementation(
-    "com.intellij.remoterobot:remote-robot:0.11.20") //intTestImplementation("com.automation-remarks:video-recorder-junit5:2.0")
+    "com.intellij.remoterobot:remote-robot:0.11.20"
+  ) //intTestImplementation("com.automation-remarks:video-recorder-junit5:2.0")
   intTestImplementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
   intTestImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
   intTestRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
@@ -139,7 +140,8 @@ tasks {
       }
     }
 
-    val changelog = project.changelog // local variable for configuration cache compatibility // Get the latest available change notes from the changelog file
+    val changelog =
+      project.changelog // local variable for configuration cache compatibility // Get the latest available change notes from the changelog file
     changeNotes = properties("pluginVersion").map { pluginVersion ->
       with(changelog) {
         renderItem(
@@ -171,20 +173,21 @@ tasks {
   // Configure UI tests plugin
   // Read more: https://github.com/JetBrains/intellij-ui-test-robot
   runIdeForUiTests {
+    systemProperty("ide.browser.jcef.enabled", true)
+    systemProperty("ide.browser.jcef.headless.enabled", true)
+    systemProperty("ide.browser.jcef.testMode.enabled", true)
     systemProperty("ide.experimental.ui", true)
-    systemProperty("ide.mac.message.dialogs.as.sheets", false)
+    systemProperty("apple.laf.useScreenMenuBar", false)
     systemProperty("ide.mac.file.chooser.native", false)
+    systemProperty("ide.mac.message.dialogs.as.sheets", false)
     systemProperty("ide.show.tips.on.startup.default.value", false)
     systemProperty("idea.trust.all.projects", true)
     systemProperty("jb.consents.confirmation.enabled", false)
     systemProperty("jb.privacy.policy.text", "<!--999.999-->")
     systemProperty("jbScreenMenuBar.enabled", false)
-    systemProperty("junit.jupiter.extensions.autodetection.enabled", true)
+    //systemProperty("junit.jupiter.extensions.autodetection.enabled", true)
     systemProperty("robot-server.port", 8082)
-    systemProperty("shared.indexes.download.auto.consent", true)
-    systemProperty("ide.browser.jcef.testMode.enabled", true)
-    systemProperty("ide.browser.jcef.enabled", true)
-    systemProperty("ide.browser.jcef.headless.enabled", true)
+    //systemProperty("shared.indexes.download.auto.consent", true)
 
     jvmArgs("--add-opens=java.desktop/javax.swing.text=ALL-UNNAMED")
 
@@ -210,7 +213,8 @@ tasks {
   publishPlugin {
     dependsOn("patchChangelog")
     token = environment(
-      "PUBLISH_TOKEN") // The pluginVersion is based on the SemVer (https://semver.org) and supports pre-release labels, like 2.1.7-alpha.3
+      "PUBLISH_TOKEN"
+    ) // The pluginVersion is based on the SemVer (https://semver.org) and supports pre-release labels, like 2.1.7-alpha.3
     // Specify pre-release label to publish the plugin in a custom Release Channel automatically. Read more:
     // https://plugins.jetbrains.com/docs/intellij/deployment.html#specifying-a-release-channel
     channels = properties("pluginVersion").map { listOf(it.split('-').getOrElse(1) { "default" }.split('.').first()) }
