@@ -21,6 +21,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.awt.event.KeyEvent.VK_END
 import java.nio.file.Path
 import java.time.Duration.ofMinutes
+import kotlin.concurrent.thread
 
 @ExtendWith(RemoteRobotExtension::class)
 @UITest
@@ -66,7 +67,8 @@ class GBrowserTollWindowUITest {
           button("Exit").click()
         }
       }
-    } catch (ignored: Exception) { // No confirm dialog
+    }
+    catch (ignored: Exception) { // No confirm dialog
 
     }
   }
@@ -148,7 +150,7 @@ class GBrowserTollWindowUITest {
 
       gBrowserToolWindow {
         gBrowserPRPanel {
-          Thread.sleep(5_000)
+          Thread.sleep(10_000)
           button(byXpath("//div[@myicon='left.svg']")).isEnabled()
           button(byXpath("//div[@accessiblename='https://www.google.com/']")).isEnabled()
 

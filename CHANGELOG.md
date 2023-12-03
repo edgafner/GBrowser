@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- UI Tests
+
 ## [2023.9.37] - 2023-12-03
 
 ### Added
