@@ -1,0 +1,11 @@
+{
+  "com": {
+    "github": {
+      "gbrowser": {
+          "expui": {
+            "gbrowser.svg": "com/github/gbrowser/gbrowser.svg"
+          }
+      }
+    }
+  }
+}

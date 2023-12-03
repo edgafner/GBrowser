@@ -13,6 +13,7 @@ plugins {
   alias(libs.plugins.qodana) // Gradle Qodana Plugin
   alias(libs.plugins.kover) // Gradle Kover Plugin
   kotlin("plugin.serialization") version "1.9.21"
+  jacoco
 }
 
 group = properties("pluginGroup").get()
@@ -21,12 +22,41 @@ version = properties("pluginVersion").get()
 // Configure project's dependencies
 repositories {
   mavenCentral()
+  maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
+}
+
+sourceSets {
+  create("intTest") {
+    compileClasspath += sourceSets.main.get().output
+    runtimeClasspath += sourceSets.main.get().output
+  }
+}
+
+idea {
+  module {
+    testSources.from(sourceSets["intTest"].kotlin.srcDirs)
+    testResources.from(sourceSets["intTest"].resources.srcDirs)
+  }
+}
+
+val intTestImplementation: Configuration by configurations.getting {
+  extendsFrom(configurations.testImplementation.get())
+}
+val intTestRuntimeOnly: Configuration by configurations.getting {
+  extendsFrom(configurations.testRuntimeOnly.get())
 }
 
 dependencies {
   implementation(libs.annotations)
 
   testImplementation(libs.bundles.kTest)
+
+  intTestImplementation("com.intellij.remoterobot:remote-fixtures:0.11.20")
+  @Suppress("VulnerableLibrariesLocal", "RedundantSuppression") intTestImplementation(
+    "com.intellij.remoterobot:remote-robot:0.11.20") //intTestImplementation("com.automation-remarks:video-recorder-junit5:2.0")
+  intTestImplementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+  intTestImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
+  intTestRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
 }
 
 kotlin {
@@ -79,6 +109,12 @@ kover {
   }
 }
 
+jacoco {
+  toolVersion = "0.8.10"
+  applyTo(tasks.runIdeForUiTests.get())
+
+}
+
 tasks {
 
   wrapper {
@@ -103,14 +139,11 @@ tasks {
       }
     }
 
-    val changelog = project.changelog // local variable for configuration cache compatibility
-    // Get the latest available change notes from the changelog file
+    val changelog = project.changelog // local variable for configuration cache compatibility // Get the latest available change notes from the changelog file
     changeNotes = properties("pluginVersion").map { pluginVersion ->
       with(changelog) {
         renderItem(
-          (getOrNull(pluginVersion) ?: getUnreleased())
-            .withHeader(false)
-            .withEmptySections(false),
+          (getOrNull(pluginVersion) ?: getUnreleased()).withHeader(false).withEmptySections(false),
           Changelog.OutputType.HTML,
         )
       }
@@ -125,13 +158,47 @@ tasks {
     systemProperty("jb.consents.confirmation.enabled", false)
   }
 
+  val runIdeUiCodeCoverageReport = register<JacocoReport>("runIdeUiCodeCoverageReport") {
+    executionData(runIdeForUiTests.get())
+    sourceSets(sourceSets.main.get())
+
+    reports {
+      xml.required = true
+      html.required = true
+    }
+  }
+
   // Configure UI tests plugin
   // Read more: https://github.com/JetBrains/intellij-ui-test-robot
   runIdeForUiTests {
-    systemProperty("robot-server.port", "8082")
-    systemProperty("ide.mac.message.dialogs.as.sheets", "false")
+    systemProperty("ide.experimental.ui", true)
+    systemProperty("ide.mac.message.dialogs.as.sheets", false)
+    systemProperty("ide.mac.file.chooser.native", false)
+    systemProperty("ide.show.tips.on.startup.default.value", false)
+    systemProperty("idea.trust.all.projects", true)
+    systemProperty("jb.consents.confirmation.enabled", false)
     systemProperty("jb.privacy.policy.text", "<!--999.999-->")
-    systemProperty("jb.consents.confirmation.enabled", "false")
+    systemProperty("jbScreenMenuBar.enabled", false)
+    systemProperty("junit.jupiter.extensions.autodetection.enabled", true)
+    systemProperty("robot-server.port", 8082)
+    systemProperty("shared.indexes.download.auto.consent", true)
+    systemProperty("ide.browser.jcef.testMode.enabled", true)
+    systemProperty("ide.browser.jcef.enabled", true)
+    systemProperty("ide.browser.jcef.headless.enabled", true)
+
+    jvmArgs("--add-opens=java.desktop/javax.swing.text=ALL-UNNAMED")
+
+    configure<JacocoTaskExtension> { // sync with testing-subplugin
+      // 221+ uses a custom classloader and jacoco fails to find classes
+      isIncludeNoLocationClasses = true
+      excludes = listOf("jdk.internal.*")
+    }
+
+    finalizedBy(runIdeUiCodeCoverageReport)
+  }
+
+  downloadRobotServerPlugin {
+    version = "0.11.20"
   }
 
   signPlugin {
@@ -142,15 +209,42 @@ tasks {
 
   publishPlugin {
     dependsOn("patchChangelog")
-    token = environment("PUBLISH_TOKEN")
-    // The pluginVersion is based on the SemVer (https://semver.org) and supports pre-release labels, like 2.1.7-alpha.3
+    token = environment(
+      "PUBLISH_TOKEN") // The pluginVersion is based on the SemVer (https://semver.org) and supports pre-release labels, like 2.1.7-alpha.3
     // Specify pre-release label to publish the plugin in a custom Release Channel automatically. Read more:
     // https://plugins.jetbrains.com/docs/intellij/deployment.html#specifying-a-release-channel
     channels = properties("pluginVersion").map { listOf(it.split('-').getOrElse(1) { "default" }.split('.').first()) }
   }
-  
+
   test {
     useJUnitPlatform()
+    val skipTestsProvider: Provider<String> = providers.gradleProperty("runUiTests")
+    onlyIf("runUiTests property is not set") {
+      !skipTestsProvider.isPresent
+    }
+  }
+
+  task<Test>("integrationTest") {
+    description = "Runs integration tests."
+    group = "verification"
+
+    testClassesDirs = sourceSets["intTest"].output.classesDirs
+    classpath = sourceSets["intTest"].runtimeClasspath
+    shouldRunAfter("test")
+
+    useJUnitPlatform {
+      includeTags("uitest")
+    }
+
+    val skipTestsProvider: Provider<String> = providers.gradleProperty("runUiTests")
+    onlyIf("runUiTests property is set") {
+      skipTestsProvider.isPresent
+    }
+
+    configure<JacocoTaskExtension> { // sync with testing-subplugin
+      isEnabled = false
+    }
+
   }
 
 }

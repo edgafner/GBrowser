@@ -3,7 +3,7 @@ codecov:
   require_ci_to_pass: true
 comment:
   behavior: default
-  layout: " diff, files"
+  layout: " diff, flags, files"
 coverage:
   precision: 2
   range:
@@ -20,13 +20,21 @@ github_checks:
   annotations: true
 flag_management:
   individual_flags:
-    - name: unitest
+    - name: unittests
       statuses:
         - type: project
-          target: 20%
-          threshold: 15%
-    - name: integration
+          target: 50%
+          threshold: 10%
+        - type: patch
+          target: 50%
+          threshold: 10%
+    - name: integration-ubuntu-latest
       statuses:
         - type: project
-          target: 20%
+          target: auto
+          threshold: 1%
+    - name: integration-mac-latest
+      statuses:
+        - type: project
+          target: auto
           threshold: 1%

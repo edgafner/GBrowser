@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Support Multiple Web Browser Tabs
+
 ## [2023.9.34] - 2023-10-03
 
 ### Added
