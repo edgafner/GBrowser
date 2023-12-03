@@ -23,11 +23,11 @@ flag_management:
     - name: unittests
       statuses:
         - type: project
-          target: 50%
-          threshold: 10%
+          target: auto
+          threshold: 1%
         - type: patch
-          target: 50%
-          threshold: 10%
+          target: auto
+          threshold: 1%
     - name: integration-ubuntu-latest
       statuses:
         - type: project
