@@ -45,20 +45,29 @@ class IdeaFrame(remoteRobot: RemoteRobot, remoteComponent: RemoteComponent) : Co
     }
   }
 
-  @JvmOverloads
+  //@JvmOverloads
+  //fun waitForBackgroundTasks(timeout: Duration = Duration.ofMinutes(5)) {
+  //  step("Wait for background tasks to finish") {
+  //    waitFor(duration = timeout, interval = Duration.ofSeconds(5)) {
+  //      findAll<ComponentFixture>(byXpath("//div[@myname='Background process']")).isEmpty() &&
+  //      findAll<ComponentFixture>(byXpath("//div[@class='JProgressBar']")).isEmpty()
+  //
+  //    }
+  //  }
+  //}
+
   fun waitForBackgroundTasks(timeout: Duration = Duration.ofMinutes(5)) {
     step("Wait for background tasks to finish") {
-      waitFor(duration = timeout, interval = Duration.ofSeconds(5)) {
-        findAll<ComponentFixture>(byXpath("//div[@myname='Background process']")).isEmpty() &&
-        findAll<ComponentFixture>(byXpath("//div[@class='JProgressBar']")).isEmpty()
-
+      waitFor(duration = timeout, interval = Duration.ofSeconds(3)) { // search for the progress bar
+        find<ComponentFixture>(byXpath("//div[@class='InlineProgressPanel']")).findAllText().isEmpty()
       }
     }
   }
 
 
   fun isDumbMode(): Boolean {
-    return callJs("""
+    return callJs(
+      """
             const frameHelper = com.intellij.openapi.wm.impl.ProjectFrameHelper.getFrameHelper(component)
             if (frameHelper) {
                 const project = frameHelper.getProject()
@@ -66,7 +75,8 @@ class IdeaFrame(remoteRobot: RemoteRobot, remoteComponent: RemoteComponent) : Co
             } else { 
                 true 
             }
-        """, true)
+        """, true
+    )
   }
 
 
@@ -80,12 +90,14 @@ class IdeaFrame(remoteRobot: RemoteRobot, remoteComponent: RemoteComponent) : Co
   }
 
 
-
   fun showProjectToolWindow() {
     try {
       find<ContainerFixture>(byXpath("ProjectViewTree", "//div[@class='ProjectViewTree']"))
     } catch (e: Exception) {
-      find(ComponentFixture::class.java, byXpath("//div[contains(@myaction.key, 'title.project') or contains(@myaction.key,'toolwindow.title.project.view title.project select.in.project')]")).click()
+      find(
+        ComponentFixture::class.java,
+        byXpath("//div[contains(@myaction.key, 'title.project') or contains(@myaction.key,'toolwindow.title.project.view title.project select.in.project')]")
+      ).click()
     }
   }
 }

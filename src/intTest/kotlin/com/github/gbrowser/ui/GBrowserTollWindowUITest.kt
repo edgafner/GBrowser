@@ -86,8 +86,8 @@ class GBrowserTollWindowUITest {
 
     idea {
       waitFor(ofMinutes(5)) { isDumbMode().not() }
-
-      Thread.sleep(15_000)
+      Thread.sleep(3_000)
+      waitForBackgroundTasks()
 
       showGBrowserToolWindow()
 
