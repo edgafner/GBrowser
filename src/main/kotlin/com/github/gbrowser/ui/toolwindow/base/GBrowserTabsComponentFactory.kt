@@ -5,11 +5,11 @@ import javax.swing.Icon
 import javax.swing.JComponent
 
 /**
- * Provides UI components for review toolwindow tabs and toolwindow empty state.
+ * Provides UI components for gbrowser toolwindow tabs and toolwindow empty state.
  */
 interface GBrowserTabsComponentFactory<TVM : GBrowserTabViewModel, PVM : GBrowserToolwindowProjectViewModel<*, TVM>> {
   /**
-   * Provide a review list component for given [projectVm]
+   * Provide a gbrowser list component for given [projectVm]
    *
    * @param cs scope that closes when context is changed
    */

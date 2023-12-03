@@ -19,9 +19,9 @@ import org.cef.handler.CefLoadHandler
 import javax.swing.Icon
 
 
-class GBrowserMainPanel(
-  private val initialUrl: String, private val callback: (Icon) -> Unit, private val contentCs: CoroutineScope
-) : SimpleToolWindowPanel(true, true), Disposable {
+class GBrowserMainPanel(private val initialUrl: String,
+                        private val callback: (Icon) -> Unit,
+                        private val contentCs: CoroutineScope) : SimpleToolWindowPanel(true, true), Disposable {
 
   private val jbCefBrowser: JBCefBrowser = GBCefBrowser(initialUrl)
 
@@ -62,7 +62,8 @@ class GBrowserMainPanel(
         contentCs.launch {
           try {
             bookMarkFavorites.updateView()
-          } catch (e: Exception) {
+          }
+          catch (e: Exception) {
             AllIcons.General.Web
           }
 
@@ -73,8 +74,7 @@ class GBrowserMainPanel(
 
     val urlTextField = GSearchFieldAction(initialUrl, "Web address", AllIcons.Actions.Refresh, jbCefBrowser, callback, contentCs)
 
-    jbCefBrowser.cefBrowser.client.addDisplayHandler(CefUrlChangeHandler
-                                                     { url -> urlTextField.setText(url ?: "") })
+    jbCefBrowser.cefBrowser.client.addDisplayHandler(CefUrlChangeHandler { url -> urlTextField.setText(url ?: "") })
 
     toolbar.add(backButton)
     toolbar.add(forwardButton)

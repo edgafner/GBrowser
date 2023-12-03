@@ -19,7 +19,8 @@ import javax.swing.WindowConstants
 
 
 class GBCefBrowser(url: String?) : JBCefBrowser(
-  createBuilder().setOffScreenRendering(false).setEnableOpenDevToolsMenuItem(true).setUrl(url)) {
+  createBuilder().setOffScreenRendering(false).setEnableOpenDevToolsMenuItem(true).setUrl(url)
+) {
 
   private var myDevtoolsFrame: JDialog? = null
 
@@ -29,21 +30,18 @@ class GBCefBrowser(url: String?) : JBCefBrowser(
       return
     }
     val comp: Component = component
-    val ancestor =
-      (SwingUtilities.getWindowAncestor(
-        comp))
-      ?: return
+    val ancestor = (SwingUtilities.getWindowAncestor(
+      comp
+    )) ?: return
     val bounds = ancestor.graphicsConfiguration.bounds
     myDevtoolsFrame = JDialog(ancestor)
     myDevtoolsFrame!!.title = "JCEF DevTools"
     myDevtoolsFrame!!.defaultCloseOperation = WindowConstants.DISPOSE_ON_CLOSE
-    myDevtoolsFrame!!.setBounds(bounds.width / 4 + 100,
-                                bounds.height / 4 + 100,
-                                bounds.width / 2,
-                                bounds.height / 2)
+    myDevtoolsFrame!!.setBounds(
+      bounds.width / 4 + 100, bounds.height / 4 + 100, bounds.width / 2, bounds.height / 2
+    )
     myDevtoolsFrame!!.layout = BorderLayout()
-    val devTools =
-      createBuilder().setCefBrowser(cefBrowser.devTools).setClient(jbCefClient).build()
+    val devTools = createBuilder().setCefBrowser(cefBrowser.devTools).setClient(jbCefClient).build()
     myDevtoolsFrame!!.add(devTools.component, BorderLayout.CENTER)
     myDevtoolsFrame!!.addWindowListener(object : WindowAdapter() {
       override fun windowClosed(e: WindowEvent) {
@@ -56,19 +54,16 @@ class GBCefBrowser(url: String?) : JBCefBrowser(
 
   override fun createDefaultContextMenuHandler(): DefaultCefContextMenuHandler {
     return object : DefaultCefContextMenuHandler(true) {
-      override fun onBeforeContextMenu(browser: CefBrowser,
-                                       frame: CefFrame,
-                                       params: CefContextMenuParams,
-                                       model: CefMenuModel) {
+      override fun onBeforeContextMenu(
+        browser: CefBrowser, frame: CefFrame, params: CefContextMenuParams, model: CefMenuModel
+      ) {
         model.addItem(28501, "Add to Bookmarks")
         super.onBeforeContextMenu(browser, frame, params, model)
       }
 
-      override fun onContextMenuCommand(browser: CefBrowser,
-                                        frame: CefFrame,
-                                        params: CefContextMenuParams,
-                                        commandId: Int,
-                                        eventFlags: Int): Boolean {
+      override fun onContextMenuCommand(
+        browser: CefBrowser, frame: CefFrame, params: CefContextMenuParams, commandId: Int, eventFlags: Int
+      ): Boolean {
         if (commandId == 28501) {
           addToBookmarks(browser)
           return true

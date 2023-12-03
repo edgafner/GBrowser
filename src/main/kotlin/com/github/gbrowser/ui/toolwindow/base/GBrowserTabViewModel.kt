@@ -4,9 +4,9 @@ import org.jetbrains.annotations.Nls
 import javax.swing.Icon
 
 /**
- * View model of the review toolwindow tab content
+ * View model of the toolwindow tab content
  */
-//TODO: move name and description to component factory and potentially remove this class
+
 interface GBrowserTabViewModel {
 
   /**

@@ -1,7 +1,7 @@
 package com.github.gbrowser.ui.toolwindow.base
 
 /**
- * Represents the state of review toolwindow tabs
+ * Represents the state of gbrowser toolwindow tabs
  *
  * @param T tab type
  * @param TVM tab view model

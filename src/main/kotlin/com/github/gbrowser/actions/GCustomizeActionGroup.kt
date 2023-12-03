@@ -22,19 +22,13 @@ class GCustomizeActionGroup(jbCefBrowser: JBCefBrowser) : ActionGroup("Customize
     val zoomOutButton = GZoomOutAction(jbCefBrowser, AllIcons.General.ZoomOut)
     val findButton = GFindAction(jbCefBrowser, AllIcons.Actions.Find)
 
-    //        val cookieIcon = IconLoader.getIcon("/icons/cookie.png", javaClass)
-
-    //        val cookiesButton = GCookiesAction(jbCefBrowser, AllIcons.Nodes.EmptyNode, givMainPanel)
-
-    findButton.registerCustomShortcutSet(KeymapUtil.getActiveKeymapShortcuts(IdeActions.ACTION_FIND),
-                                         jbCefBrowser.component)
+    findButton.registerCustomShortcutSet(KeymapUtil.getActiveKeymapShortcuts(IdeActions.ACTION_FIND), jbCefBrowser.component)
 
 
     actions += zoomInButton
     actions += zoomOutButton
     actions += findButton
-    actions += Separator()
-    // Maybe we should disable this for now
+    actions += Separator() // Maybe we should disable this for now
     //        actions += cookiesButton
   }
 

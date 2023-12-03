@@ -3,7 +3,6 @@ package com.github.gbrowser.fixture
 import com.intellij.remoterobot.RemoteRobot
 import com.intellij.remoterobot.data.RemoteComponent
 import com.intellij.remoterobot.fixtures.CommonContainerFixture
-import com.intellij.remoterobot.fixtures.ContainerFixture
 import com.intellij.remoterobot.fixtures.FixtureName
 import com.intellij.remoterobot.search.locators.byXpath
 import com.intellij.remoterobot.stepsProcessing.step
@@ -23,12 +22,9 @@ open class GBrowserToolWindowPanel(remoteRobot: RemoteRobot, remoteComponent: Re
 
   fun gBrowserPRPanel(timeout: Duration = Duration.ofSeconds(20), function: GBrowserPRPanel.() -> Unit) {
     step("GBrowser PR Panel") {
-      find<GBrowserPRPanel>(
-        byXpath("//div[@class='GBrowserMainPanel']"), timeout).apply(
-        function)
+      find<GBrowserPRPanel>(byXpath("//div[@class='GBrowserMainPanel']"), timeout).apply(function)
     }
   }
-
 
 
   @Suppress("unused")
@@ -40,8 +36,4 @@ open class GBrowserToolWindowPanel(remoteRobot: RemoteRobot, remoteComponent: Re
 
 @FixtureName("gBrowserToolWindow")
 open class GBrowserPRPanel(remoteRobot: RemoteRobot, remoteComponent: RemoteComponent) : CommonContainerFixture(remoteRobot,
-                                                                                                                remoteComponent) {
-
-  val quickFilter
-    get() = actionButton(byXpath("//div[@myaction.key='review.list.filter.quick.title']"), Duration.ofSeconds(10))
-}
+                                                                                                                remoteComponent)
