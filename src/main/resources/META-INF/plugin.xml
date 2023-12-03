@@ -24,6 +24,8 @@
 
 
         <iconMapper mappingFile="GBrowserIconMappings.json"/>
+
+        <errorHandler implementation="com.github.gbrowser.reports.GBrowserPluginErrorReportSubmitter"/>
     </extensions>
 
     <actions>
