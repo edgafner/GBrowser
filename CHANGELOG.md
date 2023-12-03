@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2023.9.37] - 2023-12-03
+
 ### Added
 
 - Support Multiple Web Browser Tabs - [GitHub issue 50](https://github.com/edgafner/GBrowser/issues/50)
@@ -181,46 +183,26 @@
 -- First Jetbrains Public
 -- First Jetbrains Public
 
-[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2023.9.35...HEAD
-
+[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2023.9.37...HEAD
+[2023.9.37]: https://github.com/edgafner/GBrowser/compare/v2023.9.35...v2023.9.37
 [2023.9.35]: https://github.com/edgafner/GBrowser/compare/v2023.9.34...v2023.9.35
-
 [2023.9.34]: https://github.com/edgafner/GBrowser/compare/v2023.9.23...v2023.9.34
-
 [2023.9.23]: https://github.com/edgafner/GBrowser/compare/v1.0.44...v2023.9.23
-
 [1.0.44]: https://github.com/edgafner/GBrowser/compare/v1.0.43...v1.0.44
-
 [1.0.43]: https://github.com/edgafner/GBrowser/compare/v1.0.41...v1.0.43
-
 [1.0.41]: https://github.com/edgafner/GBrowser/compare/v1.0.40...v1.0.41
-
 [1.0.40]: https://github.com/edgafner/GBrowser/compare/v1.0.38...v1.0.40
-
 [1.0.38]: https://github.com/edgafner/GBrowser/compare/v1.0.37...v1.0.38
-
 [1.0.37]: https://github.com/edgafner/GBrowser/compare/v1.0.36...v1.0.37
-
 [1.0.36]: https://github.com/edgafner/GBrowser/compare/v1.0.32...v1.0.36
-
 [1.0.32]: https://github.com/Jonatha1983/GBrowser/compare/v1.0.31...v1.0.32
-
 [1.0.31]: https://github.com/Jonatha1983/GBrowser/compare/v1.0.24...v1.0.31
-
 [1.0.24]: https://github.com/Jonatha1983/GBrowser/compare/v1.0.23...v1.0.24
-
 [1.0.23]: https://github.com/Jonatha1983/GBrowser/compare/v1.0.21...v1.0.23
-
 [1.0.21]: https://github.com/Jonatha1983/GBrowser/compare/v1.0.15...v1.0.21
-
 [1.0.15]: https://github.com/Jonatha1983/GBrowser/compare/v1.0.14...v1.0.15
-
 [1.0.14]: https://github.com/Jonatha1983/GBrowser/compare/v1.0.13...v1.0.14
-
 [1.0.13]: https://github.com/Jonatha1983/GBrowser/compare/v1.0.12...v1.0.13
-
 [1.0.12]: https://github.com/Jonatha1983/GBrowser/compare/v1.0.7...v1.0.12
-
 [1.0.7]: https://github.com/Jonatha1983/GBrowser/compare/v1.0.3...v1.0.7
-
 [1.0.3]: https://github.com/Jonatha1983/GBrowser/commits/v1.0.3
