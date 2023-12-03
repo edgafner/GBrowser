@@ -14,13 +14,14 @@ import com.intellij.openapi.ui.SimpleToolWindowPanel
 import com.intellij.ui.jcef.JBCefBrowser
 import com.intellij.ui.jcef.JBCefBrowserBase.ErrorPage
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.cef.handler.CefLoadHandler
 import javax.swing.Icon
 
 
-class GBrowserMainPanel(private val initialUrl: String,
-                        private val callback: (Icon) -> Unit,
-                        private val contentCs: CoroutineScope) : SimpleToolWindowPanel(true, true), Disposable {
+class GBrowserMainPanel(
+  private val initialUrl: String, private val callback: (Icon) -> Unit, private val contentCs: CoroutineScope
+) : SimpleToolWindowPanel(true, true), Disposable {
 
   private val jbCefBrowser: JBCefBrowser = GBCefBrowser(initialUrl)
 
@@ -58,13 +59,22 @@ class GBrowserMainPanel(private val initialUrl: String,
     val bus = ApplicationManager.getApplication().messageBus
     bus.connect().subscribe(SettingsChangedAction.TOPIC, object : SettingsChangedAction {
       override fun settingsChanged() {
-        bookMarkFavorites.updateView()
+        contentCs.launch {
+          try {
+            bookMarkFavorites.updateView()
+          } catch (e: Exception) {
+            AllIcons.General.Web
+          }
+
+        }
       }
     })
 
+
     val urlTextField = GSearchFieldAction(initialUrl, "Web address", AllIcons.Actions.Refresh, jbCefBrowser, callback, contentCs)
 
-    jbCefBrowser.cefBrowser.client.addDisplayHandler(CefUrlChangeHandler { url -> urlTextField.setText(url ?: "") })
+    jbCefBrowser.cefBrowser.client.addDisplayHandler(CefUrlChangeHandler
+                                                     { url -> urlTextField.setText(url ?: "") })
 
     toolbar.add(backButton)
     toolbar.add(forwardButton)
