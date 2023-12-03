@@ -67,7 +67,7 @@ private class GBrowserToolWindowController(private val project: Project, parentC
 
     cs.launch {
       val vm = project.serviceAsync<GBrowserToolWindowViewModel>()
-      val componentFactory = GBrowserToolWindowTabComponentFactory(project)
+      val componentFactory = GBrowserToolWindowTabComponentFactory()
 
       manageBrowserToolwindowTabs(this, toolWindow, vm, componentFactory, "GBrowser")
       val action = ActionManager.getInstance().getAction("GBrowser.NewTab")
