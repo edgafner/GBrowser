@@ -128,7 +128,7 @@ class GBrowserTollWindowUITest {
         gBrowserPRPanel {
           Thread.sleep(10_000)
           button(byXpath("//div[@myicon='left.svg']")).isEnabled()
-          button(byXpath("//div[@accessiblename='https://www.google.com/']")).isEnabled()
+          button(byXpath("//div[@accessiblename='https://www.google.com']")).isEnabled()
 
         }
       }

@@ -18,7 +18,7 @@
 
 
         <toolWindow id="GBrowser" icon="com.github.gbrowser.GBrowserIcons.GBrowserLogo"
-                    anchor="left"
+                    anchor="left" doNotActivateOnStart="true"
                     factoryClass="com.github.gbrowser.GBrowserToolWindowFactory"
                     canCloseContents="true"/>
 
