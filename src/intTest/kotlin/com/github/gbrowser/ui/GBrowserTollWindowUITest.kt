@@ -113,12 +113,18 @@ class GBrowserTollWindowUITest {
           moveMouse(locationOnScreen)
           rightClick()
           keyboard {
-            enterText("A")
+            down()
+            down()
+            down()
+            down()
             enter()
           }
           rightClick()
           keyboard {
-            enterText("A")
+            down()
+            down()
+            down()
+            down()
             down()
             enter()
           }
