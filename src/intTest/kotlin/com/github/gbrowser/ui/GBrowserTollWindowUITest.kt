@@ -71,6 +71,7 @@ class GBrowserTollWindowUITest {
     catch (ignored: Exception) { // No confirm dialog
 
     }
+    Thread.sleep(3_000)
   }
 
 
