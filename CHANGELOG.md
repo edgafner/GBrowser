@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Added
+
+- Support Multiple Web Browser Tabs - [GitHub issue 50](https://github.com/edgafner/GBrowser/issues/50)
+- Support Quick Access Web list - [GitHub issue 89](https://github.com/edgafner/GBrowser/issues/89)
+
 ## [2023.9.40] - 2023-12-04
 
 ### Added
