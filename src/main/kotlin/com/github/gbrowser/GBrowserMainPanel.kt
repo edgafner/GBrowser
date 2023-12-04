@@ -10,6 +10,7 @@ import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.Constraints
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.ui.SimpleToolWindowPanel
 import com.intellij.ui.jcef.JBCefBrowser
 import com.intellij.ui.jcef.JBCefBrowserBase.ErrorPage
@@ -18,6 +19,7 @@ import kotlinx.coroutines.launch
 import org.cef.handler.CefLoadHandler
 import javax.swing.Icon
 
+private val LOG = logger<GBrowserMainPanel>()
 
 class GBrowserMainPanel(private val initialUrl: String,
                         private val callback: (Icon) -> Unit,
@@ -59,6 +61,7 @@ class GBrowserMainPanel(private val initialUrl: String,
     val bus = ApplicationManager.getApplication().messageBus
     bus.connect().subscribe(SettingsChangedAction.TOPIC, object : SettingsChangedAction {
       override fun settingsChanged() {
+        LOG.info("Setting changed was invoked")
         contentCs.launch {
           try {
             bookMarksMenuAction.updateView()

@@ -4,6 +4,7 @@ import com.github.gbrowser.SettingsChangedAction
 import com.github.gbrowser.services.GBrowserSettings
 import com.github.gbrowser.settings.GBrowserBookmarks
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.ui.jcef.JBCefBrowser
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
@@ -17,6 +18,7 @@ import javax.swing.JDialog
 import javax.swing.SwingUtilities
 import javax.swing.WindowConstants
 
+private val LOG = logger<GBCefBrowser>()
 
 class GBCefBrowser(url: String?) : JBCefBrowser(
   createBuilder().setOffScreenRendering(false).setEnableOpenDevToolsMenuItem(true).setUrl(url)) {
@@ -72,12 +74,14 @@ class GBCefBrowser(url: String?) : JBCefBrowser(
       }
 
       private fun addToBookmarks(browser: CefBrowser) {
+        LOG.info("Add to Bookmarks was invoked: ${browser.url}")
         GBrowserSettings.instance().addToBookmarks(GBrowserBookmarks(browser.url))
         val bus = ApplicationManager.getApplication().messageBus
         bus.syncPublisher(SettingsChangedAction.TOPIC).settingsChanged()
       }
 
       private fun addToQuickAccessBookmarks(browser: CefBrowser) {
+        LOG.info("Add to Quick Access was invoked: ${browser.url}")
         GBrowserSettings.instance().addToQuickAccessBookmarks(GBrowserBookmarks(browser.url))
         val bus = ApplicationManager.getApplication().messageBus
         bus.syncPublisher(SettingsChangedAction.TOPIC).settingsChanged()
