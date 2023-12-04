@@ -7,12 +7,12 @@
 - Support Multiple Web Browser Tabs - [GitHub issue 50](https://github.com/edgafner/GBrowser/issues/50)
 - Support Quick Access Web list - [GitHub issue 89](https://github.com/edgafner/GBrowser/issues/89)
 
-## [2023.9.40] - 2023-12-04
+## [2023.9.40] - 2023-12-04[idea.log](..%2F..%2F..%2F..%2FDesktop%2Ftests-result-macos-latest%20%281%29%2Flog%2Fidea.log)
 
 ### Added
 
 - Support Multiple Web Browser Tabs - [GitHub issue 50](https://github.com/edgafner/GBrowser/issues/50)
-- Support Quick Access Web list - [GitHub issue 89](https://github.com/edgafner/GBrowser/issues/89)
+- Support Quick Access Web list - [GitHub issue 89](https://github.com/edgafner/GBrowser/issues/89)[idea.log](..%2F..%2F..%2F..%2FDesktop%2Ftests-result-macos-latest%20%281%29%2Flog%2Fidea.log)
 
 ## [2023.9.37] - 2023-12-03
 

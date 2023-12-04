@@ -108,8 +108,14 @@ class GBrowserTollWindowUITest {
           textField(byXpath("//div[@class='TextFieldWithProcessing']")).keyboard {
             enter()
           }
+        }
+      }
+      showProjectToolWindow()
+      showGBrowserToolWindow()
 
-          Thread.sleep(2_000)
+      gBrowserToolWindow {
+        gBrowserPRPanel {
+          Thread.sleep(4_000)
           moveMouse(locationOnScreen)
           rightClick()
           keyboard {
