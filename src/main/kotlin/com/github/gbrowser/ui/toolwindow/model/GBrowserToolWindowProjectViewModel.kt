@@ -1,6 +1,6 @@
 package com.github.gbrowser.ui.toolwindow.model
 
-import com.github.gbrowser.services.GivServiceSettings
+import com.github.gbrowser.services.GBrowserSettings
 import com.github.gbrowser.ui.toolwindow.GBrowserToolWindowTab
 import com.github.gbrowser.ui.toolwindow.base.GBrowserToolwindowProjectViewModel
 import com.github.gbrowser.ui.toolwindow.base.GBrowserToolwindowTabs
@@ -19,7 +19,7 @@ import kotlinx.coroutines.sync.withLock
 @Suppress("UnstableApiUsage")
 class GBrowserToolWindowProjectViewModel internal constructor(project: Project,
                                                               parentCs: CoroutineScope,
-                                                              private val settings: GivServiceSettings) : GBrowserToolwindowProjectViewModel<GBrowserToolWindowTab, GBrowserToolWindowTabViewModel> {
+                                                              private val settings: GBrowserSettings) : GBrowserToolwindowProjectViewModel<GBrowserToolWindowTab, GBrowserToolWindowTabViewModel> {
   private val cs = parentCs.childScope()
 
   override val browserVm: GBrowserViewModel = GBrowserViewModelImpl()
@@ -56,7 +56,7 @@ class GBrowserToolWindowProjectViewModel internal constructor(project: Project,
 
   @Suppress("UNUSED_PARAMETER")
   private fun createVm(tab: GBrowserToolWindowTab.NewBrowserTab): GBrowserToolWindowTabViewModel.NewBrowserTab = GBrowserToolWindowTabViewModel.NewBrowserTab(
-    settings.getLastSaveHomePage())
+    settings.getHomePage())
 
   override fun selectTab(tab: GBrowserToolWindowTab?) {
     cs.launch {

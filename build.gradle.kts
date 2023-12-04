@@ -191,6 +191,7 @@ tasks {
 
     jvmArgs("--add-opens=java.desktop/javax.swing.text=ALL-UNNAMED")
 
+
     configure<JacocoTaskExtension> { // sync with testing-subplugin
       // 221+ uses a custom classloader and jacoco fails to find classes
       isIncludeNoLocationClasses = true

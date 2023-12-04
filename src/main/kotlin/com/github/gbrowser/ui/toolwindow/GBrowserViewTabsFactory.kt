@@ -1,7 +1,7 @@
 package com.github.gbrowser.ui.toolwindow
 
 import com.github.gbrowser.GBrowserMainPanel
-import com.github.gbrowser.services.GivServiceSettings
+import com.github.gbrowser.services.GBrowserSettings
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.ModalityState
@@ -23,11 +23,11 @@ internal class GBrowserViewTabsFactory(private val disposable: Disposable, priva
     Disposer.register(uiDisposable) { it.cancel() }
   }
 
-  val settings = GivServiceSettings.instance()
+  val settings = GBrowserSettings.instance()
 
   fun create(): JComponent {
 
-    return GBrowserMainPanel(settings.getLastSaveHomePage(), callBack, scope)
+    return GBrowserMainPanel(settings.getHomePage(), callBack, scope)
   }
 
 }

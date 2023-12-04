@@ -1,7 +1,7 @@
 package com.github.gbrowser.ui.toolwindow
 
 import com.github.gbrowser.GBrowserMainPanel
-import com.github.gbrowser.services.GivServiceSettings
+import com.github.gbrowser.services.GBrowserSettings
 import com.github.gbrowser.ui.toolwindow.base.GBrowserTabsComponentFactory
 import com.github.gbrowser.ui.toolwindow.create.GBrowserCreateComponentHolder
 import com.github.gbrowser.ui.toolwindow.model.GBrowserToolWindowProjectViewModel
@@ -19,7 +19,7 @@ internal class GBrowserToolWindowTabComponentFactory : GBrowserTabsComponentFact
 
   override fun createGBrowserComponent(cs: CoroutineScope, projectVm: GBrowserToolWindowProjectViewModel): JComponent {
 
-    return GBrowserMainPanel(GivServiceSettings.instance().getLastSaveHomePage(), {}, cs)
+    return GBrowserMainPanel(GBrowserSettings.instance().getHomePage(), {}, cs)
   }
 
   override fun createTabComponent(cs: CoroutineScope,

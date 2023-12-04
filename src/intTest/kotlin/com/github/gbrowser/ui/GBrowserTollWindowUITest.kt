@@ -18,10 +18,10 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.io.TempDir
+import java.awt.Point
 import java.awt.event.KeyEvent.VK_END
 import java.nio.file.Path
 import java.time.Duration.ofMinutes
-import kotlin.concurrent.thread
 
 @ExtendWith(RemoteRobotExtension::class)
 @UITest
@@ -44,8 +44,7 @@ class GBrowserTollWindowUITest {
   @Suppress("JSUnresolvedReference")
   @AfterEach
   fun closeProject(remoteRobot: RemoteRobot) = with(remoteRobot) {
-    this.runJs(
-      """
+    this.runJs("""
             importClass(com.intellij.openapi.application.ApplicationManager)
 
             const actionId = "Exit";
@@ -58,8 +57,7 @@ class GBrowserTollWindowUITest {
                 }
             })
             ApplicationManager.getApplication().invokeLater(runAction)
-        """, true
-    )
+        """, true)
     try {
       idea {
 
@@ -71,6 +69,7 @@ class GBrowserTollWindowUITest {
     catch (ignored: Exception) { // No confirm dialog
 
     }
+    Thread.sleep(3_000)
   }
 
 
@@ -110,10 +109,23 @@ class GBrowserTollWindowUITest {
             enter()
           }
 
-          Thread.sleep(3_000)
+          Thread.sleep(2_000)
+          moveMouse(locationOnScreen)
           rightClick()
           keyboard {
-            enterText("A")
+            down()
+            down()
+            down()
+            down()
+            enter()
+          }
+          rightClick()
+          keyboard {
+            down()
+            down()
+            down()
+            down()
+            down()
             enter()
           }
         }
@@ -147,15 +159,26 @@ class GBrowserTollWindowUITest {
       }
 
       showGBrowserToolWindow()
+      showProjectToolWindow()
+      showGBrowserToolWindow()
 
       gBrowserToolWindow {
+        val dimension = toolWindowDimension
+        val location = location
+        moveMouse(location)
+        moveMouse(Point(dimension.width, location.y))
+        dragAndDrop(Point(location.x + dimension.width + dimension.width, location.y))
+
+
         gBrowserPRPanel {
-          Thread.sleep(10_000)
+          Thread.sleep(5_000)
           button(byXpath("//div[@myicon='left.svg']")).isEnabled()
           button(byXpath("//div[@accessiblename='https://www.google.com/']")).isEnabled()
-
+          button(byXpath("//div[@myaction='Options (Options)']")).click()
         }
       }
+      val itemList = heavyWeightWindow().itemsList
+      assert(itemList.collectItems().size == 4)
 
     }
   }

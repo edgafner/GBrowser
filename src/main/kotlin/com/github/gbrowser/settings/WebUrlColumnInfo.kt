@@ -9,9 +9,9 @@ import javax.swing.table.DefaultTableCellRenderer
 import javax.swing.table.TableCellRenderer
 
 
-class WebUrlColumnInfo : ColumnInfo<FavoritesWeb, String>("") {
+class WebUrlColumnInfo : ColumnInfo<GBrowserBookmarks, String>("") {
 
-    override fun valueOf(item: FavoritesWeb): String {
+    override fun valueOf(item: GBrowserBookmarks): String {
         return item.webUrl
     }
 
@@ -19,15 +19,15 @@ class WebUrlColumnInfo : ColumnInfo<FavoritesWeb, String>("") {
         return String::class.java
     }
 
-    override fun isCellEditable(item: FavoritesWeb?): Boolean {
+    override fun isCellEditable(item: GBrowserBookmarks?): Boolean {
         return true
     }
 
-    override fun setValue(item: FavoritesWeb, value: String) {
+    override fun setValue(item: GBrowserBookmarks, value: String) {
         item.webUrl = value
     }
 
-    override fun getRenderer(item: FavoritesWeb): TableCellRenderer {
+    override fun getRenderer(item: GBrowserBookmarks): TableCellRenderer {
         return object : DefaultTableCellRenderer() {
 
             override fun getTableCellRendererComponent(@NotNull table: JTable,

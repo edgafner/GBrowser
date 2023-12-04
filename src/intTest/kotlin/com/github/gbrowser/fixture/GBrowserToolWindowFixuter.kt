@@ -6,6 +6,8 @@ import com.intellij.remoterobot.fixtures.CommonContainerFixture
 import com.intellij.remoterobot.fixtures.FixtureName
 import com.intellij.remoterobot.search.locators.byXpath
 import com.intellij.remoterobot.stepsProcessing.step
+import java.awt.Dimension
+import java.awt.Point
 import java.time.Duration
 
 
@@ -27,10 +29,15 @@ open class GBrowserToolWindowPanel(remoteRobot: RemoteRobot, remoteComponent: Re
   }
 
 
-  @Suppress("unused")
-  val loginViaToken
-    get() = actionLink(byXpath("//div[@class='ActionLink'and @text='Log In with Token…']"))
+  val toolWindowDimension: Dimension
+    get() {
+      return callJs("component.getSize();", true)
+    }
 
+  val location: Point
+    get() {
+      return callJs("component.getLocation();", true)
+    }
 
 }
 

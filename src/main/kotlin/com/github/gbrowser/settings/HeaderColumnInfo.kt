@@ -9,9 +9,9 @@ import javax.swing.table.DefaultTableCellRenderer
 import javax.swing.table.TableCellRenderer
 
 
-class HeaderColumnInfo : ColumnInfo<HeadersOverwrite, String>("Header") {
+class HeaderColumnInfo : ColumnInfo<GBrowserHeadersOverwrite, String>("Header") {
 
-    override fun valueOf(item: HeadersOverwrite): String {
+    override fun valueOf(item: GBrowserHeadersOverwrite): String {
         return item.header
     }
 
@@ -19,15 +19,15 @@ class HeaderColumnInfo : ColumnInfo<HeadersOverwrite, String>("Header") {
         return String::class.java
     }
 
-    override fun isCellEditable(item: HeadersOverwrite?): Boolean {
+    override fun isCellEditable(item: GBrowserHeadersOverwrite?): Boolean {
         return true
     }
 
-    override fun setValue(item: HeadersOverwrite, value: String) {
+    override fun setValue(item: GBrowserHeadersOverwrite, value: String) {
         item.header = value
     }
 
-    override fun getRenderer(item: HeadersOverwrite): TableCellRenderer {
+    override fun getRenderer(item: GBrowserHeadersOverwrite): TableCellRenderer {
         return object : DefaultTableCellRenderer() {
 
             override fun getTableCellRendererComponent(@NotNull table: JTable,
