@@ -10,6 +10,7 @@ import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.Constraints
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.ui.SimpleToolWindowPanel
 import com.intellij.ui.jcef.JBCefBrowser
 import com.intellij.ui.jcef.JBCefBrowserBase.ErrorPage
@@ -59,6 +60,7 @@ class GBrowserMainPanel(private val initialUrl: String,
     val bus = ApplicationManager.getApplication().messageBus
     bus.connect().subscribe(SettingsChangedAction.TOPIC, object : SettingsChangedAction {
       override fun settingsChanged() {
+        LOG.info("Setting changed was invoked")
         contentCs.launch {
           try {
             bookMarksMenuAction.updateView()
@@ -92,5 +94,9 @@ class GBrowserMainPanel(private val initialUrl: String,
 
   override fun dispose() {
     jbCefBrowser.dispose()
+  }
+
+  companion object {
+    val LOG = logger<GBrowserMainPanel>()
   }
 }
