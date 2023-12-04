@@ -109,7 +109,8 @@ class GBrowserTollWindowUITest {
             enter()
           }
 
-          Thread.sleep(3_000)
+          Thread.sleep(2_000)
+          moveMouse(locationOnScreen)
           rightClick()
           keyboard {
             enterText("A")
