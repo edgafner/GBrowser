@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2023.9.40] - 2023-12-04
+
 ### Added
 
 - Support Multiple Web Browser Tabs - [GitHub issue 50](https://github.com/edgafner/GBrowser/issues/50)
@@ -188,7 +190,8 @@
 -- First Jetbrains Public
 -- First Jetbrains Public
 
-[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2023.9.37...HEAD
+[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2023.9.40...HEAD
+[2023.9.40]: https://github.com/edgafner/GBrowser/compare/v2023.9.37...v2023.9.40
 [2023.9.37]: https://github.com/edgafner/GBrowser/compare/v2023.9.35...v2023.9.37
 [2023.9.35]: https://github.com/edgafner/GBrowser/compare/v2023.9.34...v2023.9.35
 [2023.9.34]: https://github.com/edgafner/GBrowser/compare/v2023.9.23...v2023.9.34
