@@ -19,7 +19,6 @@ import kotlinx.coroutines.launch
 import org.cef.handler.CefLoadHandler
 import javax.swing.Icon
 
-private val LOG = logger<GBrowserMainPanel>()
 
 class GBrowserMainPanel(private val initialUrl: String,
                         private val callback: (Icon) -> Unit,
@@ -95,5 +94,9 @@ class GBrowserMainPanel(private val initialUrl: String,
 
   override fun dispose() {
     jbCefBrowser.dispose()
+  }
+
+  companion object {
+    val LOG = logger<GBrowserMainPanel>()
   }
 }

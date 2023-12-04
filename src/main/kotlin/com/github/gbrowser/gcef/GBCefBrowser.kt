@@ -18,7 +18,6 @@ import javax.swing.JDialog
 import javax.swing.SwingUtilities
 import javax.swing.WindowConstants
 
-private val LOG = logger<GBCefBrowser>()
 
 class GBCefBrowser(url: String?) : JBCefBrowser(
   createBuilder().setOffScreenRendering(false).setEnableOpenDevToolsMenuItem(true).setUrl(url)) {
@@ -26,6 +25,7 @@ class GBCefBrowser(url: String?) : JBCefBrowser(
   private var myDevtoolsFrame: JDialog? = null
 
   override fun openDevtools() {
+    LOG.info("Open DevTools was invoked")
     if (myDevtoolsFrame != null) {
       myDevtoolsFrame!!.toFront()
       return
@@ -63,10 +63,12 @@ class GBCefBrowser(url: String?) : JBCefBrowser(
                                         commandId: Int,
                                         eventFlags: Int): Boolean {
         if (commandId == 28501) {
+          LOG.info("Add to Bookmarks was invoked: ${browser.url}")
           addToBookmarks(browser)
           return true
         }
         if (commandId == 28502) {
+          LOG.info("Add to Quick Access was invoked: ${browser.url}")
           addToQuickAccessBookmarks(browser)
           return true
         }
@@ -87,6 +89,10 @@ class GBCefBrowser(url: String?) : JBCefBrowser(
         bus.syncPublisher(SettingsChangedAction.TOPIC).settingsChanged()
       }
     }
+  }
+
+  companion object {
+    val LOG = logger<GBCefBrowser>()
   }
 
 
