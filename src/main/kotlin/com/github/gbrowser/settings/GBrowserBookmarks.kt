@@ -3,7 +3,7 @@ package com.github.gbrowser.settings
 import java.io.Serializable
 import java.util.*
 
-class FavoritesWeb : Serializable {
+class GBrowserBookmarks : Serializable {
   companion object {
 
     @Suppress("ConstPropertyName")
@@ -28,7 +28,7 @@ class FavoritesWeb : Serializable {
     if (other == null || javaClass != other.javaClass) {
       return false
     }
-    val that = other as FavoritesWeb
+    val that = other as GBrowserBookmarks
     return Objects.equals(webUrl, that.webUrl)
   }
 

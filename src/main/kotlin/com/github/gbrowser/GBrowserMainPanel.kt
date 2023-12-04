@@ -52,8 +52,8 @@ class GBrowserMainPanel(private val initialUrl: String,
     val forwardButton = GForwardAction(jbCefBrowser, AllIcons.Actions.Forward)
     val refreshButton = GRefreshAction(jbCefBrowser, AllIcons.Actions.Refresh)
     val homeButton = GHomeAction(jbCefBrowser, AllIcons.Nodes.HomeFolder)
-    val bookMarkFavorites = GFavoritesMenuAction(jbCefBrowser)
-    val gCustomizeActionGroup = GCustomizeActionGroup(jbCefBrowser)
+    val bookMarksMenuAction = GBookMarksMenuAction(jbCefBrowser)
+    val gBrowserOptionsActionGroup = GBrowserOptionsActionGroup(jbCefBrowser)
 
 
     val bus = ApplicationManager.getApplication().messageBus
@@ -61,7 +61,7 @@ class GBrowserMainPanel(private val initialUrl: String,
       override fun settingsChanged() {
         contentCs.launch {
           try {
-            bookMarkFavorites.updateView()
+            bookMarksMenuAction.updateView()
           }
           catch (e: Exception) {
             AllIcons.General.Web
@@ -80,11 +80,11 @@ class GBrowserMainPanel(private val initialUrl: String,
     toolbar.add(forwardButton)
     toolbar.add(refreshButton)
     toolbar.add(homeButton)
-    toolbar.add(bookMarkFavorites)
+    toolbar.add(bookMarksMenuAction)
     toolbar.addSeparator()
     toolbar.add(urlTextField)
     toolbar.addSeparator()
-    toolbar.add(gCustomizeActionGroup, Constraints.LAST)
+    toolbar.add(gBrowserOptionsActionGroup, Constraints.LAST)
 
     return toolbar
   }

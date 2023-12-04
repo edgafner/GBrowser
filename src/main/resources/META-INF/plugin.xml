@@ -11,7 +11,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
 
-        <applicationService serviceImplementation="com.github.gbrowser.services.GivServiceSettings"/>
+        <applicationService serviceImplementation="com.github.gbrowser.services.GBrowserSettings"/>
         <projectConfigurable parentId="tools" instance="com.github.gbrowser.settings.ProjectSettingsConfigurable"
                              id="com.github.gbrowser.settings.ProjectSettingsConfigurable"
                              displayName="GBrowser"/>

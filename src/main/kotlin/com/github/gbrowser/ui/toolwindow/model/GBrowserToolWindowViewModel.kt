@@ -1,6 +1,6 @@
 package com.github.gbrowser.ui.toolwindow.model
 
-import com.github.gbrowser.services.GivServiceSettings
+import com.github.gbrowser.services.GBrowserSettings
 import com.github.gbrowser.ui.toolwindow.base.GBrowserToolwindowViewModel
 import com.github.gbrowser.util.mapScoped
 import com.intellij.openapi.components.Service
@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.*
 internal class GBrowserToolWindowViewModel(private val project: Project,
                                            parentCs: CoroutineScope) : GBrowserToolwindowViewModel<GBrowserToolWindowProjectViewModel> {
 
-  private val settings: GivServiceSettings = GivServiceSettings.instance()
+  private val settings: GBrowserSettings = GBrowserSettings.instance()
   private val cs = parentCs.childScope(Dispatchers.Main)
 
   val isAvailable: StateFlow<Boolean> = flowOf(true).stateIn(cs, SharingStarted.Lazily, true)

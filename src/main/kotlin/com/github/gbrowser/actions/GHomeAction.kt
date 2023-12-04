@@ -1,6 +1,6 @@
 package com.github.gbrowser.actions
 
-import com.github.gbrowser.services.GivServiceSettings
+import com.github.gbrowser.services.GBrowserSettings
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -18,6 +18,6 @@ class GHomeAction(private val jbCefBrowser: JBCefBrowser, icon: Icon) : AnAction
     override fun getActionUpdateThread() = ActionUpdateThread.EDT
 
     override fun actionPerformed(e: AnActionEvent) {
-        jbCefBrowser.loadURL(GivServiceSettings.instance().getLastSaveHomePage())
+        jbCefBrowser.loadURL(GBrowserSettings.instance().getHomePage())
     }
 }

@@ -1,7 +1,7 @@
 package com.github.gbrowser.actions
 
-import com.github.gbrowser.services.GivServiceSettings
-import com.github.gbrowser.settings.FavoritesWeb
+import com.github.gbrowser.services.GBrowserSettings
+import com.github.gbrowser.settings.GBrowserBookmarks
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.application.ApplicationManager
@@ -16,10 +16,10 @@ import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.test.KoinTest
 
-class GFavoritesMenuActionTest : BehaviorSpec(), KoinTest {
+class GBrowserBookmarksMenuActionTest : BehaviorSpec(), KoinTest {
 
   // Declare mockFavorites here, so it can be accessed in any nested scope
-  private val mockFavorites = mutableListOf(FavoritesWeb("https://dorkag.com/dorkag"))
+  private val mockBookmarks = mutableListOf(GBrowserBookmarks("https://dorkag.com/dorkag"))
 
   init {
 
@@ -27,20 +27,20 @@ class GFavoritesMenuActionTest : BehaviorSpec(), KoinTest {
     beforeSpec {
       startKoin { }
       val app = mockk<Application>(relaxed = true)
-      val settings = mockk<GivServiceSettings>(relaxed = true)
+      val settings = mockk<GBrowserSettings>(relaxed = true)
       val actionManager = mockk<ActionManager>(relaxed = true)
 
       mockkStatic(ApplicationManager::class)
       every { ApplicationManager.getApplication() } returns app
-      every { app.getService(GivServiceSettings::class.java) } returns settings
+      every { app.getService(GBrowserSettings::class.java) } returns settings
 
       // Mocking the response for ActionManager::class.java
       every { app.getService(ActionManager::class.java) } returns actionManager
 
-      mockkStatic(GivServiceSettings::class)
-      every { GivServiceSettings.instance() } returns settings
+      mockkStatic(GBrowserSettings::class)
+      every { GBrowserSettings.instance() } returns settings
 
-      every { settings.getFavorites() } returns mockFavorites
+      every { settings.getBookmarks() } returns mockBookmarks
 
       // Mock ActionManager.getInstance() to return the mock ActionManager
       mockkStatic(ActionManager::class)
@@ -52,16 +52,16 @@ class GFavoritesMenuActionTest : BehaviorSpec(), KoinTest {
       stopKoin()
     }
 
-    given("GFavoritesMenuAction is initialized") {
+    given("GBookmarksMenuAction is initialized") {
       val mockJBCefBrowser = mockk<JBCefBrowser>(relaxed = true)
-      val gFavoritesMenuAction = GFavoritesMenuAction(mockJBCefBrowser)
+      val gBookMarksMenuAction = GBookMarksMenuAction(mockJBCefBrowser)
 
       `when`("updateView function is called") {
-        gFavoritesMenuAction.updateView()
+        gBookMarksMenuAction.updateView()
 
-        then("GFavoritesMenuAction should have the correct actions added") {
-          gFavoritesMenuAction.childrenCount shouldBe 1
-          gFavoritesMenuAction.childActionsOrStubs[0].templateText shouldBe "https://dorkag.com/dorkag"
+        then("GBookmarksMenuAction should have the correct actions added") {
+          gBookMarksMenuAction.childrenCount shouldBe 1
+          gBookMarksMenuAction.childActionsOrStubs[0].templateText shouldBe "https://dorkag.com/dorkag"
         }
       }
     }

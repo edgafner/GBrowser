@@ -17,7 +17,7 @@ An embedded web browser window within your IDE. Cut the context switch between t
     - History Back & Forward
     - Refresh
     - Home Page
-    - Add Favorites with right click
+    - Add Bookmarks with right click
     - Zoom In & Zoom Out
     - Find in Page
     - Dev Tools enable from within the code

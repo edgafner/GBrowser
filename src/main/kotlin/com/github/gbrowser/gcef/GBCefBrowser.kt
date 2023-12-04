@@ -1,8 +1,8 @@
 package com.github.gbrowser.gcef
 
 import com.github.gbrowser.SettingsChangedAction
-import com.github.gbrowser.services.GivServiceSettings
-import com.github.gbrowser.settings.FavoritesWeb
+import com.github.gbrowser.services.GBrowserSettings
+import com.github.gbrowser.settings.GBrowserBookmarks
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.ui.jcef.JBCefBrowser
 import org.cef.browser.CefBrowser
@@ -19,8 +19,7 @@ import javax.swing.WindowConstants
 
 
 class GBCefBrowser(url: String?) : JBCefBrowser(
-  createBuilder().setOffScreenRendering(false).setEnableOpenDevToolsMenuItem(true).setUrl(url)
-) {
+  createBuilder().setOffScreenRendering(false).setEnableOpenDevToolsMenuItem(true).setUrl(url)) {
 
   private var myDevtoolsFrame: JDialog? = null
 
@@ -30,16 +29,12 @@ class GBCefBrowser(url: String?) : JBCefBrowser(
       return
     }
     val comp: Component = component
-    val ancestor = (SwingUtilities.getWindowAncestor(
-      comp
-    )) ?: return
+    val ancestor = (SwingUtilities.getWindowAncestor(comp)) ?: return
     val bounds = ancestor.graphicsConfiguration.bounds
     myDevtoolsFrame = JDialog(ancestor)
     myDevtoolsFrame!!.title = "JCEF DevTools"
     myDevtoolsFrame!!.defaultCloseOperation = WindowConstants.DISPOSE_ON_CLOSE
-    myDevtoolsFrame!!.setBounds(
-      bounds.width / 4 + 100, bounds.height / 4 + 100, bounds.width / 2, bounds.height / 2
-    )
+    myDevtoolsFrame!!.setBounds(bounds.width / 4 + 100, bounds.height / 4 + 100, bounds.width / 2, bounds.height / 2)
     myDevtoolsFrame!!.layout = BorderLayout()
     val devTools = createBuilder().setCefBrowser(cefBrowser.devTools).setClient(jbCefClient).build()
     myDevtoolsFrame!!.add(devTools.component, BorderLayout.CENTER)
@@ -54,25 +49,36 @@ class GBCefBrowser(url: String?) : JBCefBrowser(
 
   override fun createDefaultContextMenuHandler(): DefaultCefContextMenuHandler {
     return object : DefaultCefContextMenuHandler(true) {
-      override fun onBeforeContextMenu(
-        browser: CefBrowser, frame: CefFrame, params: CefContextMenuParams, model: CefMenuModel
-      ) {
+      override fun onBeforeContextMenu(browser: CefBrowser, frame: CefFrame, params: CefContextMenuParams, model: CefMenuModel) {
         model.addItem(28501, "Add to Bookmarks")
+        model.addItem(28502, "Add to Quick Access")
         super.onBeforeContextMenu(browser, frame, params, model)
       }
 
-      override fun onContextMenuCommand(
-        browser: CefBrowser, frame: CefFrame, params: CefContextMenuParams, commandId: Int, eventFlags: Int
-      ): Boolean {
+      override fun onContextMenuCommand(browser: CefBrowser,
+                                        frame: CefFrame,
+                                        params: CefContextMenuParams,
+                                        commandId: Int,
+                                        eventFlags: Int): Boolean {
         if (commandId == 28501) {
           addToBookmarks(browser)
+          return true
+        }
+        if (commandId == 28502) {
+          addToQuickAccessBookmarks(browser)
           return true
         }
         return super.onContextMenuCommand(browser, frame, params, commandId, eventFlags)
       }
 
       private fun addToBookmarks(browser: CefBrowser) {
-        GivServiceSettings.instance().addFavorite(FavoritesWeb(browser.url))
+        GBrowserSettings.instance().addToBookmarks(GBrowserBookmarks(browser.url))
+        val bus = ApplicationManager.getApplication().messageBus
+        bus.syncPublisher(SettingsChangedAction.TOPIC).settingsChanged()
+      }
+
+      private fun addToQuickAccessBookmarks(browser: CefBrowser) {
+        GBrowserSettings.instance().addToQuickAccessBookmarks(GBrowserBookmarks(browser.url))
         val bus = ApplicationManager.getApplication().messageBus
         bus.syncPublisher(SettingsChangedAction.TOPIC).settingsChanged()
       }

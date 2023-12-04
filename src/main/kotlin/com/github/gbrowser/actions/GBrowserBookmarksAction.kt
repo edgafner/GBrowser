@@ -6,7 +6,7 @@ import com.intellij.ui.jcef.JBCefBrowser
 import javax.swing.Icon
 
 
-class GFavoriteWebAction(private val webUrl: String, icon: Icon, private val jbCefBrowser: JBCefBrowser) :
+class GBrowserBookmarksAction(private val webUrl: String, icon: Icon, private val jbCefBrowser: JBCefBrowser) :
   AnAction({ webUrl }, icon) {
 
   override fun actionPerformed(e: AnActionEvent) {

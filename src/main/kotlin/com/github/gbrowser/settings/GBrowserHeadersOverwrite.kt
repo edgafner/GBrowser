@@ -3,7 +3,7 @@ package com.github.gbrowser.settings
 import java.io.Serializable
 import java.util.*
 
-class HeadersOverwrite : Serializable {
+class GBrowserHeadersOverwrite : Serializable {
     companion object {
         @Suppress("ConstPropertyName")
         const val serialVersionUID = 3523235970041806118L
@@ -33,7 +33,7 @@ class HeadersOverwrite : Serializable {
         if (other == null || javaClass != other.javaClass) {
             return false
         }
-        val that = other as HeadersOverwrite
+        val that = other as GBrowserHeadersOverwrite
         return Objects.equals(uriRegex, that.uriRegex)
                 && Objects.equals(header, that.header)
                 && Objects.equals(value, that.value)

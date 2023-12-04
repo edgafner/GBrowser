@@ -9,9 +9,9 @@ import javax.swing.table.DefaultTableCellRenderer
 import javax.swing.table.TableCellRenderer
 
 
-class UriRegexColumnInfo : ColumnInfo<HeadersOverwrite, String>("URI Regex") {
+class UriRegexColumnInfo : ColumnInfo<GBrowserHeadersOverwrite, String>("URI Regex") {
 
-    override fun valueOf(item: HeadersOverwrite): String {
+    override fun valueOf(item: GBrowserHeadersOverwrite): String {
         return item.uriRegex
     }
 
@@ -19,15 +19,15 @@ class UriRegexColumnInfo : ColumnInfo<HeadersOverwrite, String>("URI Regex") {
         return String::class.java
     }
 
-    override fun isCellEditable(item: HeadersOverwrite?): Boolean {
+    override fun isCellEditable(item: GBrowserHeadersOverwrite?): Boolean {
         return true
     }
 
-    override fun setValue(item: HeadersOverwrite, value: String) {
+    override fun setValue(item: GBrowserHeadersOverwrite, value: String) {
         item.uriRegex = value
     }
 
-    override fun getRenderer(item: HeadersOverwrite): TableCellRenderer {
+    override fun getRenderer(item: GBrowserHeadersOverwrite): TableCellRenderer {
         return object : DefaultTableCellRenderer() {
 
             override fun getTableCellRendererComponent(@NotNull table: JTable,
