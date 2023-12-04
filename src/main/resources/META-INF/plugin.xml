@@ -6,7 +6,6 @@
 
     <resource-bundle>messages.GBrowserBundle</resource-bundle>
     <depends>com.intellij.modules.platform</depends>
-    <depends>com.intellij.modules.all</depends>
 
 
     <extensions defaultExtensionNs="com.intellij">

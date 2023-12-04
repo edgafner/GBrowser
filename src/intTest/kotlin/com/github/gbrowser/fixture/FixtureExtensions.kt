@@ -9,7 +9,7 @@ import com.intellij.remoterobot.utils.keyboard
 import java.time.Duration
 
 fun ComponentFixture.rightClick() = step("Right click") {
-    runJs("robot.rightClick(component);")
+  runJs("robot.rightClick(component);")
 }
 
 fun ContainerFixture.pressOk() = findAndClick("//div[@text='OK']")
@@ -48,6 +48,8 @@ fun ContainerFixture.pressYes() = step("""Press the visible "yes" button""") {
 /*
  * Find an action button by button text instead of by xPath
  */
-fun CommonContainerFixture.actionButton(buttonText: String) =
-  actionButton(byXpath("//div[@accessiblename='$buttonText' and @class='ActionButton']"))
+fun CommonContainerFixture.actionButton(buttonText: String) = actionButton(
+  byXpath("//div[@accessiblename='$buttonText' and @class='ActionButton']"))
+
+
 

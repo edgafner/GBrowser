@@ -5,7 +5,6 @@ import com.intellij.remoterobot.data.RemoteComponent
 import com.intellij.remoterobot.fixtures.CommonContainerFixture
 import com.intellij.remoterobot.fixtures.ContainerFixture
 import com.intellij.remoterobot.fixtures.FixtureName
-import com.intellij.remoterobot.fixtures.JTextFieldFixture
 import com.intellij.remoterobot.search.locators.byXpath
 import com.intellij.remoterobot.stepsProcessing.step
 import java.time.Duration
@@ -35,24 +34,7 @@ open class DialogFixture(remoteRobot: RemoteRobot, remoteComponent: RemoteCompon
     fun byTitle(title: String) = byXpath("title $title", "//div[@title='$title' and @class='MyDialog']")
 
 
-    @JvmStatic
-    fun byTitleContains(partial: String) = byXpath("partial title $partial",
-                                                   "//div[contains(@accessiblename, $partial) and @class='MyDialog']")
-
   }
-
-  fun setToken(password: String) {
-    find<JTextFieldFixture>(byXpath("//div[@class='JBPasswordField']"), Duration.ofSeconds(20)).text = password
-  }
-
-
-  fun close() = runJs("robot.close(component)")
-
-  open fun pressOk() = pressButton("OK")
-
-  fun pressCancel() = pressButton("Cancel")
-
-  fun pressButton(text: String) = button(text).click()
 
 
   val title: String

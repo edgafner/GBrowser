@@ -18,6 +18,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.io.TempDir
+import java.awt.Point
 import java.awt.event.KeyEvent.VK_END
 import java.nio.file.Path
 import java.time.Duration.ofMinutes
@@ -155,14 +156,22 @@ class GBrowserTollWindowUITest {
       showGBrowserToolWindow()
 
       gBrowserToolWindow {
+        val dimension = toolWindowDimension
+        val location = location
+        moveMouse(location)
+        moveMouse(Point(dimension.width, location.y))
+        dragAndDrop(Point(location.x + dimension.width + dimension.width, location.y))
+
+
         gBrowserPRPanel {
-          Thread.sleep(6_000)
+          Thread.sleep(5_000)
           button(byXpath("//div[@myicon='left.svg']")).isEnabled()
-
           button(byXpath("//div[@accessiblename='https://www.google.com/']")).isEnabled()
-
+          button(byXpath("//div[@myaction='Options (Options)']")).click()
         }
       }
+      val itemList = heavyWeightWindow().itemsList
+      assert(itemList.collectItems().size == 4)
 
     }
   }
