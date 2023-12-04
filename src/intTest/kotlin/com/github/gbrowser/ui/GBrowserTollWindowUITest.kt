@@ -21,7 +21,6 @@ import org.junit.jupiter.api.io.TempDir
 import java.awt.event.KeyEvent.VK_END
 import java.nio.file.Path
 import java.time.Duration.ofMinutes
-import kotlin.concurrent.thread
 
 @ExtendWith(RemoteRobotExtension::class)
 @UITest
@@ -44,8 +43,7 @@ class GBrowserTollWindowUITest {
   @Suppress("JSUnresolvedReference")
   @AfterEach
   fun closeProject(remoteRobot: RemoteRobot) = with(remoteRobot) {
-    this.runJs(
-      """
+    this.runJs("""
             importClass(com.intellij.openapi.application.ApplicationManager)
 
             const actionId = "Exit";
@@ -58,8 +56,7 @@ class GBrowserTollWindowUITest {
                 }
             })
             ApplicationManager.getApplication().invokeLater(runAction)
-        """, true
-    )
+        """, true)
     try {
       idea {
 
@@ -117,6 +114,12 @@ class GBrowserTollWindowUITest {
             enterText("A")
             enter()
           }
+          rightClick()
+          keyboard {
+            enterText("A")
+            down()
+            enter()
+          }
         }
       }
 
@@ -148,11 +151,14 @@ class GBrowserTollWindowUITest {
       }
 
       showGBrowserToolWindow()
+      showProjectToolWindow()
+      showGBrowserToolWindow()
 
       gBrowserToolWindow {
         gBrowserPRPanel {
-          Thread.sleep(10_000)
+          Thread.sleep(6_000)
           button(byXpath("//div[@myicon='left.svg']")).isEnabled()
+
           button(byXpath("//div[@accessiblename='https://www.google.com/']")).isEnabled()
 
         }
