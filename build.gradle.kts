@@ -55,7 +55,7 @@ dependencies {
   @Suppress("VulnerableLibrariesLocal", "RedundantSuppression") intTestImplementation(
     "com.intellij.remoterobot:remote-robot:0.11.20"
   ) //intTestImplementation("com.automation-remarks:video-recorder-junit5:2.0")
-  intTestImplementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+  intTestImplementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
   intTestImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
   intTestRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
 }
