@@ -122,8 +122,8 @@ class GBrowserTollWindowUITest {
 
       gBrowserToolWindow {
         gBrowserPRPanel {
-          Thread.sleep(3_000)
-          moveMouse(locationOnScreen)
+          val location = location
+          moveMouse(location)
           rightClick()
           ImageIO.write(remoteRobot.getScreenshot(), "png", File("build/reports", "right_click.png"))
           keyboard {
