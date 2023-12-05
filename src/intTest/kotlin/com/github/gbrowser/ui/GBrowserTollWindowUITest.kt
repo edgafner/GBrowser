@@ -88,7 +88,8 @@ class GBrowserTollWindowUITest {
 
     idea {
       waitFor(ofMinutes(5)) { isDumbMode().not() }
-      Thread.sleep(3_000)
+      Thread.sleep(10_000)
+      waitForBackgroundTasks()
       waitForBackgroundTasks()
 
       showGBrowserToolWindow()
@@ -133,8 +134,7 @@ class GBrowserTollWindowUITest {
             enterText("A")
             down()
             enter()
-          }
-            //making sure it is happening
+          } //making sure it is happening
           Thread.sleep(2_000)
           rightClick()
           keyboard {
