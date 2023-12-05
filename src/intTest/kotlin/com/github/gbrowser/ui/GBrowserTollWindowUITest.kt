@@ -6,7 +6,6 @@ import com.github.gbrowser.extensions.RemoteRobotExtension
 import com.github.gbrowser.extensions.StepsLogger
 import com.github.gbrowser.fixture.*
 import com.intellij.remoterobot.RemoteRobot
-import com.intellij.remoterobot.fixtures.ComponentFixture
 import com.intellij.remoterobot.search.locators.byXpath
 import com.intellij.remoterobot.stepsProcessing.step
 import com.intellij.remoterobot.utils.keyboard
@@ -71,9 +70,8 @@ class GBrowserTollWindowUITest {
     catch (ignored: Exception) { // No confirm dialog
 
     }
-    Thread.sleep(3_000)
+    Thread.sleep(2_000)
   }
-
 
   @Test
   fun gBrowserToolWindow(remoteRobot: RemoteRobot) = with(remoteRobot) {
@@ -96,49 +94,63 @@ class GBrowserTollWindowUITest {
       showGBrowserToolWindow()
 
       Thread.sleep(3_000)
-
-      val th = find<ComponentFixture>(byXpath("//div[@class='ContentTabLabel' and @text='GBrowser']"))
-      click(th.locationOnScreen)
-      Thread.sleep(1_000)
-
-      button(byXpath("//div[@myicon='add.svg']")).click()
-      Thread.sleep(3_000)
-
       gBrowserToolWindow {
+
+        button(byXpath("//div[@myicon='add.svg']")).click()
+        Thread.sleep(3_000)
+
+        gBrowserToolWindowMyNonOpaquePanel {
+          val dimension = toolWindowDimension
+          val location = location
+          moveMouse(location)
+          moveMouse(Point(dimension.width, location.y))
+          dragAndDrop(Point(location.x + dimension.width + dimension.width, location.y))
+
+          gBrowserPRPanel {
+            textField(byXpath("//div[@class='TextFieldWithProcessing']")).text = "https://github.com/"
+            textField(byXpath("//div[@class='TextFieldWithProcessing']")).keyboard {
+              enter()
+            }
+          }
+        }
+      }
+
+
+      Thread.sleep(5_000)
+
+      gBrowserToolWindowMyNonOpaquePanel {
         gBrowserPRPanel {
-          textField(byXpath("//div[@class='TextFieldWithProcessing']")).text = "https://www.google.com"
-          textField(byXpath("//div[@class='TextFieldWithProcessing']")).keyboard {
+          val location = location
+          moveMouse(location)
+          rightClick()
+          keyboard {
+            enterText("A")
+            enter()
+          }
+          Thread.sleep(2_000)
+          rightClick()
+          keyboard {
+            enterText("A")
+            down()
+            enter()
+          }
+            //making sure it is happening
+          Thread.sleep(2_000)
+          rightClick()
+          keyboard {
+            enterText("A")
+            enter()
+          }
+          Thread.sleep(2_000)
+          rightClick()
+          keyboard {
+            enterText("A")
+            down()
             enter()
           }
         }
       }
-      showProjectToolWindow()
-      showGBrowserToolWindow()
 
-      gBrowserToolWindow {
-        gBrowserPRPanel {
-          Thread.sleep(4_000)
-          moveMouse(locationOnScreen)
-          rightClick()
-          ImageIO.write(remoteRobot.getScreenshot(), "png", File("build/reports", "right_click.png"))
-          keyboard {
-            down()
-            down()
-            down()
-            down()
-            enter()
-          }
-          rightClick()
-          keyboard {
-            down()
-            down()
-            down()
-            down()
-            down()
-            enter()
-          }
-        }
-      }
 
       showProjectToolWindow()
 
@@ -168,21 +180,13 @@ class GBrowserTollWindowUITest {
       }
 
       showGBrowserToolWindow()
-      showProjectToolWindow()
-      showGBrowserToolWindow()
 
-      gBrowserToolWindow {
-        val dimension = toolWindowDimension
-        val location = location
-        moveMouse(location)
-        moveMouse(Point(dimension.width, location.y))
-        dragAndDrop(Point(location.x + dimension.width + dimension.width, location.y))
-
+      gBrowserToolWindowMyNonOpaquePanel {
 
         gBrowserPRPanel {
-          Thread.sleep(5_000)
+          Thread.sleep(3_000)
           button(byXpath("//div[@myicon='left.svg']")).isEnabled()
-          button(byXpath("//div[@accessiblename='https://www.google.com/']")).isEnabled()
+          button(byXpath("//div[@accessiblename='https://github.com/']")).isEnabled()
           button(byXpath("//div[@myaction='Options (Options)']")).click()
         }
       }
