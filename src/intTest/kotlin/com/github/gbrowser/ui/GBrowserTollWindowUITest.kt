@@ -111,7 +111,7 @@ class GBrowserTollWindowUITest {
         dragAndDrop(Point(location.x + dimension.width + dimension.width, location.y))
 
         gBrowserPRPanel {
-          textField(byXpath("//div[@class='TextFieldWithProcessing']")).text = "https://www.google.com"
+          textField(byXpath("//div[@class='TextFieldWithProcessing']")).text = "https://github.com/"
           textField(byXpath("//div[@class='TextFieldWithProcessing']")).keyboard {
             enter()
           }
@@ -179,7 +179,7 @@ class GBrowserTollWindowUITest {
         gBrowserPRPanel {
           Thread.sleep(3_000)
           button(byXpath("//div[@myicon='left.svg']")).isEnabled()
-          button(byXpath("//div[@accessiblename='https://www.google.com/']")).isEnabled()
+          button(byXpath("//div[@accessiblename='https://github.com/']")).isEnabled()
           button(byXpath("//div[@myaction='Options (Options)']")).click()
         }
       }
