@@ -123,7 +123,20 @@ class GBrowserTollWindowUITest {
           val location = location
           moveMouse(location)
           rightClick()
-          ImageIO.write(remoteRobot.getScreenshot(), "png", File("build/reports", "right_click.png"))
+          keyboard {
+            enterText("A")
+            enter()
+          }
+          Thread.sleep(2_000)
+          rightClick()
+          keyboard {
+            enterText("A")
+            down()
+            enter()
+          }
+            //making sure it is happening
+          Thread.sleep(2_000)
+          rightClick()
           keyboard {
             enterText("A")
             enter()
