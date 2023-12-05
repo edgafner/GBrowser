@@ -31,7 +31,7 @@ class IdeaFrame(remoteRobot: RemoteRobot, remoteComponent: RemoteComponent) : Co
 
   fun waitForBackgroundTasks(timeout: Duration = Duration.ofMinutes(5)) {
     step("Wait for background tasks to finish") {
-      waitFor(duration = timeout, interval = Duration.ofSeconds(3)) { // search for the progress bar
+      waitFor(duration = timeout, interval = Duration.ofSeconds(5)) { // search for the progress bar
         find<ComponentFixture>(byXpath("//div[@class='InlineProgressPanel']")).findAllText().isEmpty()
       }
     }
