@@ -1,6 +1,5 @@
 package com.github.gbrowser.ui
 
-
 import com.github.gbrowser.UITest
 import com.github.gbrowser.extensions.RemoteRobotExtension
 import com.github.gbrowser.extensions.StepsLogger
@@ -73,7 +72,6 @@ class GBrowserTollWindowUITest {
     }
     Thread.sleep(2_000)
   }
-
 
   @Test
   fun gBrowserToolWindow(remoteRobot: RemoteRobot) = with(remoteRobot) {
