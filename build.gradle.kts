@@ -51,7 +51,7 @@ dependencies {
 
   testImplementation(libs.bundles.kTest)
 
-  intTestImplementation("com.intellij.remoterobot:remote-fixtures:0.11.20")
+  intTestImplementation("com.intellij.remoterobot:remote-fixtures:0.11.21")
   @Suppress("VulnerableLibrariesLocal", "RedundantSuppression") intTestImplementation(
     "com.intellij.remoterobot:remote-robot:0.11.20"
   ) //intTestImplementation("com.automation-remarks:video-recorder-junit5:2.0")
