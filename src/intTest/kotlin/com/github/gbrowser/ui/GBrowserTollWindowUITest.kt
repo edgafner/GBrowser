@@ -118,27 +118,26 @@ class GBrowserTollWindowUITest {
         }
       }
 
-      gBrowserToolWindow {
-        gBrowserPRPanel {
-          val location = location
-          moveMouse(location)
-          rightClick()
-          ImageIO.write(remoteRobot.getScreenshot(), "png", File("build/reports", "right_click.png"))
-          keyboard {
-            down()
-            down()
-            down()
-            down()
-            enter()
-          }
-          rightClick()
-          keyboard {
-            down()
-            down()
-            down()
-            down()
-            down()
-            enter()
+      step("Add to bookmarks and to quick access") {
+        Thread.sleep(5_000)
+
+        gBrowserToolWindow {
+          gBrowserPRPanel {
+            val location = location
+            moveMouse(location)
+            rightClick()
+            ImageIO.write(remoteRobot.getScreenshot(), "png", File("build/reports", "right_click.png"))
+            keyboard {
+              enterText("A")
+              enter()
+            }
+            Thread.sleep(2_000)
+            rightClick()
+            keyboard {
+              enterText("A")
+              down()
+              enter()
+            }
           }
         }
       }
