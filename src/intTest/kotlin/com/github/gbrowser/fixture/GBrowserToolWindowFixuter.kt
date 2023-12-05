@@ -13,7 +13,13 @@ import java.time.Duration
 
 fun RemoteRobot.gBrowserToolWindow(timeout: Duration = Duration.ofSeconds(20), function: GBrowserToolWindowPanel.() -> Unit) {
   step("GBrowser Tool Window") {
-    find<GBrowserToolWindowPanel>(byXpath("//div[@class='MyNonOpaquePanel']"), timeout).apply(function)
+    find<GBrowserToolWindowPanel>(byXpath("//div[@accessiblename='GBrowser Tool Window']"), timeout).apply(function)
+  }
+}
+
+fun RemoteRobot.gBrowserToolWindowMyNonOpaquePanel(timeout: Duration = Duration.ofSeconds(20), function: GBrowserToolWindowPanel.() -> Unit) {
+  step("GBrowser Tool Window") {
+    find<GBrowserToolWindowPanel>(byXpath("//div[@class='MyNonOpaquePanel'][.//div[@class='MyPanel']]"), timeout).apply(function)
   }
 }
 
