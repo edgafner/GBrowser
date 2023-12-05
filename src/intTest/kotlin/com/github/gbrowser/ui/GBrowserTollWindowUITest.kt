@@ -71,7 +71,7 @@ class GBrowserTollWindowUITest {
     catch (ignored: Exception) { // No confirm dialog
 
     }
-    Thread.sleep(3_000)
+    Thread.sleep(2_000)
   }
 
 
@@ -105,6 +105,13 @@ class GBrowserTollWindowUITest {
       Thread.sleep(3_000)
 
       gBrowserToolWindow {
+
+        val dimension = toolWindowDimension
+        val location = location
+        moveMouse(location)
+        moveMouse(Point(dimension.width, location.y))
+        dragAndDrop(Point(location.x + dimension.width + dimension.width, location.y))
+
         gBrowserPRPanel {
           textField(byXpath("//div[@class='TextFieldWithProcessing']")).text = "https://www.google.com"
           textField(byXpath("//div[@class='TextFieldWithProcessing']")).keyboard {
@@ -112,12 +119,10 @@ class GBrowserTollWindowUITest {
           }
         }
       }
-      showProjectToolWindow()
-      showGBrowserToolWindow()
 
       gBrowserToolWindow {
         gBrowserPRPanel {
-          Thread.sleep(4_000)
+          Thread.sleep(3_000)
           moveMouse(locationOnScreen)
           rightClick()
           ImageIO.write(remoteRobot.getScreenshot(), "png", File("build/reports", "right_click.png"))
@@ -172,15 +177,9 @@ class GBrowserTollWindowUITest {
       showGBrowserToolWindow()
 
       gBrowserToolWindow {
-        val dimension = toolWindowDimension
-        val location = location
-        moveMouse(location)
-        moveMouse(Point(dimension.width, location.y))
-        dragAndDrop(Point(location.x + dimension.width + dimension.width, location.y))
-
 
         gBrowserPRPanel {
-          Thread.sleep(5_000)
+          Thread.sleep(3_000)
           button(byXpath("//div[@myicon='left.svg']")).isEnabled()
           button(byXpath("//div[@accessiblename='https://www.google.com/']")).isEnabled()
           button(byXpath("//div[@myaction='Options (Options)']")).click()
