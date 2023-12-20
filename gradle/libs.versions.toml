@@ -12,7 +12,7 @@ changelog = "2.2.0"
 gradleIntelliJPlugin = "1.16.1"
 qodana = "0.1.13"
 kover = "0.7.5"
-koinPrevVersion = "3.5.2"
+koinPrevVersion = "3.5.3"
 koinKotestExtension = "1.3.0"
 
 [libraries]
