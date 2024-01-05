@@ -51,6 +51,13 @@ dependencies {
 
   testImplementation(libs.bundles.kTest)
 
+  implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.16.1") {
+    isTransitive = false
+  }
+
+  implementation("com.squareup.okhttp3:okhttp:4.12.0")
+  compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
+
   intTestImplementation("com.intellij.remoterobot:remote-fixtures:0.11.20")
   @Suppress("VulnerableLibrariesLocal", "RedundantSuppression") intTestImplementation(
     "com.intellij.remoterobot:remote-robot:0.11.20"
@@ -158,6 +165,9 @@ tasks {
     systemProperty("ide.show.tips.on.startup.default.value", false)
     systemProperty("idea.trust.all.projects", true)
     systemProperty("jb.consents.confirmation.enabled", false)
+    systemProperty("ide.browser.jcef.enabled", true)
+    systemProperty("ide.browser.jcef.headless.enabled", true)
+    systemProperty("ide.browser.jcef.testMode.enabled", true)
   }
 
   val runIdeUiCodeCoverageReport = register<JacocoReport>("runIdeUiCodeCoverageReport") {

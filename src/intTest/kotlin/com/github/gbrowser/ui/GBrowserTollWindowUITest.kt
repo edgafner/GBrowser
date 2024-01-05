@@ -1,6 +1,5 @@
 package com.github.gbrowser.ui
 
-
 import com.github.gbrowser.UITest
 import com.github.gbrowser.extensions.RemoteRobotExtension
 import com.github.gbrowser.extensions.StepsLogger
@@ -19,10 +18,8 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.io.TempDir
 import java.awt.Point
 import java.awt.event.KeyEvent.VK_END
-import java.io.File
 import java.nio.file.Path
 import java.time.Duration.ofMinutes
-import javax.imageio.ImageIO
 
 @ExtendWith(RemoteRobotExtension::class)
 @UITest
