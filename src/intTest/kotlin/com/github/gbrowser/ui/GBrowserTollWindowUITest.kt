@@ -137,6 +137,13 @@ class GBrowserTollWindowUITest {
               enter()
             }
 
+            moveMouse(location)
+            rightClick()
+            keyboard {
+              enterText("A")
+              enter()
+            }
+
             Thread.sleep(3_000)
             button(byXpath("//div[@myicon='left.svg']")).isEnabled()
           }
