@@ -174,7 +174,7 @@ class GBrowserUITest {
             itemList.collectItems().forEach {
               LOG.info("Item: --${it}--")
             }
-            itemList.clickItem("Add to Bookmarks", false)
+            itemList.clickItem("Add to Bo", false)
           }
 
           gBrowserPRPanel {
@@ -188,7 +188,19 @@ class GBrowserUITest {
           gBrowserPRPanel {
             button(byXpath("//div[@myicon='chevronDown.svg']")).click()
             val itemList = ideaFrame.heavyWeightWindow().itemsList
-            itemList.clickItem("Close Ta", false)
+            itemList.clickItem("Zoom Out", false)
+          }
+
+          gBrowserPRPanel {
+            button(byXpath("//div[@myicon='chevronDown.svg']")).click()
+            val itemList = ideaFrame.heavyWeightWindow().itemsList
+            itemList.clickItem("Zoom In", false)
+          }
+
+          gBrowserPRPanel {
+            button(byXpath("//div[@myicon='chevronDown.svg']")).click()
+            val itemList = ideaFrame.heavyWeightWindow().itemsList
+            itemList.clickItem("Close Tab", false)
           }
 
           gBrowserPRPanel {

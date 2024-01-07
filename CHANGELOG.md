@@ -2,8 +2,6 @@
 
 ## [Unreleased]
 
-## [2023.9.42] - 2023-12-05
-
 ### Added
 
 - 🚀 Add Google Authentication support - you can now login with your Google account
