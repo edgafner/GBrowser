@@ -128,20 +128,8 @@ class GBrowserUITest {
 
           Thread.sleep(2_000)
 
-          gBrowserPRPanel {
-            moveMouse(location)
-            rightClick()
-            keyboard {
-              enterText("A")
-              enter()
-            }
-
-            moveMouse(location)
-            rightClick()
-            keyboard {
-              enterText("A")
-              enter()
-            }
+          gBrowserPRPanel { //
+            button(byXpath("//div[@myicon='bookmark_remove.svg']")).click()
 
             Thread.sleep(3_000)
             button(byXpath("//div[@myicon='left.svg']")).isEnabled()
