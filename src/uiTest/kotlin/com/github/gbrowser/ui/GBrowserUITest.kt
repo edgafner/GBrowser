@@ -37,8 +37,8 @@ class GBrowserUITest {
     waitForIgnoringError(ofMinutes(3)) {
       remoteRobot.callJs("true")
     }
-    }
   }
+
 
   @Suppress("JSUnresolvedReference")
   @AfterEach
