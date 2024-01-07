@@ -21,7 +21,7 @@ class GBrowserSearchField(private val delegate: GBrowserSearchFieldDelegate) : G
   private val scrollPane: JBScrollPane by lazy {
     JBScrollPane(searchField).apply {
       isOpaque = false
-      enableWheelScrolling(false)
+      isWheelScrollingEnabled = false
       viewport.add(searchField)
       viewport.isOpaque = false
       horizontalScrollBar.setUI(GBrowserSearchFieldCustomScrollBar())
