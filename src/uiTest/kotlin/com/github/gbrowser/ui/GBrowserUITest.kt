@@ -88,7 +88,11 @@ class GBrowserUITest {
 
       showGBrowserToolWindow()
       Thread.sleep(3_000)
-      button(byXpath("//div[@myicon='add.svg']")).click()
+      step("New Tab") {
+        gBrowserToolWindow {
+          button(byXpath("//div[@myicon='add.svg']")).click()
+        }
+      }
       Thread.sleep(3_000)
       basicTab(this)
 
@@ -109,7 +113,7 @@ class GBrowserUITest {
   }
 
   private fun RemoteRobot.basicTab(ideaFrame: IdeaFrame) {
-    step("Create New Tab") {
+    step("Basic actions") {
       gBrowserToolWindow {
 
         gBrowserToolWindowMyNonOpaquePanel {
