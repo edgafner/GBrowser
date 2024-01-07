@@ -199,7 +199,7 @@ class GBrowserSearchFieldPane(private val delegate: GBrowserSearchFieldPaneDeleg
 
 
   private fun handleKeyPress() {
-    delegate.onKeyReleased(getText()) { history, bookmarks, suggested ->
+    delegate.onKeyReleased(text) { history, bookmarks, suggested ->
       popupModel.setItems(history, bookmarks, suggested)
       popup?.pack(true, true)
 
