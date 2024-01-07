@@ -17,8 +17,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.io.TempDir
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import java.awt.Point
 import java.nio.file.Path
 import java.time.Duration.ofMinutes
@@ -241,13 +239,8 @@ class GBrowserTollWindowUITest {
           }
         }
       }
-
     }
-
   }
 
-  companion object {
-    val LOG: Logger = LoggerFactory.getLogger("GBrowserTollWindowUITest")
-  }
 }
 

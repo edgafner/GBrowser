@@ -14,14 +14,12 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.components.service
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbAware
 import javax.swing.Icon
 
 
 class GBrowserBookmarkGroupAction : ActionGroup(GBrowserBundle.message("group.action.bookmarks"), true), DumbAware {
+  private val favIconLoader: CachingFavIconLoader = service()
 
   init {
     isSearchable = true
@@ -37,41 +35,19 @@ class GBrowserBookmarkGroupAction : ActionGroup(GBrowserBundle.message("group.ac
     GBrowserService.instance().bookmarks.forEach { fav ->
       val url = fav.url
       val name = fav.name
-      actions += GBrowserBookmarkGroupItemAction(name, url)
+      favIconLoader.loadFavIcon(url).thenAccept {
+        actions += GBrowserBookmarkGroupItemAction(name, url, it ?: AllIcons.General.Web)
+      }
     }
     return actions.toTypedArray()
   }
 
 }
 
-class GBrowserBookmarkGroupItemAction(val name: String, val url: String, initialIcon: Icon = AllIcons.General.Web) : AnAction({ name }) {
+class GBrowserBookmarkGroupItemAction(val name: String, val url: String, val icon: Icon) : AnAction({ name }) {
 
   private val settings: GBrowserService = GBrowserService.instance()
-  private val favIconLoader: CachingFavIconLoader = service()
 
-  var icon: Icon = initialIcon
-    private set // Make the setter private
-
-  init {
-    if (initialIcon == AllIcons.General.Web) {
-      loadUrlIcon()
-    }
-  }
-
-  private fun loadUrlIcon() {
-    val taskTitle = "loadFavIcon_$url"
-    ProgressManager.getInstance().run(object : Task.Backgroundable(null, taskTitle) {
-      override fun run(indicator: ProgressIndicator) {
-        favIconLoader.loadFavIcon(url).thenAccept {
-          updateIcon(it ?: AllIcons.General.Web)
-        }
-      }
-    })
-  }
-
-  private fun updateIcon(newIcon: Icon) {
-    icon = newIcon
-  }
 
   override fun update(e: AnActionEvent) {
     e.presentation.icon = icon

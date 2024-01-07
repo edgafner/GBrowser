@@ -36,7 +36,7 @@ class GBrowserBookmarkAddAction : AnAction(), DumbAware {
     e.presentation.text = if (existBookmarks) textRemove else textAdd
   }
 
-  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
   override fun actionPerformed(e: AnActionEvent) {
     val panel = GBrowserToolWindowUtil.getSelectedBrowserPanel(e) ?: return
