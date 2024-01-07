@@ -1,5 +1,5 @@
-import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.changelog.Changelog
+import org.jetbrains.changelog.markdownToHTML
 
 fun properties(key: String) = providers.gradleProperty(key)
 fun environment(key: String) = providers.environmentVariable(key)
@@ -26,7 +26,7 @@ repositories {
 }
 
 sourceSets {
-  create("intTest") {
+  create("uiTest") {
     compileClasspath += sourceSets.main.get().output
     runtimeClasspath += sourceSets.main.get().output
   }
@@ -34,15 +34,16 @@ sourceSets {
 
 idea {
   module {
-    testSources.from(sourceSets["intTest"].kotlin.srcDirs)
-    testResources.from(sourceSets["intTest"].resources.srcDirs)
+    testSources.from(sourceSets["uiTest"].kotlin.srcDirs)
+    testResources.from(sourceSets["uiTest"].resources.srcDirs)
   }
 }
 
-val intTestImplementation: Configuration by configurations.getting {
+val uiTestImplementation: Configuration by configurations.getting {
   extendsFrom(configurations.testImplementation.get())
 }
-val intTestRuntimeOnly: Configuration by configurations.getting {
+
+val uiTestRuntimeOnly: Configuration by configurations.getting {
   extendsFrom(configurations.testRuntimeOnly.get())
 }
 
@@ -58,13 +59,13 @@ dependencies {
   implementation("com.squareup.okhttp3:okhttp:4.12.0")
   compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
 
-  intTestImplementation("com.intellij.remoterobot:remote-fixtures:0.11.21")
-  @Suppress("VulnerableLibrariesLocal", "RedundantSuppression") intTestImplementation(
-    "com.intellij.remoterobot:remote-robot:0.11.21"
-  ) //intTestImplementation("com.automation-remarks:video-recorder-junit5:2.0")
-  intTestImplementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
-  intTestImplementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
-  intTestRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
+  uiTestImplementation("com.intellij.remoterobot:remote-fixtures:0.11.21")
+
+  uiTestImplementation("com.intellij.remoterobot:remote-robot:0.11.21")
+
+  uiTestImplementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+  uiTestImplementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
+  uiTestRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
 }
 
 kotlin {
@@ -113,7 +114,7 @@ koverReport {
 
 kover {
   excludeSourceSets {
-    names("test", "intTest")
+    names("test", "uiTest")
   }
 }
 
@@ -194,15 +195,15 @@ tasks {
     systemProperty("idea.trust.all.projects", true)
     systemProperty("jb.consents.confirmation.enabled", false)
     systemProperty("jb.privacy.policy.text", "<!--999.999-->")
-    systemProperty("jbScreenMenuBar.enabled", false)
-    //systemProperty("junit.jupiter.extensions.autodetection.enabled", true)
-    systemProperty("robot-server.port", 8082)
-    //systemProperty("shared.indexes.download.auto.consent", true)
+    systemProperty("jbScreenMenuBar.enabled", false) //systemProperty("junit.jupiter.extensions.autodetection.enabled", true)
+    systemProperty("robot-server.port", 8082) //systemProperty("shared.indexes.download.auto.consent", true)
 
     jvmArgs("--add-opens=java.desktop/javax.swing.text=ALL-UNNAMED")
 
 
-    configure<JacocoTaskExtension> { // sync with testing-subplugin
+    configure<JacocoTaskExtension> {
+
+      // sync with testing-sub plugin
       // 221+ uses a custom classloader and jacoco fails to find classes
       isIncludeNoLocationClasses = true
       excludes = listOf("jdk.internal.*")
@@ -224,8 +225,7 @@ tasks {
   publishPlugin {
     dependsOn("patchChangelog")
     token = environment(
-      "PUBLISH_TOKEN"
-    ) // The pluginVersion is based on the SemVer (https://semver.org) and supports pre-release labels, like 2.1.7-alpha.3
+      "PUBLISH_TOKEN") // The pluginVersion is based on the SemVer (https://semver.org) and supports pre-release labels, like 2.1.7-alpha.3
     // Specify pre-release label to publish the plugin in a custom Release Channel automatically. Read more:
     // https://plugins.jetbrains.com/docs/intellij/deployment.html#specifying-a-release-channel
     channels = properties("pluginVersion").map { listOf(it.split('-').getOrElse(1) { "default" }.split('.').first()) }
@@ -239,12 +239,12 @@ tasks {
     }
   }
 
-  task<Test>("integrationTest") {
-    description = "Runs integration tests."
+  task<Test>("uiTest") {
+    description = "Runs ui tests."
     group = "verification"
 
-    testClassesDirs = sourceSets["intTest"].output.classesDirs
-    classpath = sourceSets["intTest"].runtimeClasspath
+    testClassesDirs = sourceSets["uiTest"].output.classesDirs
+    classpath = sourceSets["uiTest"].runtimeClasspath
     shouldRunAfter("test")
 
     useJUnitPlatform {
@@ -256,7 +256,8 @@ tasks {
       skipTestsProvider.isPresent
     }
 
-    configure<JacocoTaskExtension> { // sync with testing-subplugin
+    configure<JacocoTaskExtension> {
+      // sync with testing-subplugin
       isEnabled = false
     }
 

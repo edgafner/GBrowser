@@ -70,7 +70,7 @@ jobs:
 
           # Run tests
       - name: Tests
-        run: ./gradlew integrationTest -PrunUiTests=true
+        run: ./gradlew uiTest -PrunUiTests=true
 
       - uses: GuillaumeFalourd/wait-sleep-action@v1
         with:
@@ -92,6 +92,6 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           files: ${{ github.workspace }}/build/reports/jacoco/runIdeUiCodeCoverageReport/runIdeUiCodeCoverageReport.xml
-          flags: integration-${{ matrix.os }}
+          flags: ui-${{ matrix.os }}
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

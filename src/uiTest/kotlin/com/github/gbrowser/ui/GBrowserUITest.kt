@@ -23,7 +23,7 @@ import java.time.Duration.ofMinutes
 
 @ExtendWith(RemoteRobotExtension::class)
 @UITest
-class GBrowserTollWindowUITest {
+class GBrowserUITest {
 
   @TempDir
   lateinit var tempDir: Path
@@ -36,6 +36,7 @@ class GBrowserTollWindowUITest {
   fun waitForIde(remoteRobot: RemoteRobot) {
     waitForIgnoringError(ofMinutes(3)) {
       remoteRobot.callJs("true")
+    }
     }
   }
 
