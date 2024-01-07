@@ -4,8 +4,18 @@
 
 ### Added
 
-- Support Multiple Web Browser Tabs - [GitHub issue 50](https://github.com/edgafner/GBrowser/issues/50)
-- Support Quick Access Web list - [GitHub issue 89](https://github.com/edgafner/GBrowser/issues/89)
+- 🚀 Add Google Authentication support - you can now login with your Google account
+- 🚀 ⚙️ Add Toolbar toggle visibility action - you can now show/hide search toolbar
+- 🚀 ⚙️ Add Search engine support - you can now benefit from Google engine search in the url text field
+- 🚀 ⚙️ Span in new tab action - links will be open in a new GBrowser tab
+- 🚀 Open url text in new tab action - Select a valid url in the editor and open it in a new GBrowser tab
+- 🚀 ⚙️ Add tab drag and drop support - you can now drag and drop tabs to reorder them
+- 🚀 Add remove bookmark icon action - you can now remove bookmarks from the bookmarks icon with right click
+- 🚀 ⚙️ Add history support - GBrowser will suggest you visited urls in the url text field
+- 🚀 Devtools in toolwindow - Devtools will be open in a toolwindow instead of a new dialog
+- 🚀 ⚙️ Reopen closed tabs action - Reopening a project will reopen all tabs that were open when the project was closed
+- 🚀 ⚙️ Add debug port connection - You can now connect to a remote debug port
+- 🚀 And a lot of other cool features, most of them configurable in the settings ⚙️
 
 ### Changed
 
