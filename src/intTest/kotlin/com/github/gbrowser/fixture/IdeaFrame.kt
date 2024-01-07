@@ -61,6 +61,16 @@ class IdeaFrame(remoteRobot: RemoteRobot, remoteComponent: RemoteComponent) : Co
     }
   }
 
+  // Show GBrowser Tool window, or leave it open if it is already open
+  fun showGBrowserDevToolsToolWindow() {
+    try {
+      find<GBrowserToolWindowPanel>(byXpath("//div[@myaction.key='toolwindow.stripe.DevTools']"), Duration.ofSeconds(8)).click()
+    }
+    catch (e: Exception) {
+      find<GBrowserToolWindowPanel>(byXpath("//div[@myaction.key='toolwindow.stripe.GBrowser']"), Duration.ofSeconds(8)).click()
+    }
+  }
+
 
   fun showProjectToolWindow() {
     try {

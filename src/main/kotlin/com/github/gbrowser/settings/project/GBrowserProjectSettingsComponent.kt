@@ -127,11 +127,11 @@ class GBrowserProjectSettingsComponent : SimpleToolWindowPanel(true, true), Disp
                           settings.hideIdLabel = value
                         }
                       }, {
-                        checkBox("Show tab's icon").bindSelected(settings::isTabIconVisible) { value ->
+                        checkBox("Show tab icon").bindSelected(settings::isTabIconVisible) { value ->
                           settings.isTabIconVisible = value
                         }
                       }, {
-                        checkBox("Show bookmarks' toolbar").bindSelected(settings::showBookMarksInToolbar) { value ->
+                        checkBox("Show bookmarks toolbar").bindSelected(settings::showBookMarksInToolbar) { value ->
                           settings.showBookMarksInToolbar = value
                         }
                       })
