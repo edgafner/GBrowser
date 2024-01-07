@@ -12,7 +12,7 @@ plugins {
   alias(libs.plugins.changelog) // Gradle Changelog Plugin
   alias(libs.plugins.qodana) // Gradle Qodana Plugin
   alias(libs.plugins.kover) // Gradle Kover Plugin
-  kotlin("plugin.serialization") version "1.9.21"
+  kotlin("plugin.serialization") version "1.9.22"
   jacoco
 }
 
@@ -58,9 +58,9 @@ dependencies {
   implementation("com.squareup.okhttp3:okhttp:4.12.0")
   compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
 
-  intTestImplementation("com.intellij.remoterobot:remote-fixtures:0.11.20")
+  intTestImplementation("com.intellij.remoterobot:remote-fixtures:0.11.21")
   @Suppress("VulnerableLibrariesLocal", "RedundantSuppression") intTestImplementation(
-    "com.intellij.remoterobot:remote-robot:0.11.20"
+    "com.intellij.remoterobot:remote-robot:0.11.21"
   ) //intTestImplementation("com.automation-remarks:video-recorder-junit5:2.0")
   intTestImplementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
   intTestImplementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
