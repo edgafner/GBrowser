@@ -87,12 +87,10 @@ class GBrowserUITest {
       initWaiting()
 
       showGBrowserToolWindow()
-      Thread.sleep(3_000)
-      step("New Tab") {
-        gBrowserToolWindow {
-          button(byXpath("//div[@myicon='add.svg']")).click()
-        }
-      }
+      Thread.sleep(6_000)
+
+      button(byXpath("//div[@myicon='add.svg']")).click()
+
       Thread.sleep(3_000)
       basicTab(this)
 
