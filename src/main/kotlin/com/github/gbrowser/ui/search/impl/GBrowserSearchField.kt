@@ -81,11 +81,6 @@ class GBrowserSearchField(private val delegate: GBrowserSearchFieldDelegate) : G
     lastText = value
   }
 
-  @Suppress("SameParameterValue")
-  private fun setCaretPosition(position: Int) {
-    searchField.setCaretPosition(position)
-  }
-
   private fun setLastEnteredText() {
     setText(lastText ?: "")
   }
@@ -141,7 +136,7 @@ class GBrowserSearchField(private val delegate: GBrowserSearchFieldDelegate) : G
     resetSelectionText()
     setText(url)
     enableScrolling(true)
-    setCaretPosition(0)
+    searchField.caretPosition = 0
     delegate.onEnter(url)
   }
 
@@ -153,7 +148,7 @@ class GBrowserSearchField(private val delegate: GBrowserSearchFieldDelegate) : G
 
   override fun onCancel() {
     resetSelectionText()
-    setCaretPosition(0)
+    searchField.caretPosition = 0
     resetScrollPosition()
     enableScrolling(true)
   }

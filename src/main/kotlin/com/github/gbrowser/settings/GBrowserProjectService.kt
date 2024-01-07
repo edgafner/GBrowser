@@ -43,12 +43,6 @@ class GBrowserProjectService : SerializablePersistentStateComponent<GBrowserProj
     }
   }
 
-  fun removeTabs(date: Date) {
-    updateStateAndEmit {
-      it.copy(tabs = it.tabs.apply { removeAll { tb -> tb.createdAt == date } })
-    }
-  }
-
   private inline fun updateStateAndEmit(updateFunction: (currentState: ProjectSettingsState) -> ProjectSettingsState) {
     val state = super.updateState(updateFunction)
     listeners.multicaster.onSettingsChange(state)

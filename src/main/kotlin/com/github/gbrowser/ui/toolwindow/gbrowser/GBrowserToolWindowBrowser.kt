@@ -23,7 +23,7 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
                                                                       GBrowserToolWindowActionBarDelegate, GBrowserCefDisplayChangeDelegate,
                                                                       GBrowserCefDevToolsListener {
   private val settings: GBrowserService = GBrowserService.instance()
-  private var toolBar: GBrowserToolWindowActionBar = GBrowserToolWindowActionBar(this)
+  private var gBrowserToolBar: GBrowserToolWindowActionBar = GBrowserToolWindowActionBar(this)
   private var currentUrl: String = settings.defaultUrl
   private var currentTitle: String = ""
   private var zoomLevel: Double = 0.0
@@ -35,7 +35,7 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
   private var isSearchFocused: Boolean = false
 
   init {
-    setToolbar(toolBar.component)
+    toolbar = gBrowserToolBar.component
     setSearchText(currentUrl)
     setupBrowser()
     addSettingsListener()
@@ -66,14 +66,14 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
 
   override fun dispose() {
     browser.dispose()
-    toolBar.dispose()
+    gBrowserToolBar.dispose()
     removeSettingsListener()
   }
 
   private fun addSettingsListener() {
     settings.addListener { state: GBrowserService.SettingsState ->
       state.let {
-        toolBar.search?.let {
+        gBrowserToolBar.search?.let {
           it.isHostHighlighted = state.isHostHighlight
           it.isHostHidden = state.isProtocolHidden
           it.setSearchHighlighted(state.isSuggestionSearchHighlighted)
@@ -151,11 +151,11 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
 
 
   fun setToolBarVisible(isVisible: Boolean) {
-    toolBar.component.isVisible = isVisible
+    gBrowserToolBar.component.isVisible = isVisible
   }
 
   fun isToolBarVisible(): Boolean {
-    return toolBar.component.isVisible
+    return gBrowserToolBar.component.isVisible
   }
 
 
@@ -185,7 +185,7 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
   }
 
   private fun setSearchText(text: String) {
-    toolBar.search?.setText(text)
+    gBrowserToolBar.search?.setText(text)
   }
 
   private fun setHistoryItem() {
