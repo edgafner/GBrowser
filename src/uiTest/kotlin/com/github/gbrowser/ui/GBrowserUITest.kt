@@ -17,6 +17,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.io.TempDir
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.awt.Point
 import java.nio.file.Path
 import java.time.Duration.ofMinutes
@@ -169,7 +171,10 @@ class GBrowserUITest {
           gBrowserPRPanel {
             button(byXpath("//div[@myicon='chevronDown.svg']")).click()
             val itemList = ideaFrame.heavyWeightWindow().itemsList
-            itemList.clickItem("Add to Bo", false)
+            itemList.collectItems().forEach {
+              LOG.info("Item: --${it}--")
+            }
+            itemList.clickItem("Add to Bookmarks", false)
           }
 
           gBrowserPRPanel {
@@ -231,6 +236,10 @@ class GBrowserUITest {
         }
       }
     }
+  }
+
+  companion object {
+    val LOG: Logger = LoggerFactory.getLogger("GBrowserTollWindowUITest")
   }
 
 }
