@@ -1,7 +1,7 @@
 package com.github.gbrowser.settings.request_header
 
 
-import com.github.gbrowser.settings.GBrowserSetting
+import com.github.gbrowser.settings.GBrowserService
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.ui.SideBorder
@@ -15,7 +15,7 @@ import com.intellij.util.ui.ListTableModel
 import com.intellij.util.ui.UIUtil
 
 class GBrowserRequestHeaderTableComponent : Disposable {
-  private val settings: GBrowserSetting = GBrowserSetting.instance()
+  private val settings: GBrowserService = GBrowserService.instance()
   private lateinit var tableModel: ListTableModel<GBrowserRequestHeader>
   private lateinit var tableView: TableView<GBrowserRequestHeader>
   private lateinit var scrollPanel: JBScrollPane

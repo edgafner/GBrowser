@@ -8,7 +8,8 @@ object GBrowserIcons {
   val GBROWSER_LOGO = IconLoader.getIcon("/com/github/gbrowser/gbrowser.svg", javaClass)
 
   @JvmField
-  val TOOL_WINDOW_DEV_TOOLS = IconLoader.getIcon("/com/github/gbrowser/dev_tools_active.svg", javaClass)
+  val GBROWSER_LOGO_LARGER = IconLoader.getIcon("/com/github/gbrowser/gbrowser_larger.svg", javaClass)
+
 
   @JvmField
   val BOOKMARK_ADD = IconLoader.getIcon("/com/github/gbrowser/bookmark_add.svg", javaClass)
@@ -19,11 +20,12 @@ object GBrowserIcons {
   @JvmField
   val BOOKMARK_MANAGER = IconLoader.getIcon("/com/github/gbrowser/bookmark_group.svg", javaClass)
 
-  @JvmField
-  val DEV_TOOLS = IconLoader.getIcon("/com/github/gbrowser/dev_tools_active.svg", javaClass)
 
   @JvmField
-  val DEV_TOOLS_ACTIVE = IconLoader.getIcon("/com/github/gbrowser/devToolsActive/devToolsActive.svg", javaClass)
+  val DEV_TOOLS = IconLoader.getIcon("/com/github/gbrowser/dev_tools.svg", javaClass)
+
+  @JvmField
+  val DEV_TOOLS_ACTIVE = IconLoader.getIcon("/com/github/gbrowser/dev_tools_active.svg", javaClass)
 
   @JvmField
   val BROOM = IconLoader.getIcon("/com/github/gbrowser/broom.svg", javaClass)

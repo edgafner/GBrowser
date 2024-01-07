@@ -1,93 +1,17 @@
 package com.github.gbrowser.util
 
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.progress.Task
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.editor.EditorKind
 import com.intellij.openapi.util.registry.Registry
-import com.intellij.util.ImageLoader
-import com.intellij.util.ui.HTMLEditorKitBuilder
-import com.intellij.util.ui.JBImageIcon
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import java.net.URI
-import java.net.URL
 import java.util.regex.Pattern
 import java.util.regex.PatternSyntaxException
-import javax.swing.Icon
-import javax.swing.text.html.HTMLDocument
 
 object GBrowserUtil {
-  const val GROUP_DISPLAY_ID = "GBrowser"
+  const val GBROWSER_TOOL_WINDOW_ID = "GBrowser"
   const val DEVTOOLS_TOOL_WINDOW_ID = "DevTools"
-
-  fun getTitleOfWebPage(url: String): String {
-
-    return try {
-      val connection = URL(url).openConnection()
-
-      val editorKit = HTMLEditorKitBuilder().withGapsBetweenParagraphs().withoutContentCss().build()
-      val htmlDoc = editorKit.createDefaultDocument()
-      editorKit.read(connection.getInputStream(), htmlDoc, 0)
-
-      // Extract title
-      val res = htmlDoc.getProperty(HTMLDocument.TitleProperty) as? String
-      res ?: "Unknown"
-    } catch (e: Exception) {
-      "Unknown"
-    }
-  }
-
-
-  private fun getDomainName(url: String): String {
-    return try {
-      URI(url).host?.removePrefix("www.")?.removeSuffix("/") ?: url
-    } catch (e: Exception) {
-      url.removePrefix("www.").removeSuffix("/")
-    }
-  }
-
-  fun loadFavIconBGT(url: String, onSuccess: (Icon?) -> Unit) {
-    ProgressManager.getInstance().run(object : Task.Backgroundable(null, "Load Suggestion Search FavIcon_$url") {
-      private var icon: Icon? = null
-
-      override fun run(indicator: ProgressIndicator) {
-        icon = loadFavIcon(url, 32, 18)
-      }
-
-      override fun onFinished() {
-        icon?.let { onSuccess(it) }
-        super.onFinished()
-      }
-    })
-  }
-
-  fun loadFavIconBGTSmall(url: String, onSuccess: (Icon?) -> Unit) {
-    ProgressManager.getInstance().run(object : Task.Backgroundable(null, "Load Suggestion Search FavIcon_$url") {
-      private var icon: Icon? = null
-
-      override fun run(indicator: ProgressIndicator) {
-        icon = loadFavIcon(url, 32, 16)
-      }
-
-      override fun onFinished() {
-        icon?.let { onSuccess(it) }
-        super.onFinished()
-      }
-    })
-  }
-
-  fun loadFavIcon(url: String, size: Int = 32, targetSize: Int = 16): Icon? {
-    return try {
-      val domain = getDomainName(url.trim())
-      val iconUrl = URL("https://www.google.com/s2/favicons?domain=$domain&sz=$size")
-      ImageLoader.loadFromUrl(iconUrl)?.let { iconImage ->
-        val iconScaled = ImageLoader.scaleImage(iconImage, targetSize)
-        JBImageIcon(iconScaled)
-      }
-    } catch (e: Exception) {
-      null
-    }
-  }
 
   fun suggestQuery(text: String): String {
     if (text.isEmpty()) return ""
@@ -128,6 +52,22 @@ object GBrowserUtil {
     } catch (e: PatternSyntaxException) {
       false
     }
+  }
+
+  fun getSelectedText(anActionEvent: AnActionEvent): String? {
+    val editor = anActionEvent.getData(CommonDataKeys.EDITOR) ?: return null
+
+    if (editor.editorKind != EditorKind.MAIN_EDITOR) return null
+
+    //anActionEvent.getData(PlatformDataKeys.VIRTUAL_FILE) ?: return ""
+
+    val selected = editor.selectionModel.selectedText ?: return null
+
+    if (selected.isBlank()) return null
+
+    if (isValidBrowserURL(selected)) return selected.trim()
+
+    return null
   }
 
 

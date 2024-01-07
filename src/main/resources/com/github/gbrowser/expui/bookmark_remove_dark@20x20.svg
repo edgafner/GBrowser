@@ -1,4 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="20" height="20" x="0" y="0"
-     viewBox="0 0 682.667 682.667" style="enable-background:new 0 0 512 512" xml:space="preserve" class=""><g><defs><clipPath id="a" clipPathUnits="userSpaceOnUse">
-    <path d="M0 512h512V0H0Z" fill="#e3e3e3" opacity="1"/></clipPath></defs><g
-        clip-path="url(#a)" transform="matrix(1.33333 0 0 -1.33333 0 682.667)"><path d="M0 0a32.144 32.144 0 0 1-22.734-9.415 32.111 32.111 0 0 1-9.4-22.718v-427.904c0-12.13 9.801-21.963 21.931-21.963h.081a24.334 24.334 0 0 1 17.271 7.182c21.288 21.272 84.109 84.093 110.057 109.992 7.23 7.27 17.11 11.359 27.394 11.359 10.283 0 20.164-4.089 27.393-11.359 26.028-25.98 89.17-89.106 110.218-110.185 4.498-4.475 10.522-6.989 16.869-6.989 12.292 0 22.253 9.954 22.253 22.236v427.631A32.114 32.114 0 0 1 289.199 0Z" style="stroke-width:30;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1" transform="translate(111.4 497)" fill="none" stroke="#e3e3e3" stroke-width="30" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-dasharray="none" stroke-opacity=""  opacity="1"/></g></g></svg>
+     viewBox="0 0 682.667 682.667" style="enable-background:new 0 0 512 512" xml:space="preserve" class="">
+    <g>
+        <defs>
+            <clipPath id="a" clipPathUnits="userSpaceOnUse">
+            <path d="M0 512h512V0H0Z" fill="#41B7FE" opacity="0.8"/>
+            </clipPath></defs><g
+            clip-path="url(#a)" transform="matrix(1.33333 0 0 -1.33333 0 682.667)"><path d="M0 0a32.144 32.144 0 0 1-22.734-9.415 32.111 32.111 0 0 1-9.4-22.718v-427.904c0-12.13 9.801-21.963 21.931-21.963h.081a24.334 24.334 0 0 1 17.271 7.182c21.288 21.272 84.109 84.093 110.057 109.992 7.23 7.27 17.11 11.359 27.394 11.359 10.283 0 20.164-4.089 27.393-11.359 26.028-25.98 89.17-89.106 110.218-110.185 4.498-4.475 10.522-6.989 16.869-6.989 12.292 0 22.253 9.954 22.253 22.236v427.631A32.114 32.114 0 0 1 289.199 0Z" style="stroke-width:30;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1" transform="translate(111.4 497)" fill="none" stroke="#41B7FE" stroke-width="30" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="11" stroke-dasharray="none" stroke-opacity=""  opacity="0.8"/>
+    </g></g></svg>

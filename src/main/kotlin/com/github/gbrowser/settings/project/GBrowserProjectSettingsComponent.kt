@@ -1,11 +1,12 @@
 package com.github.gbrowser.settings.project
 
+import com.github.gbrowser.GBrowserIcons
 import com.github.gbrowser.i18n.GBrowserBundle
-import com.github.gbrowser.settings.GBrowserSetting
+import com.github.gbrowser.settings.GBrowserService
 import com.github.gbrowser.settings.bookmarks.GBrowserBookmarksTableComponent
-import com.github.gbrowser.settings.dao.GBrowserHistoryDelete
 import com.github.gbrowser.settings.request_header.GBrowserRequestHeaderTableComponent
 import com.intellij.icons.AllIcons
+import com.intellij.ide.BrowserUtil
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.ui.DialogPanel
@@ -13,29 +14,33 @@ import com.intellij.openapi.ui.SimpleToolWindowPanel
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.ui.dsl.builder.*
 import com.intellij.util.ui.JBEmptyBorder
+import com.intellij.util.ui.JBFont
 import com.intellij.util.ui.UIUtil
 import javax.swing.JTextField
 
 class GBrowserProjectSettingsComponent : SimpleToolWindowPanel(true, true), Disposable {
-  private val settings = GBrowserSetting.instance()
+  private val settings = GBrowserService.instance()
   val settingsComponent: DialogPanel by lazy { createComponent() }
   val textField: JTextField by lazy { JTextField() }
   private val bookmarks: GBrowserBookmarksTableComponent by lazy { GBrowserBookmarksTableComponent() }
   private val responseHeaders: GBrowserRequestHeaderTableComponent by lazy { GBrowserRequestHeaderTableComponent() }
 
-  private val historyOptions = mutableListOf(GBrowserHistoryDelete(-1, "Delete never"), GBrowserHistoryDelete(0, "Delete on close IDE"),
-                                             GBrowserHistoryDelete(24, "Delete after 1 day"),
-                                             GBrowserHistoryDelete(24 * 7, "Delete after 7 days"),
-                                             GBrowserHistoryDelete(24 * 14, "Delete after 14 days"),
-                                             GBrowserHistoryDelete(24 * 30, "Delete after 30 days"),
-                                             GBrowserHistoryDelete(24 * 60, "Delete after 60 days"))
 
   private fun createComponent(): DialogPanel = panel {
-    separator()
+    row {
+      icon(GBrowserIcons.GBROWSER_LOGO_LARGER).applyToComponent {
+        font = JBFont.label().biggerOn(3.0f).asBold()
+      }.align(AlignX.CENTER)
+      link("Support GBrowser and help keep it free") {
+        BrowserUtil.browse("https://github.com/sponsors/edgafner")
+      }
+    }.topGap(TopGap.SMALL).bottomGap(BottomGap.SMALL)
+
+
     row(GBrowserBundle.message("default.url.field")) {
       cell(textField).columns(COLUMNS_MEDIUM).align(AlignX.FILL).bindText(settings::defaultUrl).validationOnApply {
         if (it.text.isBlank()) {
-          ValidationInfo("Default URL cannot be empty")
+          ValidationInfo("Please enter a default URL.")
         } else {
           null
         }
@@ -50,21 +55,11 @@ class GBrowserProjectSettingsComponent : SimpleToolWindowPanel(true, true), Disp
   }
 
   private fun Panel.searchGroup() {
-    group("Search Configuration", true) {
-      group("Search Engine", false) {
+    group("Search Settings", true) {
+      group("Configuration", false) {
         twoColumnsRow({
-                        checkBox("Enable suggestion search").bindSelected(settings::isSuggestionSearchEnabled) { value ->
-                          settings.isSuggestionSearchEnabled = value
-                        }
-                      }, {
                         checkBox("Highlight URL host").bindSelected(settings::isHostHighlight) { value ->
                           settings.isHostHighlight = value
-
-                        }
-                      })
-        twoColumnsRow({
-                        checkBox("Hide URL protocol").bindSelected(settings::isProtocolHidden) { value ->
-                          settings.isProtocolHidden = value
                         }
                       }, {
                         checkBox("Highlight suggestion query").bindSelected(settings::isSuggestionSearchHighlighted) { value ->
@@ -72,19 +67,33 @@ class GBrowserProjectSettingsComponent : SimpleToolWindowPanel(true, true), Disp
                         }
                       })
         twoColumnsRow({
+                        checkBox("Hide URL protocol").bindSelected(settings::isProtocolHidden) { value ->
+                          settings.isProtocolHidden = value
+                        }
+                      }, {
                         checkBox("Load favicon in popup").bindSelected(settings::isFavIconEnabled) { value ->
                           settings.isFavIconEnabled = value
                         }
                       })
+        twoColumnsRow({
+                        checkBox("Enable suggestion search").bindSelected(settings::isSuggestionSearchEnabled) { value ->
+                          settings.isSuggestionSearchEnabled = value
+                        }.comment("Suggestion search based on google engine")
+                      }, {
+                        checkBox("Life Span in new tab").bindSelected(settings::navigateInNewTab) { value ->
+                          settings.navigateInNewTab = value
+                        }.comment("When disabled span links will popup in a dialog")
+                      })
       }
       group("Browser History", false) {
         row {
-          val historyCheckBox = checkBox("Auto cleanup").bindSelected(settings::isHistoryEnabled) { value ->
+          val historyCheckBox = checkBox("History enable").bindSelected(settings::isHistoryEnabled) { value ->
             settings.isHistoryEnabled = value
-          }
-          comboBox(historyOptions).bindItem(settings::historyDeleteOption) { value ->
-            value?.let { settings.historyDeleteOption = it }
-          }.enabledIf(historyCheckBox.selected)
+          }.gap(RightGap.SMALL)
+          spinner(0..60, 1).bindIntValue(settings::historyDeleteOption) { value ->
+            settings.historyDeleteOption = value
+          }.enabledIf(historyCheckBox.selected).gap(RightGap.SMALL)
+          comment("Amount of history items to persist").enabledIf(historyCheckBox.selected)
         }
 
       }
@@ -92,9 +101,9 @@ class GBrowserProjectSettingsComponent : SimpleToolWindowPanel(true, true), Disp
   }
 
   private fun Panel.browserOptions() {
-    group("Debug Options", true) {
+    group("Developer Options", true) {
       row {
-        val debugPortEnable = checkBox("Port").bindSelected(settings::isDebugEnabled) { value ->
+        val debugPortEnable = checkBox("Debug port").bindSelected(settings::isDebugEnabled) { value ->
           settings.isDebugEnabled = value
         }.gap(RightGap.SMALL)
         spinner(-1..9999, 1).bindIntValue(settings::debugPort) { value ->
@@ -104,7 +113,7 @@ class GBrowserProjectSettingsComponent : SimpleToolWindowPanel(true, true), Disp
         comment("Required an IDE restart").enabledIf(debugPortEnable.selected)
       }
       row {
-        comment("Port which can be used for debugging JavaScript in JCEF components")
+        comment("Port which can be used for debugging javaScript in JCEF components")
       }
     }
 
@@ -112,33 +121,37 @@ class GBrowserProjectSettingsComponent : SimpleToolWindowPanel(true, true), Disp
   }
 
   private fun Panel.toolWindowOptions() {
-    group("GBrowser Toolwindow Appearance", true) {
+    group("Tool Window Settings", true) {
+      threeColumnsRow({
+                        checkBox("Hide toolwindow label").bindSelected(settings::hideIdLabel) { value ->
+                          settings.hideIdLabel = value
+                        }
+                      }, {
+                        checkBox("Show tab's icon").bindSelected(settings::isTabIconVisible) { value ->
+                          settings.isTabIconVisible = value
+                        }
+                      }, {
+                        checkBox("Show bookmarks' toolbar").bindSelected(settings::showBookMarksInToolbar) { value ->
+                          settings.showBookMarksInToolbar = value
+                        }
+                      })
       twoColumnsRow({
-                      checkBox("Hide ToolWindow title").bindSelected(settings::isToolWindowTitleVisible) { value ->
-                        settings.isToolWindowTitleVisible = value
-                      }
+                      checkBox("Enable drag and drop tabs").bindSelected(settings::isDragAndDropEnabled) { value ->
+                        settings.isDragAndDropEnabled = value
+                      }.comment("Allow drag and drop for tabs")
                     }, {
-                      checkBox("Enable Tab reorder").bindSelected(settings::isDnDEnabled) { value ->
-                        settings.isDnDEnabled = value
-                      }
-                    })
-      twoColumnsRow({
-                      checkBox("Show Tab icon").bindSelected(settings::isTabIconVisible) { value ->
-                        settings.isTabIconVisible = value
-                      }
-                    }, {
-                      checkBox("Show bookmarks Icons").bindSelected(settings::showBookMarksInToolbar) { value ->
-                        settings.showBookMarksInToolbar = value
-                      }
+                      checkBox("Reload previous tabs").bindSelected(settings::reloadTabOnStartup) { value ->
+                        settings.reloadTabOnStartup = value
+                      }.comment("Restore tabs when reopening a project")
                     })
     }
   }
 
 
   private fun Panel.bookmarksOptions() {
-    collapsibleGroup("Bookmarks", true) {
+    collapsibleGroup("Bookmark Management", true) {
       row {
-        cell(bookmarks.createScrollPane()).comment("Add and Remove bookmarks").align(Align.FILL).validationOnApply {
+        cell(bookmarks.createScrollPane()).comment("Manage your bookmarks").align(Align.FILL).validationOnApply {
 
           return@validationOnApply bookmarks.validate()
         }
@@ -154,16 +167,14 @@ class GBrowserProjectSettingsComponent : SimpleToolWindowPanel(true, true), Disp
   }
 
   private fun Panel.responseHeaderOptions() {
-    collapsibleGroup("Response Headers", true) {
+    collapsibleGroup("HTTP Response Headers", true) {
       row {
         cell(responseHeaders.createScrollPane()).label("Headers", LabelPosition.TOP).comment(
-          "Add and Remove headers. The overwrite column is used to overwrite the header if it already exists in the request.").align(
+          "Manage your response headers. The overwrite column is used to overwrite the header if it already exists in the request.").align(
           Align.FILL)
       }.resizableRow()
     }.apply {
 
-      // Border is required to have more space - otherwise there could be issues with focus ring.
-      // `getRegularPanelInsets()` is used to simplify border calculation for dialogs where this panel is used.
       border = JBEmptyBorder(UIUtil.getRegularPanelInsets())
 
     }.topGap(TopGap.NONE)
@@ -178,17 +189,6 @@ class GBrowserProjectSettingsComponent : SimpleToolWindowPanel(true, true), Disp
     bookmarks.apply()
     responseHeaders.apply()
 
-    //val bus = ApplicationManager.getApplication().messageBus
-    //bus.syncPublisher(GBrowserSettingsChangedAction.TOPIC).settingsChanged(settings)
-    //settings.addListener(object : GBrowserSetting.Listener {
-    //  override fun onSettingsChange(settings: GBrowserSetting) {
-    //    bus.syncPublisher(GBrowserSettingsChangedAction.TOPIC).settingsChanged(settings)
-    //  }
-    //})
-    //
-    //settings.addListener { state: GBrowserSetting.SettingsState ->
-    //  update(state)
-    //}
   }
 
   fun reset() {

@@ -21,21 +21,6 @@ fun createToolBarAction(actions: AnAction, targetComponent: JComponent?): Action
   return actionToolbar
 }
 
-fun registerAction(actionId: String, actions: AnAction) {
-  val actionManager = ActionManager.getInstance()
-  actionManager.replaceAction(actionId, actions)
-}
-
-fun replaceRegisteredAction(actionId: String, actions: AnAction) {
-  val actionManager = ActionManager.getInstance()
-  actionManager.replaceAction(actionId, actions)
-}
-
-fun unregisterAction(actionId: String) {
-  val actionManager = ActionManager.getInstance()
-  actionManager.unregisterAction(actionId)
-}
-
 fun createToolBarActionPanel(actions: DefaultActionGroup): BorderLayoutPanel {
   val actionToolbar = createToolbar(actions) as ActionToolbar
   val component = actionToolbar.component

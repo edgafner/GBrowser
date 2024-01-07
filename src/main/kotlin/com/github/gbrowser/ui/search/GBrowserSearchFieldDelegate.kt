@@ -8,5 +8,5 @@ interface GBrowserSearchFieldDelegate {
 
   fun onFocusLost()
 
-  fun onKeyReleased(text: String, popupItems: (List<GBrowserSearchPopUpItem>?) -> Unit)
+  fun onKeyReleased(text: String, popupItems: (List<GBrowserSearchPopUpItemImpl>, List<GBrowserSearchPopUpItemImpl>, List<GBrowserSearchPopUpItemImpl>) -> Unit)
 }

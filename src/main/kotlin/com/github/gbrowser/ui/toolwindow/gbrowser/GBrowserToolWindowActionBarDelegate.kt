@@ -1,8 +1,10 @@
 package com.github.gbrowser.ui.toolwindow.gbrowser
 
-import com.github.gbrowser.ui.search.GBrowserSearchPopUpItem
+import com.github.gbrowser.ui.search.GBrowserSearchPopUpItemImpl
 
 interface GBrowserToolWindowActionBarDelegate {
+
+  fun onToolBarIcon(text: String)
 
   fun onSearchEnter(text: String)
 
@@ -10,5 +12,5 @@ interface GBrowserToolWindowActionBarDelegate {
 
   fun onSearchFocusLost()
 
-  fun onKeyReleased(text: String, popupItems: (List<GBrowserSearchPopUpItem>?) -> Unit)
+  fun onKeyReleased(text: String, popupItems: (List<GBrowserSearchPopUpItemImpl>, List<GBrowserSearchPopUpItemImpl>, List<GBrowserSearchPopUpItemImpl>) -> Unit)
 }

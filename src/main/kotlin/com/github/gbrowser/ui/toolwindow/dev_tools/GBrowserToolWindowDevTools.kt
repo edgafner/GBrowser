@@ -49,7 +49,7 @@ class GBrowserToolWindowDevTools(private var toolWindow: ToolWindow, var browser
     if (title == null) return
     toolWindow.contentManager.getContent(this)?.let {
       application.invokeLater {
-        val tabName = if (title.length >= 17) title.take(17) + "..." else name
+        val tabName = if (title.length >= 17) title.take(17) + "..." else title
         it.displayName = tabName
       }
     }

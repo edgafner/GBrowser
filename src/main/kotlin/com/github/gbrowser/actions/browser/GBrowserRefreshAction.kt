@@ -1,6 +1,6 @@
 package com.github.gbrowser.actions.browser
 
-import com.github.gbrowser.ui.toolwindow.gbrowser.getSelectedBrowserPanel
+import com.github.gbrowser.util.GBrowserToolWindowUtil
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -10,7 +10,7 @@ class GBrowserRefreshAction : AnAction(), DumbAware {
 
   
   override fun update(e: AnActionEvent) {
-    e.presentation.isEnabled = getSelectedBrowserPanel(e)?.hasContent() ?: false
+    e.presentation.isEnabled = GBrowserToolWindowUtil.getSelectedBrowserPanel(e)?.hasContent() ?: false
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread {
@@ -18,7 +18,7 @@ class GBrowserRefreshAction : AnAction(), DumbAware {
   }
 
   override fun actionPerformed(e: AnActionEvent) {
-    val panel = getSelectedBrowserPanel(e) ?: return
+    val panel = GBrowserToolWindowUtil.getSelectedBrowserPanel(e) ?: return
     panel.reload()
     panel.updateUI()
   }

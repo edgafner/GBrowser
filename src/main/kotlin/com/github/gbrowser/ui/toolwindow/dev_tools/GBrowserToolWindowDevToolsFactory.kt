@@ -59,7 +59,7 @@ class GBrowserToolWindowDevToolsFactory : ToolWindowFactory, DumbAware {
   }
 
   private fun getToolWindowIcon(): Icon {
-    return GBrowserIcons.TOOL_WINDOW_DEV_TOOLS
+    return GBrowserIcons.DEV_TOOLS_ACTIVE
   }
 
   object Companion {
@@ -96,6 +96,7 @@ class GBrowserToolWindowDevToolsFactory : ToolWindowFactory, DumbAware {
       })
 
       toolWindow.show()
+      showContent(toolWindow, content)
     }
 
     private fun showContent(toolWindow: ToolWindow, content: Content) {

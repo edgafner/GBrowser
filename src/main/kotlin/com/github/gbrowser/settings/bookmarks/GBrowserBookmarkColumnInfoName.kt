@@ -25,6 +25,7 @@ class GBrowserBookmarkColumnInfoName : ColumnInfo<GBrowserBookmark, String>("Nam
     item.name = value
   }
 
+  @Suppress("DuplicatedCode")
   override fun getRenderer(item: GBrowserBookmark): TableCellRenderer {
     return object : DefaultTableCellRenderer() {
       override fun getTableCellRendererComponent(table: JTable,

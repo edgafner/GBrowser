@@ -2,23 +2,21 @@ package com.github.gbrowser.ui.toolwindow.gbrowser
 
 import com.github.gbrowser.GBrowserIcons
 import com.github.gbrowser.actions.GBrowserActionId
-import com.github.gbrowser.actions.GBrowserDefaultActionLayouts
-import com.github.gbrowser.actions.GBrowserDynamicGroupAction
-import com.github.gbrowser.actions.bookmark.GBrowserBookmarkGroupAction
-import com.github.gbrowser.settings.GBrowserProjectSetting
-import com.github.gbrowser.settings.GBrowserSetting
+import com.github.gbrowser.settings.GBrowserProjectService
+import com.github.gbrowser.settings.GBrowserService
+import com.github.gbrowser.util.GBrowserToolWindowUtil
 import com.github.gbrowser.util.GBrowserUtil
 import com.intellij.ide.AppLifecycleListener
-import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
-import com.intellij.openapi.project.DumbAware
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.ProjectManager
-import com.intellij.openapi.project.VetoableProjectManagerListener
+import com.intellij.openapi.project.*
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
+import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.openapi.wm.ex.ToolWindowEx
+import com.intellij.openapi.wm.ex.ToolWindowManagerListener
 import com.intellij.openapi.wm.impl.content.ToolWindowContentUi
 import com.intellij.ui.content.ContentManagerEvent
 import com.intellij.ui.content.ContentManagerListener
@@ -26,27 +24,57 @@ import com.intellij.util.application
 import java.util.*
 
 
-class GBrowserToolWindowFactory : ToolWindowFactory, DumbAware, VetoableProjectManagerListener, ContentManagerListener {
+@Suppress("UnstableApiUsage")
+class GBrowserToolWindowFactory : ToolWindowFactory, DumbAware, ContentManagerListener {
 
-  private val gBrowserSetting = GBrowserSetting.instance()
-  private lateinit var gBrowserProjectSetting: GBrowserProjectSetting
+  private val myGBrowserService = GBrowserService.instance()
+  private lateinit var myGBrowserProjectService: GBrowserProjectService
   private lateinit var project: Project
 
   override fun init(toolWindow: ToolWindow) {
     project = toolWindow.project
-    gBrowserProjectSetting = project.service<GBrowserProjectSetting>()
-    GBrowserDefaultActionLayouts.initialize()
-
+    myGBrowserProjectService = project.service<GBrowserProjectService>()
 
   }
 
   override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
     configureToolWindow(toolWindow)
-    GBrowserToolWindowBuilder.createContentTab(toolWindow, gBrowserSetting.defaultUrl, "")
-
-    createTabActions(toolWindow)
+    if (!myGBrowserService.reloadTabOnStartup || myGBrowserProjectService.tabs.isEmpty()) {
+      GBrowserToolWindowUtil.createContentTab(toolWindow, myGBrowserService.defaultUrl, "")
+    }
+    //createTabActions(toolWindow)
     createTitleActions(toolWindow)
     createAdditionalGearActions(toolWindow)
+
+    project.messageBus.connect(toolWindow.disposable).subscribe<ToolWindowManagerListener>(ToolWindowManagerListener.TOPIC,
+                                                                                           object : ToolWindowManagerListener {
+                                                                                             override fun toolWindowsRegistered(ids: MutableList<String>,
+                                                                                                                                toolWindowManager: ToolWindowManager) {
+                                                                                               if (ids.contains(
+                                                                                                   GBrowserUtil.GBROWSER_TOOL_WINDOW_ID) && myGBrowserService.reloadTabOnStartup) {
+                                                                                                 createTabsOnAppStart(toolWindow)
+                                                                                               }
+                                                                                             }
+                                                                                           })
+
+    project.messageBus.connect(toolWindow.disposable).subscribe(ProjectCloseListener.TOPIC, object : ProjectCloseListener {
+      override fun projectClosingBeforeSave(project: Project) {
+        toolWindow.let {
+          val contentManager = it.contentManager
+          val tabs = contentManager.contents
+
+          val gBrowserTabs = tabs.take(5).mapNotNull { con ->
+            val panel = con.component as? GBrowserToolWindowBrowser
+            panel?.getCurrentUrl()?.let { currentUrl ->
+              val title = panel.getCurrentTitle()
+              GBrowserTab(currentUrl, title, Date())
+            }
+          }
+          myGBrowserProjectService.addTabs(gBrowserTabs)
+        }
+      }
+    })
+
   }
 
   private fun configureToolWindow(toolWindow: ToolWindow) {
@@ -56,14 +84,14 @@ class GBrowserToolWindowFactory : ToolWindowFactory, DumbAware, VetoableProjectM
       toolWindow.setIcon(GBrowserIcons.GBROWSER_LOGO)
     }
     toolWindow.contentManager.contents.forEach { content ->
-      content.putUserData(ToolWindow.SHOW_CONTENT_ICON, gBrowserSetting.isTabIconVisible)
+      content.putUserData(ToolWindow.SHOW_CONTENT_ICON, myGBrowserService.isTabIconVisible)
     }
 
-    toolWindow.component.putClientProperty("HideIdLabel", gBrowserSetting.isToolWindowTitleVisible.toString())
+    toolWindow.component.putClientProperty("HideIdLabel", myGBrowserService.hideIdLabel.toString())
     (toolWindow as? ToolWindowEx)?.updateContentUi()
 
     toolWindow.component.putClientProperty(ToolWindowContentUi.DONT_HIDE_TOOLBAR_IN_HEADER, true)
-    toolWindow.component.putClientProperty(ToolWindowContentUi.ALLOW_DND_FOR_TABS, gBrowserSetting.isDnDEnabled)
+    toolWindow.component.putClientProperty(ToolWindowContentUi.ALLOW_DND_FOR_TABS, myGBrowserService.isDragAndDropEnabled)
     toolWindow.contentManager.addContentManagerListener((object : ContentManagerListener {
       override fun selectionChanged(event: ContentManagerEvent) {
         if (event.content.isSelected) {
@@ -82,9 +110,9 @@ class GBrowserToolWindowFactory : ToolWindowFactory, DumbAware, VetoableProjectM
 
 
   private fun addSettingsListener(toolWindow: ToolWindow) {
-    gBrowserSetting.addListener { state: GBrowserSetting.SettingsState ->
-      toolWindow.component.putClientProperty("HideIdLabel", state.isToolWindowTitleVisible.toString())
-      toolWindow.component.putClientProperty(ToolWindowContentUi.ALLOW_DND_FOR_TABS, state.isDnDEnabled)
+    myGBrowserService.addListener { state: GBrowserService.SettingsState ->
+      toolWindow.component.putClientProperty("HideIdLabel", state.hideIdLabel.toString())
+      toolWindow.component.putClientProperty(ToolWindowContentUi.ALLOW_DND_FOR_TABS, state.isDragAndDropEnabled)
       toolWindow.contentManager.contents.forEach { content ->
         content.putUserData(ToolWindow.SHOW_CONTENT_ICON, state.isTabIconVisible)
       }
@@ -102,35 +130,13 @@ class GBrowserToolWindowFactory : ToolWindowFactory, DumbAware, VetoableProjectM
   }
 
   private fun createTitleActions(toolWindow: ToolWindow) {
-    GBrowserActionId.GBROWSER_TOGGLE_TOOLBAR_ID.let { id ->
-      val action = ActionManager.getInstance().getAction(id)
-      toolWindow.setTitleActions(listOf(action))
-    }
+    toolWindow.setTitleActions(GBrowserActionId.titleActions())
   }
 
   private fun createAdditionalGearActions(toolWindow: ToolWindow) {
-    val titleActions = DefaultActionGroup()
-
-
-    val devToolsGroup = GBrowserDynamicGroupAction(GBrowserActionId.DEVTOOLS_GROUP, GBrowserIcons.DEV_TOOLS, "Inspect")
-    titleActions.add(devToolsGroup)
-    titleActions.add(Separator.create())
-
-    val cleanGroup = GBrowserDynamicGroupAction(GBrowserActionId.CLEAR_BROWSER_DATA, GBrowserIcons.COOKIES, "Clear Cookies and History")
-    titleActions.add(cleanGroup)
-    titleActions.add(Separator.create())
-    titleActions.addAll(GBrowserActionId.BOOKMARK)
-    titleActions.add(GBrowserBookmarkGroupAction())
-    titleActions.add(Separator.create())
-    titleActions.addAll(GBrowserActionId.TABS)
-    titleActions.add(Separator.create())
-    titleActions.addAll(GBrowserActionId.BROWSER)
-    titleActions.add(Separator.create())
-    titleActions.addAll(GBrowserActionId.ZOOM)
-    titleActions.add(Separator.create())
-    titleActions.add(GBrowserActionId.toAction(GBrowserActionId.GBROWSER_PREFERENCES_ID))
-
-    toolWindow.setAdditionalGearActions(titleActions)
+    val actionGroup = DefaultActionGroup()
+    actionGroup.addAll(GBrowserActionId.allActions())
+    toolWindow.setAdditionalGearActions(actionGroup)
   }
 
 
@@ -141,25 +147,11 @@ class GBrowserToolWindowFactory : ToolWindowFactory, DumbAware, VetoableProjectM
     val topic = AppLifecycleListener.TOPIC
     messageBusConnection.subscribe(topic, object : AppLifecycleListener {
       override fun appClosing() {
-        computeHistoryItemsClearing()
         removeSettingsListener()
         removeApplicationListener()
         super.appClosing()
       }
     })
-  }
-
-
-  private fun computeHistoryItemsClearing() {
-    val intervalHrs: Int = gBrowserSetting.historyDeleteOption.hours
-
-    if (intervalHrs == 0) {
-      gBrowserSetting.removeHistory()
-    } else if (intervalHrs != -1) {
-      val deleteDate = Date(Date().time - 1000L * 60 * 60 * intervalHrs)
-      gBrowserSetting.removeHistory(deleteDate)
-      gBrowserProjectSetting.removeTabs(deleteDate)
-    }
   }
 
   private fun removeSettingsListener() {
@@ -176,58 +168,18 @@ class GBrowserToolWindowFactory : ToolWindowFactory, DumbAware, VetoableProjectM
     }
   }
 
-  @Suppress("unused")
-  private fun addProjectListener() {
-    ProjectManager.getInstance().addProjectManagerListener(this as VetoableProjectManagerListener)
+  private fun createTabsOnAppStart(toolWindow: ToolWindow) {
+    val tabs = myGBrowserProjectService.tabs
+    if (tabs.isNotEmpty()) {
+      for (tab in tabs) {
+        GBrowserToolWindowUtil.createContentTab(toolWindow, tab.url, tab.name)
+      }
+    }
   }
 
-  @Suppress("unused")
-  private fun removeProjectListener() {
-    ProjectManager.getInstance().removeProjectManagerListener(this as VetoableProjectManagerListener)
-  }
 
-
-  override fun canClose(project: Project): Boolean = true
-
-  //private fun createTabsOnAppStart(toolWindow: ToolWindow) {
-  //  val tabs = gbrowserProjectService.tabs
-  //  if (tabs.isEmpty()) {
-  //    GBrowserToolWindowBuilder.createContentTab(toolWindow = toolWindow, url = null, tabName = null)
-  //  } else {
-  //    for (tab in tabs) {
-  //      GBrowserToolWindowBuilder.createContentTab(toolWindow, tab.url, tab.name)
-  //    }
-  //    gbrowserProjectService.removeTabs(tabs)
-  //  }
-  //}
-
-
-  //private fun storeTabsOnClosingProject(project: Project) {
-  //  val toolWindow = getToolWindow(project, "GBrowser")
-  //  toolWindow?.let {
-  //    val contentManager = it.contentManager
-  //    val tabs = contentManager.contents
-  //
-  //    for (element in tabs) {
-  //      val panel = element.component as? GBrowserToolWindowBrowser
-  //      val url = panel?.getCurrentUrl() ?: continue
-  //      val title = panel.getCurrentTitle()
-  //      gbrowserProjectService.addTab(GBrowserTab(url, title, Date()))
-  //    }
-  //  }
-  //}
 }
 
 
-fun getSelectedBrowserPanel(anActionEvent: AnActionEvent): GBrowserToolWindowBrowser? {
-  val project = anActionEvent.getRequiredData(CommonDataKeys.PROJECT)
-  return getSelectedBrowserPanel(project)
-}
-
-fun getSelectedBrowserPanel(project: Project): GBrowserToolWindowBrowser? {
-  val toolWindow = getToolWindow(project, GBrowserUtil.GROUP_DISPLAY_ID) ?: return null
-  val selectedContent = toolWindow.contentManager.selectedContent ?: return null
-  return selectedContent.component as? GBrowserToolWindowBrowser
-}
 
 

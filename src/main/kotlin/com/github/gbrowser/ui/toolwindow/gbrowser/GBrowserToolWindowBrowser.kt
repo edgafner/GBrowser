@@ -1,35 +1,35 @@
 package com.github.gbrowser.ui.toolwindow.gbrowser
 
-import com.github.gbrowser.settings.GBrowserSetting
-import com.github.gbrowser.settings.dao.GBrowserHistory
+import com.github.gbrowser.services.providers.CachingFavIconLoader
+import com.github.gbrowser.settings.GBrowserService
 import com.github.gbrowser.settings.bookmarks.GBrowserBookmark
+import com.github.gbrowser.settings.dao.GBrowserHistory
 import com.github.gbrowser.ui.gcef.GBrowserCefDevToolsListener
 import com.github.gbrowser.ui.gcef.GBrowserCefDisplayChangeDelegate
 import com.github.gbrowser.ui.gcef.GCefBrowser
 import com.github.gbrowser.ui.gcef.impl.GBrowserCefRequestHandler
-import com.github.gbrowser.ui.search.GBrowserSearchPopUpItem
+import com.github.gbrowser.ui.search.GBrowserSearchPopUpItemImpl
 import com.github.gbrowser.util.GBrowserUtil
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.service
 import com.intellij.openapi.ui.SimpleToolWindowPanel
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.util.application
 import com.intellij.util.messages.MessageBus
 import com.intellij.util.messages.MessageBusConnection
-import java.util.*
-import javax.swing.Icon
 
 class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleToolWindowPanel(true, true), Disposable,
                                                                       GBrowserToolWindowActionBarDelegate, GBrowserCefDisplayChangeDelegate,
                                                                       GBrowserCefDevToolsListener {
-  private val settings: GBrowserSetting = GBrowserSetting.instance()
-  private var toolBar: GBrowserToolWindowActionBar = GBrowserToolWindowActionBar(this, toolWindow)
+  private val settings: GBrowserService = GBrowserService.instance()
+  private var toolBar: GBrowserToolWindowActionBar = GBrowserToolWindowActionBar(this)
   private var currentUrl: String = settings.defaultUrl
   private var currentTitle: String = ""
   private var zoomLevel: Double = 0.0
-  private var browser: GCefBrowser = GCefBrowser(currentUrl, null, null)
-  private var devToolsBrowser: GCefBrowser? = null
-  private var isDevToolsBrowser: Boolean = false
+  private var browser: GCefBrowser = GCefBrowser(toolWindow.project, currentUrl, null, null)
+  private val devTools = GCefBrowser(toolWindow.project, null, browser.client, browser.devTools, browser.id)
+  private val favIconLoader: CachingFavIconLoader = service()
   private val bus: MessageBus = ApplicationManager.getApplication().messageBus
   private val settingsConnection: MessageBusConnection = bus.connect()
   private var isSearchFocused: Boolean = false
@@ -43,6 +43,7 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
 
   private fun setupBrowser() {
     browser.addDisplayHandler(this)
+    browser.addLifeSpanHandler(toolWindow)
     browser.addRequestHandler(GBrowserCefRequestHandler(null))
     setContent(browser.component)
   }
@@ -61,28 +62,16 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
 
   fun getBrowser(): GCefBrowser = browser
 
-  fun isDevToolsBrowserPanel(): Boolean = isDevToolsBrowser
-
-  fun setIsDevToolsBrowserPanel(isDevTools: Boolean) {
-    isDevToolsBrowser = isDevTools
-  }
-
-  fun getDevToolsBrowser(): GCefBrowser? = devToolsBrowser
-
-  fun setDevToolsBrowser(browser: GCefBrowser?) {
-    devToolsBrowser = browser
-  }
-
+  fun getDevToolsBrowser(): GCefBrowser = devTools
 
   override fun dispose() {
-    devToolsBrowser?.disposeDevTools()
     browser.dispose()
     toolBar.dispose()
     removeSettingsListener()
   }
 
   private fun addSettingsListener() {
-    settings.addListener { state: GBrowserSetting.SettingsState ->
+    settings.addListener { state: GBrowserService.SettingsState ->
       state.let {
         toolBar.search?.let {
           it.isHostHighlighted = state.isHostHighlight
@@ -155,24 +144,6 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
     return url.isNotEmpty()
   }
 
-  fun hasDevToolsInstance(): Boolean {
-    return devToolsBrowser != null
-  }
-
-
-  fun createDevTools(url: String): GCefBrowser? {
-    if (devToolsBrowser == null) {
-      devToolsBrowser = GCefBrowser(url, browser.client, browser.devTools)
-      val devTools = devToolsBrowser
-      devTools?.addDevToolsListener(this)
-    }
-
-    return devToolsBrowser
-  }
-
-  //fun getAllCookies() {
-  // //browser.getAllCookies { }
-  //}
 
   fun deleteCookies() {
     browser.deleteCookies()
@@ -197,7 +168,7 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
     val tabComponent = toolWindow.contentManager.getContent(this)
     if (tabComponent != null) {
       application.invokeLater {
-        val tabName = if (name.length > 6) name.take(6) + "..." else name
+        val tabName = if (name.length > 11) name.take(11).plus("...").trim() else name.trim()
         tabComponent.displayName = tabName
       }
     }
@@ -206,9 +177,10 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
   private fun setTabIcon(url: String) {
     val builderContent = toolWindow.contentManager.getContent(this)
     if (builderContent != null) {
-      GBrowserUtil.loadFavIconBGT(url) { icon: Icon? ->
+      favIconLoader.loadFavIcon(url).thenAccept { icon ->
         icon?.let { builderContent.icon = it }
       }
+
     }
   }
 
@@ -219,13 +191,17 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
   private fun setHistoryItem() {
     if (currentUrl.trim().isNotEmpty()) {
       if (settings.isHistoryEnabled) {
-        settings.addHistory(GBrowserHistory(currentTitle, currentUrl, Date()))
+        settings.addHistory(GBrowserHistory(currentTitle, currentUrl))
       }
     }
   }
 
   private fun removeSettingsListener() {
     settingsConnection.disconnect()
+  }
+
+  override fun onToolBarIcon(text: String) {
+    loadUrl(text)
   }
 
   override fun onSearchEnter(text: String) {
@@ -244,25 +220,28 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
     isSearchFocused = false
   }
 
-  override fun onKeyReleased(text: String, popupItems: (List<GBrowserSearchPopUpItem>?) -> Unit) {
-    val displayItems = mutableListOf<GBrowserSearchPopUpItem>()
+  override fun onKeyReleased(text: String,
+                             popupItems: (List<GBrowserSearchPopUpItemImpl>, List<GBrowserSearchPopUpItemImpl>, List<GBrowserSearchPopUpItemImpl>) -> Unit) {
+    val historyItems = mutableListOf<GBrowserSearchPopUpItemImpl>()
 
     val history: MutableSet<GBrowserHistory> = settings.history
-    displayItems.addAll(getHistoryItemsWidthValue(text, history, settings.isFavIconEnabled))
+    historyItems.addAll(getHistoryItemsWidthValue(text, history, favIconLoader, settings.isFavIconEnabled))
 
+    val bookMarksItems = mutableListOf<GBrowserSearchPopUpItemImpl>()
     val bookmarks: MutableSet<GBrowserBookmark> = settings.bookmarks
-    displayItems.addAll(getHBookmarkItemsWidthValue(text, bookmarks))
+    bookMarksItems.addAll(getHBookmarkItemsWidthValue(text, bookmarks))
 
+    val suggestedItems = mutableListOf<GBrowserSearchPopUpItemImpl>()
     val isSuggestionEnabled: Boolean = settings.isSuggestionSearchEnabled
     if (isSuggestionEnabled) {
-      displayItems.addAll(getSuggestionItems(text))
+      suggestedItems.addAll(getSuggestionItems(text))
     }
 
-    popupItems.invoke(displayItems)
+    popupItems.invoke(historyItems, bookMarksItems, suggestedItems)
   }
 
   override fun onDisposeDevtools() {
-    devToolsBrowser = null
+    browser.disposeDevTools()
   }
 
   override fun onAddressChange(url: String) {
@@ -271,6 +250,7 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
     }
 
     setTabIcon(url)
+    setHistoryItem()
     setCurrentUrl(url)
 
   }
@@ -281,10 +261,9 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
     }
     setTabName(title)
     setCurrentTitle(title)
-    setHistoryItem()
     browser.setVisibility(true)
-    devToolsBrowser?.notifyTitleChanged(title)
-
+    browser.notifyTitleChanged(title)
+    devTools.notifyTitleChanged(title)
   }
 
 

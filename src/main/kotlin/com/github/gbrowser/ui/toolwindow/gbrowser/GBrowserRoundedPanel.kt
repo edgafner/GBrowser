@@ -13,8 +13,6 @@ class GBrowserRoundedPanel(layout: LayoutManager? = null, private var cornerRadi
     }
   }
 
-  constructor(radius: Int) : this(null, radius)
-
   constructor(radius: Int, bgColor: Color?) : this(null, radius, bgColor)
 
   override fun paintComponent(g: Graphics) {

@@ -10,7 +10,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
 
-        <applicationService serviceImplementation="com.github.gbrowser.settings.GBrowserSetting"/>
+        <applicationService serviceImplementation="com.github.gbrowser.settings.GBrowserService"/>
         <projectConfigurable parentId="tools" instance="com.github.gbrowser.settings.project.GBrowserProjectSettingsConfigurable"
                              id="com.github.gbrowser.settings.project.GBrowserProjectSettingsConfigurable"
                              displayName="GBrowser"/>
@@ -22,8 +22,8 @@
 
         <toolWindow id="DevTools" factoryClass="com.github.gbrowser.ui.toolwindow.dev_tools.GBrowserToolWindowDevToolsFactory"
                     anchor="bottom"
-                    secondary="true" canCloseContents="true" doNotActivateOnStart="true"
-                    icon="com.github.gbrowser.GBrowserIcons.TOOL_WINDOW_DEV_TOOLS"/>
+                    secondary="false" canCloseContents="true" doNotActivateOnStart="true"
+                    icon="com.github.gbrowser.GBrowserIcons.DEV_TOOLS_ACTIVE"/>
 
 
         <iconMapper mappingFile="GBrowserIconMappings.json"/>
@@ -34,16 +34,18 @@
     <actions>
 
         <!--        browser-->
-        <action id="GBrowserForwardAction" class="com.github.gbrowser.actions.browser.GBrowserForwardAction"
+        <action id="GBrowserForwardAction" class="com.github.gbrowser.actions.browser.navigation.GBrowserForwardAction"
                 icon="AllIcons.Actions.Forward">
             <keyboard-shortcut keymap="$default" first-keystroke="alt RIGHT"/>
         </action>
 
-        <action id="GBrowserBackwardAction" class="com.github.gbrowser.actions.browser.GBrowserBackwardAction" icon="AllIcons.Actions.Back">
+        <action id="GBrowserBackwardAction" class="com.github.gbrowser.actions.browser.navigation.GBrowserBackwardAction"
+                icon="AllIcons.Actions.Back">
             <keyboard-shortcut keymap="$default" first-keystroke="alt LEFT"/>
         </action>
 
-        <action id="GBrowserHomeAction" class="com.github.gbrowser.actions.browser.GBrowserHomeAction" icon="AllIcons.Nodes.HomeFolder">
+        <action id="GBrowserHomeAction" class="com.github.gbrowser.actions.browser.navigation.GBrowserHomeAction"
+                icon="AllIcons.Nodes.HomeFolder">
             <keyboard-shortcut keymap="$default" first-keystroke="alt control H"/>
         </action>
 
@@ -64,17 +66,18 @@
         <action id="GBrowserPreferencesAction" class="com.github.gbrowser.actions.browser.GBrowserPreferencesAction"
                 icon="AllIcons.Actions.Refresh"/>
 
-        <action id="GBrowserZoomInAction" class="com.github.gbrowser.actions.browser.GBrowserZoomInAction" icon="AllIcons.General.ZoomIn">
+        <action id="GBrowserZoomInAction" class="com.github.gbrowser.actions.browser.zoom.GBrowserZoomInAction"
+                icon="AllIcons.General.ZoomIn">
             <keyboard-shortcut keymap="$default" first-keystroke="control PLUS"/>
         </action>
 
-        <action id="GBrowserZoomOutAction" class="com.github.gbrowser.actions.browser.GBrowserZoomOutAction"
+        <action id="GBrowserZoomOutAction" class="com.github.gbrowser.actions.browser.zoom.GBrowserZoomOutAction"
                 icon="AllIcons.General.ZoomOut">
             <keyboard-shortcut keymap="$default" first-keystroke="control MINUS"/>
 
         </action>
 
-        <action id="GBrowserZoomResetAction" class="com.github.gbrowser.actions.browser.GBrowserZoomResetAction"
+        <action id="GBrowserZoomResetAction" class="com.github.gbrowser.actions.browser.zoom.GBrowserZoomResetAction"
                 icon="AllIcons.General.ActualZoom">
             <keyboard-shortcut keymap="$default" first-keystroke="control 0"/>
         </action>
@@ -86,12 +89,12 @@
             <keyboard-shortcut keymap="$default" first-keystroke="alt F3"/>
         </action>
 
-        <action id="GBrowserCookieDeleteAllAction" class="com.github.gbrowser.actions.browser.GBrowserCookieDeleteAllAction"
+        <action id="GBrowserCookieDeleteAllAction" class="com.github.gbrowser.actions.browser.clear.GBrowserCookieDeleteAllAction"
                 icon="com.github.gbrowser.GBrowserIcons.BROOM">
             <keyboard-shortcut keymap="$default" first-keystroke="shift control 8"/>
         </action>
 
-        <action id="GBrowserClearHistoryAction" class="com.github.gbrowser.actions.browser.GBrowserClearHistoryAction"
+        <action id="GBrowserClearHistoryAction" class="com.github.gbrowser.actions.browser.clear.GBrowserClearHistoryAction"
                 icon="com.github.gbrowser.GBrowserIcons.BROOM">
             <keyboard-shortcut keymap="$default" first-keystroke="shift control 7"/>
         </action>
@@ -115,12 +118,8 @@
         </group>
 
         <!--        devtools-->
-        <action id="GBrowserDevToolsToolWindowAction" class="com.github.gbrowser.actions.devtools.GBrowserDevToolsToolWindowAction">
+        <action id="GBrowserDevToolsAction" class="com.github.gbrowser.actions.devtools.GBrowserDevToolsAction">
             <keyboard-shortcut keymap="$default" first-keystroke="control I"/>
-        </action>
-
-        <action id="GBrowserDevToolsWindowAction" class="com.github.gbrowser.actions.devtools.GBrowserDevToolsWindowAction">
-            <keyboard-shortcut keymap="$default" first-keystroke="control alt I"/>
         </action>
 
         <!--        toolwindow-->
@@ -141,6 +140,14 @@
         <action id="GBrowserCloseTabAction" class="com.github.gbrowser.actions.toolwindow.GBrowserCloseTabAction"
                 icon="AllIcons.Actions.Cancel">
             <keyboard-shortcut keymap="$default" first-keystroke="control W"/>
+        </action>
+
+
+        <!--        editor-->
+        <action class="com.github.gbrowser.actions.editor.GBrowserEditorOpenAction" id="GBrowserEditorOpenAction" text="Open in GBrowser"
+                description="Open in GBrowser" icon="com.github.gbrowser.GBrowserIcons.GBROWSER_LOGO">
+            <add-to-group group-id="EditorPopupMenu" anchor="after" relative-to-action="EditorPopupMenu1"/>
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="ReplaceInPath"/>
         </action>
     </actions>
 

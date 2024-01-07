@@ -12,11 +12,12 @@ interface GBrowserSearchFieldPaneDelegate {
 
   fun onFocusLost()
 
-  fun onKeyReleased(text: String, popupItems: (List<GBrowserSearchPopUpItem>?) -> Unit)
+  fun onKeyReleased(text: String,
+                    popupItems: (List<GBrowserSearchPopUpItemImpl>, List<GBrowserSearchPopUpItemImpl>, List<GBrowserSearchPopUpItemImpl>) -> Unit)
 
   fun onMouseEntered()
 
   fun onMouseExited()
 
-  fun onSelect(item: GBrowserSearchPopUpItem)
+  fun onSelect(item: GBrowserSearchPopUpItemImpl)
 }

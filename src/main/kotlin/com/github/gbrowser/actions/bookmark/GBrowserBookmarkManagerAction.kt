@@ -1,6 +1,6 @@
 package com.github.gbrowser.actions.bookmark
 
-import com.github.gbrowser.settings.GBrowserSetting
+import com.github.gbrowser.settings.GBrowserService
 import com.github.gbrowser.settings.project.GBrowserProjectSettingsConfigurable
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
@@ -12,7 +12,7 @@ import com.intellij.openapi.project.DumbAware
 class GBrowserBookmarkManagerAction : AnAction(), DumbAware {
 
   override fun update(e: AnActionEvent) {
-    e.presentation.isEnabled = GBrowserSetting.instance().bookmarks.isNotEmpty()
+    e.presentation.isEnabled = GBrowserService.instance().bookmarks.isNotEmpty()
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread {

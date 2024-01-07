@@ -2,9 +2,9 @@ package com.github.gbrowser.actions.bookmark
 
 import com.github.gbrowser.GBrowserIcons
 import com.github.gbrowser.i18n.GBrowserBundle
-import com.github.gbrowser.settings.GBrowserSetting
+import com.github.gbrowser.settings.GBrowserService
 import com.github.gbrowser.settings.bookmarks.GBrowserBookmark
-import com.github.gbrowser.ui.toolwindow.gbrowser.getSelectedBrowserPanel
+import com.github.gbrowser.util.GBrowserToolWindowUtil
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -13,7 +13,7 @@ import javax.swing.Icon
 
 
 class GBrowserBookmarkAddAction : AnAction(), DumbAware {
-  private val settings: GBrowserSetting = GBrowserSetting.instance()
+  private val settings: GBrowserService = GBrowserService.instance()
   private var existBookmarks: Boolean = false
   private val iconAdd: Icon = GBrowserIcons.BOOKMARK_REMOVE
   private val iconExist: Icon = GBrowserIcons.BOOKMARK_ADD
@@ -22,7 +22,7 @@ class GBrowserBookmarkAddAction : AnAction(), DumbAware {
 
 
   override fun update(e: AnActionEvent) {
-    val panel = getSelectedBrowserPanel(e)
+    val panel = GBrowserToolWindowUtil.getSelectedBrowserPanel(e)
     if (panel == null || !panel.hasContent()) {
       e.presentation.isEnabled = false
       return
@@ -39,11 +39,11 @@ class GBrowserBookmarkAddAction : AnAction(), DumbAware {
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
 
   override fun actionPerformed(e: AnActionEvent) {
-    val panel = getSelectedBrowserPanel(e) ?: return
+    val panel = GBrowserToolWindowUtil.getSelectedBrowserPanel(e) ?: return
     panel.let {
       val favorite = GBrowserBookmark(panel.getCurrentUrl(), panel.getCurrentTitle())
       if (existBookmarks) {
-        settings.removeBookmarks(favorite)
+        settings.removeBookmark(favorite)
       } else {
         settings.addBookmarks(favorite)
       }

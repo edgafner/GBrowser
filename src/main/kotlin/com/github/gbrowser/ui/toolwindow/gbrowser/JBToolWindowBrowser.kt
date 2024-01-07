@@ -3,20 +3,20 @@ package com.github.gbrowser.ui.toolwindow.gbrowser
 import com.github.gbrowser.GBrowserIcons
 import com.github.gbrowser.settings.dao.GBrowserHistory
 import com.github.gbrowser.settings.bookmarks.GBrowserBookmark
-import com.github.gbrowser.ui.search.GBrowserSearchPopUpItem
-import com.github.gbrowser.util.GBrowserUtil.loadFavIconBGT
+import com.github.gbrowser.ui.search.GBrowserSearchPopUpItemImpl
+import com.github.gbrowser.services.providers.CachingFavIconLoader
 import com.github.gbrowser.util.GBrowserUtil.suggestQuery
 import com.intellij.icons.AllIcons.Actions
 import com.intellij.icons.AllIcons.General
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonPrimitive
-import javax.swing.Icon
 
 fun getHistoryItemsWidthValue(searchValue: String,
                               history: MutableSet<GBrowserHistory>,
-                              isFaviconEnabled: Boolean = true): List<GBrowserSearchPopUpItem> {
-  val displayItems = mutableListOf<GBrowserSearchPopUpItem>()
+                              favIconLoader: CachingFavIconLoader,
+                              isFaviconEnabled: Boolean = true): List<GBrowserSearchPopUpItemImpl> {
+  val displayItems = mutableListOf<GBrowserSearchPopUpItemImpl>()
   val defaultIcon = General.Web
   val displayCount = 10
 
@@ -26,11 +26,11 @@ fun getHistoryItemsWidthValue(searchValue: String,
     val isMinCount = displayItems.size <= displayCount
 
     if (isMatch && isMinCount) {
-      val item = GBrowserSearchPopUpItem(searchValue, defaultIcon, null, false, entry.name, url)
+      val item = GBrowserSearchPopUpItemImpl(searchValue, defaultIcon, null, false, entry.name, url)
       displayItems.add(item)
       if (isFaviconEnabled) {
-        loadFavIconBGT(url) { i: Icon? ->
-          item.icon = i
+        favIconLoader.loadFavIcon(url).thenAccept {
+          item.icon = it ?: defaultIcon
         }
       }
     }
@@ -39,15 +39,15 @@ fun getHistoryItemsWidthValue(searchValue: String,
   return displayItems
 }
 
-fun getHBookmarkItemsWidthValue(searchValue: String, bookmarks: MutableSet<GBrowserBookmark>): List<GBrowserSearchPopUpItem> {
-  val displayItems = mutableListOf<GBrowserSearchPopUpItem>()
+fun getHBookmarkItemsWidthValue(searchValue: String, bookmarks: MutableSet<GBrowserBookmark>): List<GBrowserSearchPopUpItemImpl> {
+  val displayItems = mutableListOf<GBrowserSearchPopUpItemImpl>()
 
   bookmarks.forEach { item ->
     val url = item.url
     if (url.contains(searchValue, ignoreCase = true)) {
       val name = item.name
       val icon = GBrowserIcons.BOOKMARK_ADD
-      displayItems.add(GBrowserSearchPopUpItem(searchValue, icon, null, false, name, url))
+      displayItems.add(GBrowserSearchPopUpItemImpl(searchValue, icon, null, false, name, url))
     }
   }
 
@@ -55,8 +55,8 @@ fun getHBookmarkItemsWidthValue(searchValue: String, bookmarks: MutableSet<GBrow
 }
 
 
-fun getSuggestionItems(text: String): List<GBrowserSearchPopUpItem> {
-  val displayItems = mutableListOf<GBrowserSearchPopUpItem>()
+fun getSuggestionItems(text: String): List<GBrowserSearchPopUpItemImpl> {
+  val displayItems = mutableListOf<GBrowserSearchPopUpItemImpl>()
   val suggest = suggestQuery(text)
 
   if (suggest.isNotEmpty()) {
@@ -71,7 +71,7 @@ fun getSuggestionItems(text: String): List<GBrowserSearchPopUpItem> {
           val query = name.replace(" ", "+")
           val url = "https://www.google.com/search?q=$query"
           val icon = Actions.Search
-          val item = GBrowserSearchPopUpItem(text, icon, null, false, name, url)
+          val item = GBrowserSearchPopUpItemImpl(text, icon, null, false, name, url)
           displayItems.add(item)
         }
       }

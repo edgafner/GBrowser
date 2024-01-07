@@ -26,6 +26,7 @@ class GBrowserBookmarkColumnInfoUrl : ColumnInfo<GBrowserBookmark, String>("URL"
     item.url = value
   }
 
+  @Suppress("DuplicatedCode")
   override fun getRenderer(item: GBrowserBookmark): TableCellRenderer {
     return object : DefaultTableCellRenderer() {
       override fun getTableCellRendererComponent(table: JTable,

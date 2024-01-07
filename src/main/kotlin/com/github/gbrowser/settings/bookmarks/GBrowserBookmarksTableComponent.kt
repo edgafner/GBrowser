@@ -1,6 +1,6 @@
 package com.github.gbrowser.settings.bookmarks
 
-import com.github.gbrowser.settings.GBrowserSetting
+import com.github.gbrowser.settings.GBrowserService
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.wm.IdeFocusManager
@@ -13,9 +13,8 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.ListTableModel
 import com.intellij.util.ui.UIUtil
 
-
 class GBrowserBookmarksTableComponent : Disposable {
-  private val settings = GBrowserSetting.instance()
+  private val settings = GBrowserService.instance()
   private lateinit var tableView: TableView<GBrowserBookmark>
   private lateinit var tableModel: ListTableModel<GBrowserBookmark>
   private lateinit var scrollPanel: JBScrollPane
@@ -42,7 +41,7 @@ class GBrowserBookmarksTableComponent : Disposable {
   }
 
   fun apply() {
-    settings.addBookmarks(tableModel.items)
+    settings.addBookmarks(tableModel.items.toMutableSet())
   }
 
   fun reset() {
@@ -54,11 +53,12 @@ class GBrowserBookmarksTableComponent : Disposable {
   private fun removeAction() {
     val cellEditor = tableView.cellEditor
     cellEditor?.stopCellEditing()
-    val item: GBrowserBookmark? = tableView.selectedObject
+    val item: GBrowserBookmark = tableView.selectedObject ?: return
     val items = mutableListOf<GBrowserBookmark>()
     items.addAll(tableView.items)
     items.remove(item)
     tableModel.items = items
+    settings.removeBookmark(item)
     tableView.requestFocusInWindow()
   }
 

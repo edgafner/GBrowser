@@ -1,6 +1,6 @@
 package com.github.gbrowser.actions.toolwindow
 
-import com.github.gbrowser.ui.toolwindow.gbrowser.getToolWindow
+import com.github.gbrowser.util.GBrowserToolWindowUtil
 import com.github.gbrowser.util.GBrowserUtil
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
@@ -21,7 +21,7 @@ class GBrowserCloseTabAction : AnAction(), DumbAware {
   }
 
   override fun actionPerformed(event: AnActionEvent) {
-    getToolWindow(event.project, GBrowserUtil.GROUP_DISPLAY_ID)?.let { toolWindow ->
+    GBrowserToolWindowUtil.getToolWindow(event.project, GBrowserUtil.GBROWSER_TOOL_WINDOW_ID)?.let { toolWindow ->
       toolWindow.contentManager.selectedContent?.let { content ->
         toolWindow.contentManager.removeContent(content, true)
       }

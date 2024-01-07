@@ -1,7 +1,7 @@
 package com.github.gbrowser.actions.toolwindow
 
-import com.github.gbrowser.settings.GBrowserSetting
-import com.github.gbrowser.ui.toolwindow.gbrowser.GBrowserToolWindowBuilder
+import com.github.gbrowser.settings.GBrowserService
+import com.github.gbrowser.util.GBrowserToolWindowUtil
 import com.github.gbrowser.util.GBrowserUtil
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
@@ -25,8 +25,8 @@ class GBrowserAddTabAction : AnAction(), DumbAware {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.getRequiredData(CommonDataKeys.PROJECT)
-    getInstance(project).getToolWindow(GBrowserUtil.GROUP_DISPLAY_ID)?.let {
-      GBrowserToolWindowBuilder.createContentTab(it, GBrowserSetting.instance().defaultUrl, "")
+    getInstance(project).getToolWindow(GBrowserUtil.GBROWSER_TOOL_WINDOW_ID)?.let {
+      GBrowserToolWindowUtil.createContentTab(it, GBrowserService.instance().defaultUrl, "")
     }
   }
 }

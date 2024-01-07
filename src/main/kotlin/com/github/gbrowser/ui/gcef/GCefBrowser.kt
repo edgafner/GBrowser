@@ -1,39 +1,52 @@
 package com.github.gbrowser.ui.gcef
 
-import com.github.gbrowser.settings.GBrowserSetting
+import com.github.gbrowser.i18n.GBrowserBundle
+import com.github.gbrowser.services.providers.CachingWebPageTitleLoader
+import com.github.gbrowser.settings.GBrowserService
 import com.github.gbrowser.settings.bookmarks.GBrowserBookmark
 import com.github.gbrowser.ui.gcef.impl.GBrowserCefDisplayChangeHandler
+import com.github.gbrowser.ui.gcef.impl.GBrowserCefLifeSpanDelegate
 import com.github.gbrowser.ui.gcef.impl.GBrowserCefRequestHandler
-import com.github.gbrowser.util.GBrowserUtil
-import com.intellij.openapi.diagnostic.logger
+import com.github.gbrowser.ui.toolwindow.dev_tools.GBrowserToolWindowDevToolsFactory
+import com.github.gbrowser.util.GBrowserToolWindowUtil
+import com.intellij.openapi.components.service
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.jcef.JBCefBrowser
+import com.intellij.ui.jcef.JBCefBrowserBase
 import com.intellij.ui.jcef.JBCefClient
+import com.intellij.util.application
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
 import org.cef.callback.CefContextMenuParams
 import org.cef.callback.CefMenuModel
+import org.cef.callback.CefMenuModel.MenuId
 import org.cef.handler.CefLoadHandler
 import org.cef.network.CefCookieManager
 import java.util.*
-import org.cef.browser.CefBrowser as OrgCefBrowser
+
 
 @Suppress("MemberVisibilityCanBePrivate")
-class GCefBrowser(url: String, client: JBCefClient? = null, browser: OrgCefBrowser? = null) : JBCefBrowser(createBuilder().apply {
+class GCefBrowser(val project: Project,
+                  url: String?,
+                  client: JBCefClient? = null,
+                  browser: CefBrowser? = null,
+                  val id: String = UUID.randomUUID().toString()) : JBCefBrowser(createBuilder().apply {
   setOffScreenRendering(false)
   setEnableOpenDevToolsMenuItem(true)
   setCefBrowser(browser)
   setClient(client)
   setUrl(url)
 }) {
-  val id: String
-    get() {
-      return UUID.randomUUID().toString()
-    }
 
-  val devTools: OrgCefBrowser
+  private val favIconLoader: CachingWebPageTitleLoader = service()
+
+
+  val devTools: CefBrowser
     get() {
       return cefBrowser.devTools
     }
+
   val client: JBCefClient
     get() {
       return jbCefClient
@@ -50,12 +63,20 @@ class GCefBrowser(url: String, client: JBCefClient? = null, browser: OrgCefBrows
     }
   }
 
+
   override fun createDefaultContextMenuHandler(): DefaultCefContextMenuHandler {
     return object : DefaultCefContextMenuHandler(true) {
+      private val BOOKMARK_ADD: Int = 26501
+
       override fun onBeforeContextMenu(browser: CefBrowser, frame: CefFrame, params: CefContextMenuParams, model: CefMenuModel) {
-        model.addItem(28501, "Add to Bookmarks")
-        model.addItem(28502, "Add to Quick Access")
-        super.onBeforeContextMenu(browser, frame, params, model)
+        if (isProperty(JBCefBrowserBase.Properties.NO_CONTEXT_MENU)) {
+          model.clear()
+          return
+        }
+
+        model.addItem(MenuId.MENU_ID_USER_LAST, "Open DevTools")
+        model.addItem(BOOKMARK_ADD, GBrowserBundle.message(
+          "action.GBrowserBookmarkAddAction.text")) //model.addItem(26502, GBrowserBundle.message("action.GBrowserBookmarkAddAction.text")) //super.onBeforeContextMenu(browser, frame, params, model)
       }
 
       override fun onContextMenuCommand(browser: CefBrowser,
@@ -63,26 +84,38 @@ class GCefBrowser(url: String, client: JBCefClient? = null, browser: OrgCefBrows
                                         params: CefContextMenuParams,
                                         commandId: Int,
                                         eventFlags: Int): Boolean {
-        if (commandId == 28501) {
-          LOG.info("Add to Bookmarks was invoked: ${browser.url}")
+        if (commandId == BOOKMARK_ADD) {
           addToBookmarks(browser)
           return true
-        } //if (commandId == 28502) {
-        //  LOG.info("Add to Quick Access was invoked: ${browser.url}")
-        //  addToBookmarksAndToolBar(browser)
+        }
+        if (commandId == MenuId.MENU_ID_USER_LAST) {
+          openDevtools()
+          return true
+
+        } //  addToBookmarksAndToolBar(browser)
         //  return true
-        //}
         return super.onContextMenuCommand(browser, frame, params, commandId, eventFlags)
       }
 
       private fun addToBookmarks(browser: CefBrowser) {
-        GBrowserSetting.instance().addBookmarks(GBrowserBookmark(browser.url, GBrowserUtil.getTitleOfWebPage(browser.url)))
+        favIconLoader.getTitleOfWebPage(browser.url).thenAccept {
+          GBrowserService.instance().addBookmarks(GBrowserBookmark(browser.url, it))
+        }
+      }
+
+      private fun openDevtools() {
+        val selectedBrowser = GBrowserToolWindowUtil.getSelectedBrowserPanel(project) ?: return
+        val browser = selectedBrowser.getDevToolsBrowser()
+        application.invokeLater {
+          GBrowserToolWindowDevToolsFactory.Companion.createTab(project, browser, selectedBrowser.getCurrentTitle())
+        }
       }
     }
   }
 
+
   fun setVisibility(isVisible: Boolean) {
-    this.component.isVisible = isVisible
+    component.isVisible = isVisible
   }
 
 
@@ -92,11 +125,11 @@ class GCefBrowser(url: String, client: JBCefClient? = null, browser: OrgCefBrows
   }
 
   fun addTitleChangeListener(delegate: GBrowserCefBrowserTitleDelegate) {
-    this.titleChangeDelegate = delegate
+    titleChangeDelegate = delegate
   }
 
   fun removeTitleChangeListener() {
-    this.titleChangeDelegate = null
+    titleChangeDelegate = null
   }
 
   fun notifyTitleChanged(title: String?) {
@@ -128,6 +161,10 @@ class GCefBrowser(url: String, client: JBCefClient? = null, browser: OrgCefBrows
     cefBrowser.client?.addDisplayHandler(GBrowserCefDisplayChangeHandler(delegate))
   }
 
+  fun addLifeSpanHandler(toolWindow: ToolWindow) {
+    cefBrowser.client?.addLifeSpanHandler(GBrowserCefLifeSpanDelegate(toolWindow))
+  }
+
   fun removeDisplayHandler() {
     cefBrowser.client?.removeDisplayHandler()
   }
@@ -153,42 +190,4 @@ class GCefBrowser(url: String, client: JBCefClient? = null, browser: OrgCefBrows
 
     super.dispose()
   }
-
-  companion object {
-    val LOG = logger<GCefBrowser>()
-  }
-
 }
-
-//
-//class GBCefBrowser(url: String?) : JBCefBrowser(
-//  createBuilder().setOffScreenRendering(false).setEnableOpenDevToolsMenuItem(true).setUrl(url)) {
-//
-//  private var myDevtoolsFrame: JDialog? = null
-//
-//  override fun openDevtools() {
-//    LOG.info("Open DevTools was invoked")
-//    if (myDevtoolsFrame != null) {
-//      myDevtoolsFrame!!.toFront()
-//      return
-//    }
-//    val comp: Component = component
-//    val ancestor = (SwingUtilities.getWindowAncestor(comp)) ?: return
-//    val bounds = ancestor.graphicsConfiguration.bounds
-//    myDevtoolsFrame = JDialog(ancestor)
-//    myDevtoolsFrame!!.title = "JCEF DevTools"
-//    myDevtoolsFrame!!.defaultCloseOperation = WindowConstants.DISPOSE_ON_CLOSE
-//    myDevtoolsFrame!!.setBounds(bounds.width / 4 + 100, bounds.height / 4 + 100, bounds.width / 2, bounds.height / 2)
-//    myDevtoolsFrame!!.layout = BorderLayout()
-//    val devTools = createBuilder().setCefBrowser(cefBrowser.devTools).setClient(jbCefClient).build()
-//    myDevtoolsFrame!!.add(devTools.component, BorderLayout.CENTER)
-//    myDevtoolsFrame!!.addWindowListener(object : WindowAdapter() {
-//      override fun windowClosed(e: WindowEvent) {
-//        myDevtoolsFrame = null
-//
-//      }
-//    })
-//    myDevtoolsFrame!!.isVisible = true
-//  }
-//
-//}

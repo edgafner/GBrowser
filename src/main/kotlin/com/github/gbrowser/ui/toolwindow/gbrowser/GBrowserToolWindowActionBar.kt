@@ -1,44 +1,38 @@
 package com.github.gbrowser.ui.toolwindow.gbrowser
 
-import com.github.gbrowser.settings.GBrowserSetting
+import com.github.gbrowser.services.providers.CachingFavIconLoader
+import com.github.gbrowser.settings.GBrowserService
 import com.github.gbrowser.settings.bookmarks.GBrowserBookmark
-import com.github.gbrowser.ui.search.GBrowserSearchField
 import com.github.gbrowser.ui.search.GBrowserSearchFieldDelegate
-import com.github.gbrowser.ui.search.GBrowserSearchPopUpItem
-import com.github.gbrowser.util.GBrowserUtil
+import com.github.gbrowser.ui.search.GBrowserSearchPopUpItemImpl
+import com.github.gbrowser.ui.search.impl.GBrowserSearchField
 import com.intellij.collaboration.ui.HorizontalListPanel
 import com.intellij.ide.ui.UISettings
 import com.intellij.ide.ui.UISettingsListener
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.wm.ToolWindow
+import com.intellij.openapi.components.service
+import com.intellij.openapi.ui.JBPopupMenu
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.util.preferredHeight
 import com.intellij.util.messages.MessageBusConnection
 import com.intellij.util.ui.InlineIconButton
 import com.intellij.util.ui.JBEmptyBorder
 import com.intellij.util.ui.JBInsets
 import com.intellij.util.ui.JBUI
+import java.awt.Dimension
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
-import java.awt.event.ActionListener
-import java.awt.event.ComponentAdapter
-import java.awt.event.ComponentEvent
-import java.awt.event.ComponentListener
-import javax.swing.BoxLayout
-import javax.swing.JComponent
-import javax.swing.JPanel
+import java.awt.event.*
+import javax.swing.*
 
 @Suppress("UnstableApiUsage")
-class GBrowserToolWindowActionBar(private val delegate: GBrowserToolWindowActionBarDelegate, toolWindow: ToolWindow) : ComponentAdapter(),
-                                                                                                                       Disposable {
+class GBrowserToolWindowActionBar(private val delegate: GBrowserToolWindowActionBarDelegate) : ComponentAdapter(), Disposable {
 
-  companion object {
-    const val ACTIONS_TOOLBAR_LEFT = "toolBarActionsLeft"
-    const val ACTIONS_TOOLBAR_RIGHT = "toolBarActionsRight"
-  }
 
-  private var tabCount: Int = toolWindow.contentManager.contentCount
+  private val favIconLoader: CachingFavIconLoader = service()
+  val settings = GBrowserService.instance()
 
   private val componentBorder: JBEmptyBorder by lazy {
     if (UISettings.getInstance().compactMode) {
@@ -63,8 +57,13 @@ class GBrowserToolWindowActionBar(private val delegate: GBrowserToolWindowAction
     }
   }
 
-  private val bookmarksComponent = HorizontalListPanel(5)
-  private val browserComponent = JPanel().apply {
+  private val bookmarksComponent = HorizontalListPanel(7).apply {
+    layout = BoxLayout(this, BoxLayout.X_AXIS)
+    preferredHeight = 22
+
+
+  }
+  private val browserComponent = JPanel(null).apply {
     layout = BoxLayout(this, BoxLayout.LINE_AXIS)
   }
 
@@ -73,9 +72,13 @@ class GBrowserToolWindowActionBar(private val delegate: GBrowserToolWindowAction
       cell(browserComponent).align(AlignX.FILL).component
     }
     row {
-      cell(bookmarksComponent).align(AlignX.FILL).component
+      cell(bookmarksComponent).align(
+        AlignX.LEFT).component.apply { // Override the maximum size to ensure it doesn't stretch to fill the space.
+        maximumSize = Dimension(Int.MAX_VALUE, preferredSize.height)
+      }
     }
-
+  }.apply {
+    layout = BoxLayout(this, BoxLayout.Y_AXIS)
   }
 
   var search: GBrowserSearchField? = null
@@ -102,45 +105,72 @@ class GBrowserToolWindowActionBar(private val delegate: GBrowserToolWindowAction
     val actionToolbarLeft = createToolBarAction(actionsLeft, browserComponent)
 
     browserComponent.add(actionToolbarLeft.component)
-    replaceRegisteredAction("toolBarActionsLeft" + this.tabCount, actionsLeft)
     actionsLeftComponent = actionToolbarLeft.component
     actionsLeftComponent?.addComponentListener(this as ComponentListener)
 
   }
 
   private fun setupBookmarks() {
-    val settings = GBrowserSetting.instance()
-    bookmarksComponent.removeAll()
-    initBookMarks(settings.bookmarks)
-
-    settings.addListener { state: GBrowserSetting.SettingsState ->
+    settings.addListener { state: GBrowserService.SettingsState ->
+      bookmarksComponent.removeAll()
       state.let { currentState ->
-        bookmarksComponent.removeAll()
-        initBookMarks(currentState.bookmarks)
+        if (currentState.showBookMarksInToolbar) {
+          bookmarksComponent.isVisible = true
+          initBookMarks(currentState.bookmarks)
+        } else {
+          bookmarksComponent.isVisible = false
+        }
       }
     }
   }
 
   private fun initBookMarks(bookmarks: MutableSet<GBrowserBookmark>) {
-
+    val iconButtonSet = mutableMapOf<String, InlineIconButton>()
     bookmarks.forEach { bookMark ->
-      GBrowserUtil.loadFavIconBGTSmall(bookMark.url) { icon ->
+      val url = bookMark.url
+      favIconLoader.loadFavIcon(url, targetSize = 18).thenAccept { icon ->
         icon?.let { iconBookMark ->
-          bookmarksComponent.add(InlineIconButton(iconBookMark).apply {
-            border = JBUI.Borders.empty(1)
-            actionListener = ActionListener { delegate.onSearchEnter(bookMark.url) }
-          })
+          iconButtonSet[url] = InlineIconButton(iconBookMark).apply {
+            border = JBUI.Borders.empty(1, 5)
+            actionListener = ActionListener { delegate.onToolBarIcon(url) }
+            toolTipText = url
+            addMouseListener(object : MouseAdapter() {
+              override fun mouseClicked(e: MouseEvent) {
+                if (SwingUtilities.isRightMouseButton(e)) {
+                  createPopupMenu(bookMark, this@apply).show(e.component, e.x, e.y)
+                }
+              }
+            })
+          }
         }
       }
     }
+
+    iconButtonSet.values.forEach {
+      bookmarksComponent.add(it)
+    }
+    bookmarksComponent.revalidate()
+    bookmarksComponent.repaint()
+  }
+
+  private fun createPopupMenu(bookmark: GBrowserBookmark, button: InlineIconButton): JBPopupMenu {
+    val popupMenu = JBPopupMenu()
+    val removeItem = JMenuItem("Remove Bookmark").apply {
+      addActionListener { // Add logic here to remove the bookmark
+        settings.removeBookmark(bookmark)
+        bookmarksComponent.remove(button)
+        bookmarksComponent.revalidate()
+        bookmarksComponent.repaint()
+      }
+    }
+    popupMenu.add(removeItem)
+    return popupMenu
   }
 
   private fun setupRightActionBars() {
     val actionsRight = GBrowserToolBarSectionRightAction(browserComponent)
     val actionToolbarRight = createToolBarAction(actionsRight, browserComponent)
     browserComponent.add(actionToolbarRight.component)
-
-    replaceRegisteredAction("toolBarActionsRight" + this.tabCount, actionsRight)
     this.actionsRightComponent = actionToolbarRight.component
     actionsRightComponent?.addComponentListener(this as ComponentListener)
   }
@@ -159,7 +189,8 @@ class GBrowserToolWindowActionBar(private val delegate: GBrowserToolWindowAction
         delegate.onSearchFocusLost()
       }
 
-      override fun onKeyReleased(text: String, popupItems: (List<GBrowserSearchPopUpItem>?) -> Unit) {
+      override fun onKeyReleased(text: String,
+                                 popupItems: (List<GBrowserSearchPopUpItemImpl>, List<GBrowserSearchPopUpItemImpl>, List<GBrowserSearchPopUpItemImpl>) -> Unit) {
         delegate.onKeyReleased(text, popupItems)
       }
     })
@@ -191,13 +222,11 @@ class GBrowserToolWindowActionBar(private val delegate: GBrowserToolWindowAction
     browserComponent.border = componentBorder
 
     bookmarksComponent.removeAll()
-    initBookMarks(GBrowserSetting.instance().bookmarks)
+    initBookMarks(settings.bookmarks)
 
   }
 
   override fun dispose() { // Disposal logic
-    unregisterAction("$ACTIONS_TOOLBAR_LEFT$tabCount")
-    unregisterAction("$ACTIONS_TOOLBAR_RIGHT$tabCount")
     settingsConnection?.disconnect()
     actionsLeftComponent?.removeComponentListener(this)
     search?.dispose()

@@ -16,7 +16,6 @@ import java.util.*
 
 interface GBrowserErrorPage {
 
-
   companion object {
 
     private val ERROR_PAGE_READER: LazyInitializer.LazyValue<String> = LazyInitializer.create { errorPageReaderLambda() }

@@ -1,6 +1,6 @@
 package com.github.gbrowser.actions.browser
 
-import com.github.gbrowser.ui.toolwindow.gbrowser.getSelectedBrowserPanel
+import com.github.gbrowser.util.GBrowserToolWindowUtil
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -8,12 +8,10 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.project.DumbAware
 
 
-class GBrowserFindAction  : AnAction(), DumbAware {
-
-  
+class GBrowserFindAction : AnAction(), DumbAware {
 
   override fun update(e: AnActionEvent) {
-    val panel = getSelectedBrowserPanel(e)
+    val panel = GBrowserToolWindowUtil.getSelectedBrowserPanel(e)
     if (panel == null) {
       e.presentation.isEnabled = false
     }
@@ -25,7 +23,7 @@ class GBrowserFindAction  : AnAction(), DumbAware {
   }
 
   override fun actionPerformed(e: AnActionEvent) {
-    val browser = getSelectedBrowserPanel(e)?.getBrowser() ?: return
+    val browser = GBrowserToolWindowUtil.getSelectedBrowserPanel(e)?.getBrowser() ?: return
     val project = e.getRequiredData(CommonDataKeys.PROJECT)
     val findDialog = GBrowserFindDialog(project, browser)
 
