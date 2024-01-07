@@ -176,7 +176,7 @@ class GBrowserService : SerializablePersistentStateComponent<GBrowserService.Set
       }
     }
 
-  var historyDeleteOption: Int
+  var historyItemsToKeep: Int
     get() = state.historyItemsToKeep
     set(value) {
       updateStateAndEmit {

@@ -90,8 +90,8 @@ class GBrowserProjectSettingsComponent : SimpleToolWindowPanel(true, true), Disp
           val historyCheckBox = checkBox("History enable").bindSelected(settings::isHistoryEnabled) { value ->
             settings.isHistoryEnabled = value
           }.gap(RightGap.SMALL)
-          spinner(0..60, 1).bindIntValue(settings::historyDeleteOption) { value ->
-            settings.historyDeleteOption = value
+          spinner(0..60, 1).bindIntValue(settings::historyItemsToKeep) { value ->
+            settings.historyItemsToKeep = value
           }.enabledIf(historyCheckBox.selected).gap(RightGap.SMALL)
           comment("Amount of history items to persist").enabledIf(historyCheckBox.selected)
         }

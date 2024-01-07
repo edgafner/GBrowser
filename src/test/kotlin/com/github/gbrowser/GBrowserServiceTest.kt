@@ -83,13 +83,13 @@ class GBrowserServiceTest {
 
   @Test
   fun `test history delete option state serialization`() = runTest {
-    service.historyDeleteOption = 10
+    service.historyItemsToKeep = 10
     val state = service.getState()
     val element = serialize(state)!!
     val xml = JDOMUtil.write(element)
 
     Assertions.assertEquals("""<state><![CDATA[{
-  "historyDeleteOption": 10
+  "historyItemsToKeep": 10
 }]]></state>""".trimIndent(), xml)
   }
 
