@@ -186,7 +186,7 @@ tasks {
   runIdeForUiTests {
     systemProperty("ide.browser.jcef.enabled", true)
     systemProperty("ide.browser.jcef.headless.enabled", true)
-    systemProperty("ide.browser.jcef.testMode.enabled", true)
+    //systemProperty("ide.browser.jcef.testMode.enabled", true)
     systemProperty("ide.experimental.ui", true)
     systemProperty("apple.laf.useScreenMenuBar", false)
     systemProperty("ide.mac.file.chooser.native", false)
