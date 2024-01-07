@@ -28,12 +28,12 @@ flag_management:
         - type: patch
           target: auto
           threshold: 1%
-    - name: integration-ubuntu-latest
+    - name: ui-ubuntu-latest
       statuses:
         - type: project
           target: auto
           threshold: 1%
-    - name: integration-mac-latest
+    - name: ui-mac-latest
       statuses:
         - type: project
           target: auto
