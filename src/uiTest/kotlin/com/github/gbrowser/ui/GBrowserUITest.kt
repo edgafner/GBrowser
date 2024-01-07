@@ -130,7 +130,7 @@ class GBrowserUITest {
             }
           }
 
-          Thread.sleep(2_000)
+          Thread.sleep(4_000)
 
           gBrowserPRPanel { //
             button(byXpath("//div[@myicon='bookmark_remove.svg']")).click()
