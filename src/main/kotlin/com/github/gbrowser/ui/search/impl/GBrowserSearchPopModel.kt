@@ -1,9 +1,6 @@
 package com.github.gbrowser.ui.search.impl
 
-
 import com.github.gbrowser.ui.search.GBrowserSearchPopUpItem
-import com.github.gbrowser.ui.search.GBrowserSearchPopUpItemImpl
-import com.github.gbrowser.ui.search.GBrowserSearchPopUpItemSeparator
 import javax.swing.AbstractListModel
 
 class GBrowserSearchPopModel : AbstractListModel<GBrowserSearchPopUpItem>() {
@@ -13,23 +10,13 @@ class GBrowserSearchPopModel : AbstractListModel<GBrowserSearchPopUpItem>() {
 
   override fun getSize(): Int = minOf(15, items.size)
 
-  fun setItems(historyList: List<GBrowserSearchPopUpItemImpl>,
-               bookmarks: List<GBrowserSearchPopUpItemImpl>,
-               suggested: List<GBrowserSearchPopUpItemImpl>) {
+  fun setItems(popUpItem: List<GBrowserSearchPopUpItem>) {
     items.clear() // Clear the existing items
 
     // Add all items and separators to the set
-    items.addAll(historyList)
-    if (historyList.isNotEmpty()) {
-      items.add(GBrowserSearchPopUpItemSeparator())
-    }
-    items.addAll(bookmarks)
-    if (bookmarks.isNotEmpty()) {
-      items.add(GBrowserSearchPopUpItemSeparator())
-    }
-    items.addAll(suggested)
+    items.addAll(popUpItem)
 
-    fireContentsChanged(this, 0, size -1)
+    fireContentsChanged(this, 0, size - 1)
   }
 
 }

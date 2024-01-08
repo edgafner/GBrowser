@@ -14,7 +14,7 @@ import javax.swing.Icon
 
 class GBrowserBookmarkAddAction : AnAction(), DumbAware {
   private val settings: GBrowserService = GBrowserService.instance()
-  private var existBookmarks: Boolean = false
+
   private val iconAdd: Icon = GBrowserIcons.BOOKMARK_REMOVE
   private val iconExist: Icon = GBrowserIcons.BOOKMARK_ADD
   private val textAdd: String = GBrowserBundle.message("actions.bookmark.add.text")
@@ -22,6 +22,7 @@ class GBrowserBookmarkAddAction : AnAction(), DumbAware {
 
 
   override fun update(e: AnActionEvent) {
+
     val panel = GBrowserToolWindowUtil.getSelectedBrowserPanel(e)
     if (panel == null || !panel.hasContent()) {
       e.presentation.isEnabled = false
@@ -30,7 +31,7 @@ class GBrowserBookmarkAddAction : AnAction(), DumbAware {
 
     e.presentation.isEnabled = true
     val currentUrl = panel.getCurrentUrl()
-    existBookmarks = settings.existBookmark(currentUrl)
+    val existBookmarks = settings.existBookmark(currentUrl)
 
     e.presentation.icon = if (existBookmarks) iconExist else iconAdd
     e.presentation.text = if (existBookmarks) textRemove else textAdd
@@ -40,6 +41,7 @@ class GBrowserBookmarkAddAction : AnAction(), DumbAware {
 
   override fun actionPerformed(e: AnActionEvent) {
     val panel = GBrowserToolWindowUtil.getSelectedBrowserPanel(e) ?: return
+    val existBookmarks = settings.existBookmark(panel.getCurrentUrl())
     panel.let {
       val favorite = GBrowserBookmark(panel.getCurrentUrl(), panel.getCurrentTitle())
       if (existBookmarks) {

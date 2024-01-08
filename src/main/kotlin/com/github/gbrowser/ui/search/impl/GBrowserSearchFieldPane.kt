@@ -3,8 +3,6 @@ package com.github.gbrowser.ui.search.impl
 
 import com.github.gbrowser.ui.search.GBrowserSearchFieldPaneDelegate
 import com.github.gbrowser.ui.search.GBrowserSearchPopUpItem
-import com.github.gbrowser.ui.search.GBrowserSearchPopUpItemImpl
-import com.github.gbrowser.ui.search.GBrowserSearchPopUpItemSeparator
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.actionSystem.PlatformDataKeys
@@ -172,14 +170,12 @@ class GBrowserSearchFieldPane(private val delegate: GBrowserSearchFieldPaneDeleg
   private fun initPopUpListeners() {
     list.addListSelectionListener { e ->
       val source = e.source
-      if (source is JBList<*> && source.selectedValue is GBrowserSearchPopUpItemImpl) {
-        if (source.selectedValue !is GBrowserSearchPopUpItemSeparator) {
-          val selectedItem = source.selectedValue as GBrowserSearchPopUpItemImpl
+      if (source is JBList<*> && source.selectedValue is GBrowserSearchPopUpItem) {
+        val selectedItem = source.selectedValue as GBrowserSearchPopUpItem
 
-          // Check if the selected item is not a separator before proceeding
-          delegate.onSelect(selectedItem)
-          popupSelectIndex = source.selectedIndex
-        }
+        // Check if the selected item is not a separator before proceeding
+        delegate.onSelect(selectedItem)
+        popupSelectIndex = source.selectedIndex
       }
     }
 
@@ -199,8 +195,8 @@ class GBrowserSearchFieldPane(private val delegate: GBrowserSearchFieldPaneDeleg
 
 
   private fun handleKeyPress() {
-    delegate.onKeyReleased(text) { history, bookmarks, suggested ->
-      popupModel.setItems(history, bookmarks, suggested)
+    delegate.onKeyReleased(text) { items ->
+      popupModel.setItems(items)
       popup?.pack(true, true)
 
       if (popupModel.size >= 1) {
@@ -388,10 +384,7 @@ class GBrowserSearchFieldPane(private val delegate: GBrowserSearchFieldPaneDeleg
 
 
   private fun handleItemChosen(item: GBrowserSearchPopUpItem) {
-    if (item is GBrowserSearchPopUpItemImpl) {
-      delegate.onSelect(item)
-    }
-
+    delegate.onSelect(item)
   }
 
   private fun handlePopupCancel(): Boolean {

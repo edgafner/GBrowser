@@ -2,10 +2,11 @@ package com.github.gbrowser.ui.search.impl
 
 import com.github.gbrowser.ui.search.GBrowserSearchFieldDelegate
 import com.github.gbrowser.ui.search.GBrowserSearchFieldPaneDelegate
-import com.github.gbrowser.ui.search.GBrowserSearchPopUpItemImpl
+import com.github.gbrowser.ui.search.GBrowserSearchPopUpItem
 import com.github.gbrowser.ui.toolwindow.gbrowser.GBrowserRoundedPanel
 import com.intellij.openapi.Disposable
 import com.intellij.ui.components.JBScrollPane
+import com.intellij.ui.util.minimumWidth
 import com.intellij.util.ui.JBUI.Borders
 import com.intellij.util.ui.JBUI.CurrentTheme
 import java.awt.Color
@@ -25,7 +26,7 @@ class GBrowserSearchField(private val delegate: GBrowserSearchFieldDelegate) : G
       viewport.add(searchField)
       viewport.isOpaque = false
       horizontalScrollBar.setUI(GBrowserSearchFieldCustomScrollBar())
-      verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
+      verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER
       horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
     }
   }
@@ -60,7 +61,6 @@ class GBrowserSearchField(private val delegate: GBrowserSearchFieldDelegate) : G
       setLastEnteredText()
     }
 
-  private var isHostForcedVisible = false
   private var lastText: String? = null
   private var textBeforeSelectPopupItem: String? = null
 
@@ -74,10 +74,9 @@ class GBrowserSearchField(private val delegate: GBrowserSearchFieldDelegate) : G
   fun setText(value: String) {
     searchField.apply {
       isHostHighlighted = this@GBrowserSearchField.isHostHighlighted
-      isHostHidden = if (isHostForcedVisible) false else this@GBrowserSearchField.isHostHidden
+      isHostHidden = this@GBrowserSearchField.isHostHidden
       text = value
     }
-    isHostForcedVisible = false
     lastText = value
   }
 
@@ -89,7 +88,6 @@ class GBrowserSearchField(private val delegate: GBrowserSearchFieldDelegate) : G
     if (textBeforeSelectPopupItem == null) {
       textBeforeSelectPopupItem = lastText
     }
-
     setText(value)
   }
 
@@ -107,7 +105,7 @@ class GBrowserSearchField(private val delegate: GBrowserSearchFieldDelegate) : G
   }
 
   private fun enableScrolling(isEnabled: Boolean) {
-    val policy = if (isEnabled) 30 else 31
+    val policy = if (isEnabled) ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED else ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
     scrollPane.horizontalScrollBarPolicy = policy
   }
 
@@ -121,7 +119,6 @@ class GBrowserSearchField(private val delegate: GBrowserSearchFieldDelegate) : G
 
   private fun selectText() {
     searchField.selectAll()
-
   }
 
   private fun deselectText() {
@@ -136,11 +133,10 @@ class GBrowserSearchField(private val delegate: GBrowserSearchFieldDelegate) : G
     resetSelectionText()
     setText(url)
     enableScrolling(true)
-    searchField.caretPosition = 0
     delegate.onEnter(url)
   }
 
-  override fun onSelect(item: GBrowserSearchPopUpItemImpl) {
+  override fun onSelect(item: GBrowserSearchPopUpItem) {
     setSelectionText(item.url)
     resetScrollPosition()
     enableScrolling(false)
@@ -148,7 +144,6 @@ class GBrowserSearchField(private val delegate: GBrowserSearchFieldDelegate) : G
 
   override fun onCancel() {
     resetSelectionText()
-    searchField.caretPosition = 0
     resetScrollPosition()
     enableScrolling(true)
   }
@@ -161,7 +156,6 @@ class GBrowserSearchField(private val delegate: GBrowserSearchFieldDelegate) : G
     if (hasScrolled()) {
       selectText()
     }
-
     delegate.onFocus()
   }
 
@@ -183,8 +177,7 @@ class GBrowserSearchField(private val delegate: GBrowserSearchFieldDelegate) : G
     enableWheelScrolling(false)
   }
 
-  override fun onKeyReleased(text: String,
-                             popupItems: (List<GBrowserSearchPopUpItemImpl>, List<GBrowserSearchPopUpItemImpl>, List<GBrowserSearchPopUpItemImpl>) -> Unit) {
+  override fun onKeyReleased(text: String, popupItems: (List<GBrowserSearchPopUpItem>) -> Unit) {
     delegate.onKeyReleased(text, popupItems)
   }
 

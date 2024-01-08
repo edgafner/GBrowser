@@ -1,12 +1,9 @@
 package com.github.gbrowser.ui.search.impl
 
 import com.github.gbrowser.ui.search.GBrowserSearchPopUpItem
-import com.github.gbrowser.ui.search.GBrowserSearchPopUpItemImpl
-import com.github.gbrowser.ui.search.GBrowserSearchPopUpItemSeparator
 import com.github.gbrowser.ui.toolwindow.gbrowser.GBrowserRoundedPanel
 import com.intellij.icons.AllIcons
 import com.intellij.ui.JBColor
-import com.intellij.ui.SeparatorComponent
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTextField
 import com.intellij.util.ui.JBUI
@@ -37,57 +34,46 @@ class GBrowserSearchPopCellRenderer(private val highlightEnabled: Boolean) : Lis
     isOpaque = true
     border = CompoundBorder(null, JBUI.Borders.empty(0, 8))
 
-    when (value) {
-      is GBrowserSearchPopUpItemSeparator -> {
-        val separator = SeparatorComponent(0, 0, background ?: JBUI.CurrentTheme.CustomFrameDecorations.separatorForeground(), null)
-        val padding = 5 // Adjust this value to control the vertical size
-        separator.border = BorderFactory.createEmptyBorder(padding, 0, padding, 0)
-        add(separator, BorderLayout.CENTER)
-      }
-      is GBrowserSearchPopUpItemImpl -> {
-        val labelIcon = JLabel(value.icon ?: AllIcons.General.Web, SwingConstants.LEFT).apply {
-          border = JBUI.Borders.emptyLeft(0)
-          isOpaque = false
-        }
 
-        val name = value.name.let { if (it.length >= 50) it.take(50) + "..." else it }
-        val labelName = createLabel(name, JBColor.BLACK, 8, value.highlight)
-
-        @Suppress("HttpUrlsUsage") val urlValue =
-          if (value.isURLVisible) value.url.removePrefix("https://").removePrefix("http://").removePrefix("www.") else ""
-        val maxWidth = (60 - name.length).let { if (it <= 4) 50 else it }
-        val url = if (urlValue.length >= maxWidth) urlValue.take(maxWidth) + "..." else urlValue
-        val labelURL = createLabel(url, JBColor.gray, 0, value.highlight)
-
-        val namePanel = JPanel(BorderLayout()).apply {
-          isOpaque = false
-          border = JBUI.Borders.empty()
-          add(labelName, BorderLayout.WEST)
-          add(labelURL, BorderLayout.CENTER)
-        }
-
-        val labelInfo = JBLabel(value.info ?: "").apply {
-          fontColor = UIUtil.FontColor.BRIGHTER
-          border = JBUI.Borders.emptyLeft(2)
-          isOpaque = false
-        }
-
-        val content =
-          GBrowserRoundedPanel(10, if (isSelected) UIUtil.getListSelectionBackground(cellHasFocus) else Color.getColor("")).apply {
-            isOpaque = false
-            layout = BorderLayout()
-            add(labelIcon, BorderLayout.WEST)
-            add(namePanel, BorderLayout.CENTER)
-            add(labelInfo, BorderLayout.EAST)
-            border = CompoundBorder(null, JBUI.Borders.empty(1, 7))
-          }
-
-        add(content, BorderLayout.CENTER)
-      }
+    val labelIcon = JLabel(value.icon ?: AllIcons.General.Web, SwingConstants.LEFT).apply {
+      border = JBUI.Borders.emptyLeft(0)
+      isOpaque = false
     }
 
+    val name = value.name.let { if (it.length >= 50) it.take(50) + "..." else it }
+    val labelName = createLabel(name, JBColor.BLACK, 8, value.highlight)
 
+    @Suppress("HttpUrlsUsage") val urlValue =
+      if (value.isURLVisible) value.url.removePrefix("https://").removePrefix("http://").removePrefix("www.") else ""
+    val maxWidth = (60 - name.length).let { if (it <= 4) 50 else it }
+    val url = if (urlValue.length >= maxWidth) urlValue.take(maxWidth) + "..." else urlValue
+    val labelURL = createLabel(url, JBColor.gray, 0, value.highlight)
+
+    val namePanel = JPanel(BorderLayout()).apply {
+      isOpaque = false
+      border = JBUI.Borders.empty()
+      add(labelName, BorderLayout.WEST)
+      add(labelURL, BorderLayout.CENTER)
+    }
+
+    val labelInfo = JBLabel(value.info ?: "").apply {
+      fontColor = UIUtil.FontColor.BRIGHTER
+      border = JBUI.Borders.emptyLeft(2)
+      isOpaque = false
+    }
+
+    val content = GBrowserRoundedPanel(10, if (isSelected) UIUtil.getListSelectionBackground(cellHasFocus) else Color.getColor("")).apply {
+      isOpaque = false
+      layout = BorderLayout()
+      add(labelIcon, BorderLayout.WEST)
+      add(namePanel, BorderLayout.CENTER)
+      add(labelInfo, BorderLayout.EAST)
+      border = CompoundBorder(null, JBUI.Borders.empty(1, 7))
+    }
+
+    add(content, BorderLayout.CENTER)
   }
+
 
   private fun createLabel(text: String, color: Color, leftPadding: Int, highlight: String?): JBTextField {
     return JBTextField(text).apply {

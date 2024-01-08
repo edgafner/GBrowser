@@ -2,6 +2,34 @@
 
 ## [Unreleased]
 
+### Added
+
+- 🚀 Add Google Authentication support - you can now login with your Google account
+- 🚀 ⚙️ Add Toolbar toggle visibility action - you can now show/hide search toolbar
+- 🚀 ⚙️ Add Search engine support - you can now benefit from Google engine search in the url text field
+- 🚀 ⚙️ Span in new tab action - links will be open in a new GBrowser tab
+- 🚀 Open url text in new tab action - Select a valid url in the editor and open it in a new GBrowser tab
+- 🚀 ⚙️ Add tab drag and drop support - you can now drag and drop tabs to reorder them
+- 🚀 Add remove bookmark icon action - you can now remove bookmarks from the bookmarks icon with right click
+- 🚀 ⚙️ Add history support - GBrowser will suggest you visited urls in the url text field
+- 🚀 Devtools in toolwindow - Devtools will be open in a toolwindow instead of a new dialog
+- 🚀 ⚙️ Reopen closed tabs action - Reopening a project will reopen all tabs that were open when the project was closed
+- 🚀 ⚙️ Add debug port connection - You can now connect to a remote debug port
+- 🚀 And a lot of other cool features, most of them configurable in the settings ⚙️
+
+### Changed
+
+- 📒 More examples with new documentation
+- 📒 Persisted bookmarks data structure changed, ⚠️ this will cause bookmarks from previous versions to be lost ⚠️. (Sorry for the
+  inconvenience)
+
+### Fixed
+
+- 🪲 Editing URL bug in UI text field - [#124](https://github.com/edgafner/GBrowser/issues/124)
+- 🪲 Open DevTools as in a toolwindow tab - [#75](https://github.com/edgafner/GBrowser/issues/75)
+- 🪲 Google Chrome Authentication - [#35](https://github.com/edgafner/GBrowser/issues/35)
+- 🪲 General UI rendering fixes
+
 ## [2024.1.3] - 2024-01-07
 
 ### Added

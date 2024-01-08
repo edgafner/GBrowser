@@ -8,8 +8,9 @@ import com.github.gbrowser.ui.gcef.GBrowserCefDevToolsListener
 import com.github.gbrowser.ui.gcef.GBrowserCefDisplayChangeDelegate
 import com.github.gbrowser.ui.gcef.GCefBrowser
 import com.github.gbrowser.ui.gcef.impl.GBrowserCefRequestHandler
-import com.github.gbrowser.ui.search.GBrowserSearchPopUpItemImpl
+import com.github.gbrowser.ui.search.GBrowserSearchPopUpItem
 import com.github.gbrowser.util.GBrowserUtil
+import com.intellij.ide.ui.UISettings
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
@@ -220,24 +221,23 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
     isSearchFocused = false
   }
 
-  override fun onKeyReleased(text: String,
-                             popupItems: (List<GBrowserSearchPopUpItemImpl>, List<GBrowserSearchPopUpItemImpl>, List<GBrowserSearchPopUpItemImpl>) -> Unit) {
-    val historyItems = mutableListOf<GBrowserSearchPopUpItemImpl>()
+  override fun onKeyReleased(text: String, popupItems: (List<GBrowserSearchPopUpItem>) -> Unit) {
+    val items = mutableListOf<GBrowserSearchPopUpItem>()
 
     val history: MutableSet<GBrowserHistory> = settings.history
-    historyItems.addAll(getHistoryItemsWidthValue(text, history, favIconLoader, settings.isFavIconEnabled))
+    items.addAll(getHistoryItemsWidthValue(text, history, favIconLoader, settings.isFavIconEnabled))
 
-    val bookMarksItems = mutableListOf<GBrowserSearchPopUpItemImpl>()
+    mutableListOf<GBrowserSearchPopUpItem>()
     val bookmarks: MutableSet<GBrowserBookmark> = settings.bookmarks
-    bookMarksItems.addAll(getHBookmarkItemsWidthValue(text, bookmarks))
+    items.addAll(getHBookmarkItemsWidthValue(text, bookmarks))
 
-    val suggestedItems = mutableListOf<GBrowserSearchPopUpItemImpl>()
+    mutableListOf<GBrowserSearchPopUpItem>()
     val isSuggestionEnabled: Boolean = settings.isSuggestionSearchEnabled
     if (isSuggestionEnabled) {
-      suggestedItems.addAll(getSuggestionItems(text))
+      items.addAll(getSuggestionItems(text))
     }
 
-    popupItems.invoke(historyItems, bookMarksItems, suggestedItems)
+    popupItems.invoke(items)
   }
 
   override fun onDisposeDevtools() {
@@ -252,6 +252,10 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
     setTabIcon(url)
     setHistoryItem()
     setCurrentUrl(url)
+    application.invokeLater {
+      UISettings.getInstance().fireUISettingsChanged()
+    }
+
 
   }
 
@@ -264,6 +268,9 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
     browser.setVisibility(true)
     browser.notifyTitleChanged(title)
     devTools.notifyTitleChanged(title)
+    application.invokeLater {
+      UISettings.getInstance().fireUISettingsChanged()
+    }
   }
 
 

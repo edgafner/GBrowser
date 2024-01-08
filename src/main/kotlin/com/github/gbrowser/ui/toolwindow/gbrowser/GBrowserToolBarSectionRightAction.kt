@@ -15,7 +15,7 @@ class GBrowserToolBarSectionRightAction(@Suppress("unused") private var parentCo
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread {
-    return ActionUpdateThread.EDT
+    return ActionUpdateThread.BGT
   }
 
   override fun createCustomComponent(presentation: Presentation, place: String): JComponent {

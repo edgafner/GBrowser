@@ -4,7 +4,7 @@ import com.github.gbrowser.services.providers.CachingFavIconLoader
 import com.github.gbrowser.settings.GBrowserService
 import com.github.gbrowser.settings.bookmarks.GBrowserBookmark
 import com.github.gbrowser.ui.search.GBrowserSearchFieldDelegate
-import com.github.gbrowser.ui.search.GBrowserSearchPopUpItemImpl
+import com.github.gbrowser.ui.search.GBrowserSearchPopUpItem
 import com.github.gbrowser.ui.search.impl.GBrowserSearchField
 import com.intellij.collaboration.ui.HorizontalListPanel
 import com.intellij.ide.ui.UISettings
@@ -15,8 +15,9 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.ui.JBPopupMenu
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.util.minimumWidth
 import com.intellij.ui.util.preferredHeight
-import com.intellij.util.messages.MessageBusConnection
+import com.intellij.util.application
 import com.intellij.util.ui.InlineIconButton
 import com.intellij.util.ui.JBEmptyBorder
 import com.intellij.util.ui.JBInsets
@@ -41,6 +42,7 @@ class GBrowserToolWindowActionBar(private val delegate: GBrowserToolWindowAction
       JBUI.Borders.empty(3, 0)
     }
   }
+
   private val searchInsets: JBInsets by lazy {
     if (UISettings.getInstance().compactMode) {
       JBUI.insets(2, 0)
@@ -48,6 +50,7 @@ class GBrowserToolWindowActionBar(private val delegate: GBrowserToolWindowAction
       JBUI.insets(5, 0)
     }
   }
+
   private val searchConstraints: GridBagConstraints by lazy {
     GridBagConstraints().apply {
       insets = searchInsets
@@ -63,8 +66,9 @@ class GBrowserToolWindowActionBar(private val delegate: GBrowserToolWindowAction
 
 
   }
-  private val browserComponent = JPanel(null).apply {
-    layout = BoxLayout(this, BoxLayout.LINE_AXIS)
+  private val browserComponent = JPanel(GridBagLayout()).apply {
+    border = componentBorder
+    minimumWidth = 50
   }
 
   val component: JPanel = panel {
@@ -84,19 +88,14 @@ class GBrowserToolWindowActionBar(private val delegate: GBrowserToolWindowAction
   var search: GBrowserSearchField? = null
   private var actionsLeftComponent: JComponent? = null
   private var actionsRightComponent: JComponent? = null
-  private var settingsConnection: MessageBusConnection? = null
 
   init {
     setupLeftActionBars()
     setupSearchField()
     setupRightActionBars()
     setupBookmarks()
-    registerSettingsListener()
-
-
-    val messageBus = ApplicationManager.getApplication().messageBus
-    this.settingsConnection = messageBus.connect()
-    settingsConnection!!.subscribe(UISettingsListener.TOPIC, UISettingsListener { updateUIForSettings() })
+    ApplicationManager.getApplication().messageBus.connect().subscribe(UISettingsListener.TOPIC,
+                                                                       UISettingsListener { updateUIForSettings() })
 
   }
 
@@ -108,6 +107,40 @@ class GBrowserToolWindowActionBar(private val delegate: GBrowserToolWindowAction
     actionsLeftComponent = actionToolbarLeft.component
     actionsLeftComponent?.addComponentListener(this as ComponentListener)
 
+  }
+
+  private fun setupRightActionBars() {
+    val actionsRight = GBrowserToolBarSectionRightAction(browserComponent)
+    val actionToolbarRight = createToolBarAction(actionsRight, browserComponent)
+    browserComponent.add(actionToolbarRight.component)
+    this.actionsRightComponent = actionToolbarRight.component
+    actionsRightComponent?.addComponentListener(this as ComponentListener)
+  }
+
+  private fun setupSearchField() {
+    search = GBrowserSearchField(object : GBrowserSearchFieldDelegate {
+      override fun onEnter(url: String) {
+        delegate.onSearchEnter(url)
+      }
+
+      override fun onFocus() {
+        delegate.onSearchFocus()
+      }
+
+      override fun onFocusLost() {
+        delegate.onSearchFocusLost()
+      }
+
+      override fun onKeyReleased(text: String, popupItems: (List<GBrowserSearchPopUpItem>) -> Unit) {
+        delegate.onKeyReleased(text, popupItems)
+      }
+    })
+    browserComponent.layout = GridBagLayout()
+    browserComponent.border = componentBorder
+
+    search?.let {
+      browserComponent.add(it.component, searchConstraints)
+    }
   }
 
   private fun setupBookmarks() {
@@ -167,49 +200,6 @@ class GBrowserToolWindowActionBar(private val delegate: GBrowserToolWindowAction
     return popupMenu
   }
 
-  private fun setupRightActionBars() {
-    val actionsRight = GBrowserToolBarSectionRightAction(browserComponent)
-    val actionToolbarRight = createToolBarAction(actionsRight, browserComponent)
-    browserComponent.add(actionToolbarRight.component)
-    this.actionsRightComponent = actionToolbarRight.component
-    actionsRightComponent?.addComponentListener(this as ComponentListener)
-  }
-
-  private fun setupSearchField() {
-    this.search = GBrowserSearchField(object : GBrowserSearchFieldDelegate {
-      override fun onEnter(url: String) {
-        delegate.onSearchEnter(url)
-      }
-
-      override fun onFocus() {
-        delegate.onSearchFocus()
-      }
-
-      override fun onFocusLost() {
-        delegate.onSearchFocusLost()
-      }
-
-      override fun onKeyReleased(text: String,
-                                 popupItems: (List<GBrowserSearchPopUpItemImpl>, List<GBrowserSearchPopUpItemImpl>, List<GBrowserSearchPopUpItemImpl>) -> Unit) {
-        delegate.onKeyReleased(text, popupItems)
-      }
-    })
-    browserComponent.layout = GridBagLayout()
-    browserComponent.border = componentBorder
-    browserComponent.layout = GridBagLayout()
-
-    search?.let {
-      browserComponent.add(it.component, searchConstraints)
-    }
-  }
-
-  private fun registerSettingsListener() {
-    settingsConnection = ApplicationManager.getApplication().messageBus.connect().apply {
-      subscribe(UISettingsListener.TOPIC, UISettingsListener {
-        updateUIForSettings()
-      })
-    }
-  }
 
   private fun updateUIForSettings() {
     this.searchConstraints.insets = searchInsets
@@ -223,12 +213,16 @@ class GBrowserToolWindowActionBar(private val delegate: GBrowserToolWindowAction
 
     bookmarksComponent.removeAll()
     initBookMarks(settings.bookmarks)
+    application.invokeLater {
+      component.repaint()
+    }
+
 
   }
 
   override fun dispose() { // Disposal logic
-    settingsConnection?.disconnect()
     actionsLeftComponent?.removeComponentListener(this)
+    actionsRightComponent?.removeComponentListener(this)
     search?.dispose()
     component.removeAll()
   }
