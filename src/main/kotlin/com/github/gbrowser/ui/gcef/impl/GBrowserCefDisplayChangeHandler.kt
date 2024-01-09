@@ -17,7 +17,7 @@ class GBrowserCefDisplayChangeHandler(private val delegate: GBrowserToolWindowAc
   }
 
   override fun onTitleChange(browser: CefBrowser?, title: String?) {
-    val isValidTitle = !title.isNullOrBlank() && !title.startsWith("GDevTools")
+    val isValidTitle = !title.isNullOrBlank() && !title.startsWith("DevTools")
     if (isValidTitle) {
       delegate.onTitleChange(title!!)
     }

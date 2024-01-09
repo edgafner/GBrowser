@@ -67,7 +67,7 @@ class IdeaFrame(remoteRobot: RemoteRobot, remoteComponent: RemoteComponent) : Co
       find<GBrowserToolWindowPanel>(byXpath("//div[@myaction.key='toolwindow.stripe.GDevTools']"), Duration.ofSeconds(8)).click()
     }
     catch (e: Exception) {
-      find<GBrowserToolWindowPanel>(byXpath("//div[@myaction.key='toolwindow.stripe.GDevTools']"), Duration.ofSeconds(8)).click()
+      find<GBrowserToolWindowPanel>(byXpath("//div[@myaction.key='toolwindow.stripe.DevTools']"), Duration.ofSeconds(8)).click()
     }
   }
 
