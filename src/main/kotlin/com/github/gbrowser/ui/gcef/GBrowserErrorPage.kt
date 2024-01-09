@@ -49,15 +49,11 @@ interface GBrowserErrorPage {
       val fgWebColor = "#%02x%02x%02x".format(fgColor.red, fgColor.green, fgColor.blue)
       var html = ERROR_PAGE_READER.get()
 
-      html = html.replace("\${lineHeight}", lineHeight.toString())
-        .replace("\${iconPaddingRight}", iconPaddingRight.toString())
-        .replace("\${fontSize}", fontSize.toString())
-        .replace("\${headerFontSize}", headerFontSize.toString())
-        .replace("\${headerPaddingTop}", headerPaddingTop.toString())
-        .replace("\${bgWebColor}", bgWebColor)
-        .replace("\${fgWebColor}", fgWebColor)
-        .replace("\${errorText}", errorText)
-        .replace("\${failedUrl}", failedUrl)
+      html = html.replace("\${lineHeight}", lineHeight.toString()).replace("\${iconPaddingRight}", iconPaddingRight.toString()).replace(
+        "\${fontSize}", fontSize.toString()).replace("\${headerFontSize}", headerFontSize.toString()).replace("\${headerPaddingTop}",
+                                                                                                              headerPaddingTop.toString()).replace(
+        "\${bgWebColor}", bgWebColor).replace("\${fgWebColor}", fgWebColor).replace("\${errorText}", errorText).replace("\${failedUrl}",
+                                                                                                                        failedUrl)
       return html
     }
   }

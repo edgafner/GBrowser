@@ -2,8 +2,8 @@ package com.github.gbrowser.ui.toolwindow.gbrowser
 
 import com.github.gbrowser.GBrowserIcons
 import com.github.gbrowser.actions.GBrowserActionId
-import com.github.gbrowser.settings.GBrowserProjectService
-import com.github.gbrowser.settings.GBrowserService
+import com.github.gbrowser.services.GBrowserProjectService
+import com.github.gbrowser.services.GBrowserService
 import com.github.gbrowser.util.GBrowserToolWindowUtil
 import com.github.gbrowser.util.GBrowserUtil
 import com.intellij.ide.AppLifecycleListener
@@ -42,7 +42,6 @@ class GBrowserToolWindowFactory : ToolWindowFactory, DumbAware, ContentManagerLi
     if (!myGBrowserService.reloadTabOnStartup || myGBrowserProjectService.tabs.isEmpty()) {
       GBrowserToolWindowUtil.createContentTab(toolWindow, myGBrowserService.defaultUrl, "")
     }
-    //createTabActions(toolWindow)
     createTitleActions(toolWindow)
     createAdditionalGearActions(toolWindow)
 

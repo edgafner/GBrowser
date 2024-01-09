@@ -9,7 +9,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
 
-        <applicationService serviceImplementation="com.github.gbrowser.settings.GBrowserService"/>
+        <applicationService serviceImplementation="com.github.gbrowser.services.GBrowserService"/>
         <projectConfigurable parentId="tools" instance="com.github.gbrowser.settings.project.GBrowserProjectSettingsConfigurable"
                              id="com.github.gbrowser.settings.project.GBrowserProjectSettingsConfigurable"
                              displayName="GBrowser"/>
@@ -19,7 +19,7 @@
                     anchor="left" secondary="false" canCloseContents="true"
                     icon="com.github.gbrowser.GBrowserIcons.GBROWSER_LOGO"/>
 
-        <toolWindow id="DevTools" factoryClass="com.github.gbrowser.ui.toolwindow.dev_tools.GBrowserToolWindowDevToolsFactory"
+        <toolWindow id="GDevTools" factoryClass="com.github.gbrowser.ui.toolwindow.dev_tools.GBrowserToolWindowDevToolsFactory"
                     anchor="bottom"
                     secondary="false" canCloseContents="true" doNotActivateOnStart="true"
                     icon="com.github.gbrowser.GBrowserIcons.DEV_TOOLS_ACTIVE"/>

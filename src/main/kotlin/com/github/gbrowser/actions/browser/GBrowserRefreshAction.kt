@@ -8,7 +8,6 @@ import com.intellij.openapi.project.DumbAware
 
 class GBrowserRefreshAction : AnAction(), DumbAware {
 
-  
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabled = GBrowserToolWindowUtil.getSelectedBrowserPanel(e)?.hasContent() ?: false
   }
@@ -20,6 +19,5 @@ class GBrowserRefreshAction : AnAction(), DumbAware {
   override fun actionPerformed(e: AnActionEvent) {
     val panel = GBrowserToolWindowUtil.getSelectedBrowserPanel(e) ?: return
     panel.reload()
-    panel.updateUI()
   }
 }

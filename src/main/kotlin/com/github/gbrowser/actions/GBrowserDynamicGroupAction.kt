@@ -11,7 +11,6 @@ import javax.swing.Icon
 
 class GBrowserDynamicGroupAction(private val actionItems: List<AnAction>, val icon: Icon, val text: String) : ActionGroup(text, null, icon),
                                                                                                               DumbAware {
-
   init {
     isPopup = true
     isSearchable = true

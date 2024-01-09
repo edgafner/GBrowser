@@ -2,7 +2,7 @@ package com.github.gbrowser.settings.project
 
 import com.github.gbrowser.GBrowserIcons
 import com.github.gbrowser.i18n.GBrowserBundle
-import com.github.gbrowser.settings.GBrowserService
+import com.github.gbrowser.services.GBrowserService
 import com.github.gbrowser.settings.bookmarks.GBrowserBookmarksTableComponent
 import com.github.gbrowser.settings.request_header.GBrowserRequestHeaderTableComponent
 import com.intellij.icons.AllIcons

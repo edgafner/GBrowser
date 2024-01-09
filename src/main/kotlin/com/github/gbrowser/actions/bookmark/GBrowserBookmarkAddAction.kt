@@ -2,7 +2,7 @@ package com.github.gbrowser.actions.bookmark
 
 import com.github.gbrowser.GBrowserIcons
 import com.github.gbrowser.i18n.GBrowserBundle
-import com.github.gbrowser.settings.GBrowserService
+import com.github.gbrowser.services.GBrowserService
 import com.github.gbrowser.settings.bookmarks.GBrowserBookmark
 import com.github.gbrowser.util.GBrowserToolWindowUtil
 import com.intellij.openapi.actionSystem.ActionUpdateThread
@@ -14,7 +14,7 @@ import javax.swing.Icon
 
 class GBrowserBookmarkAddAction : AnAction(), DumbAware {
   private val settings: GBrowserService = GBrowserService.instance()
-  private var existBookmarks: Boolean = false
+
   private val iconAdd: Icon = GBrowserIcons.BOOKMARK_REMOVE
   private val iconExist: Icon = GBrowserIcons.BOOKMARK_ADD
   private val textAdd: String = GBrowserBundle.message("actions.bookmark.add.text")
@@ -22,24 +22,27 @@ class GBrowserBookmarkAddAction : AnAction(), DumbAware {
 
 
   override fun update(e: AnActionEvent) {
+
     val panel = GBrowserToolWindowUtil.getSelectedBrowserPanel(e)
-    if (panel == null || !panel.hasContent()) {
+    //if (panel == null || !panel.hasContent()) {
+    if (panel == null) {
       e.presentation.isEnabled = false
       return
     }
 
     e.presentation.isEnabled = true
     val currentUrl = panel.getCurrentUrl()
-    existBookmarks = settings.existBookmark(currentUrl)
+    val existBookmarks = settings.existBookmark(currentUrl)
 
     e.presentation.icon = if (existBookmarks) iconExist else iconAdd
     e.presentation.text = if (existBookmarks) textRemove else textAdd
   }
 
-  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
 
   override fun actionPerformed(e: AnActionEvent) {
     val panel = GBrowserToolWindowUtil.getSelectedBrowserPanel(e) ?: return
+    val existBookmarks = settings.existBookmark(panel.getCurrentUrl())
     panel.let {
       val favorite = GBrowserBookmark(panel.getCurrentUrl(), panel.getCurrentTitle())
       if (existBookmarks) {
@@ -48,6 +51,6 @@ class GBrowserBookmarkAddAction : AnAction(), DumbAware {
         settings.addBookmarks(favorite)
       }
     }
-    panel.updateUI()
+    //panel.updateUI()
   }
 }

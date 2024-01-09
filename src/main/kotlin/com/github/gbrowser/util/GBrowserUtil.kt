@@ -11,7 +11,7 @@ import java.util.regex.PatternSyntaxException
 
 object GBrowserUtil {
   const val GBROWSER_TOOL_WINDOW_ID = "GBrowser"
-  const val DEVTOOLS_TOOL_WINDOW_ID = "DevTools"
+  const val DEVTOOLS_TOOL_WINDOW_ID = "GDevTools"
 
   fun suggestQuery(text: String): String {
     if (text.isEmpty()) return ""

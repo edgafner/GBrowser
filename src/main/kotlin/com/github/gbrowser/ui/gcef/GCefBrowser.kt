@@ -2,12 +2,13 @@ package com.github.gbrowser.ui.gcef
 
 import com.github.gbrowser.i18n.GBrowserBundle
 import com.github.gbrowser.services.providers.CachingWebPageTitleLoader
-import com.github.gbrowser.settings.GBrowserService
+import com.github.gbrowser.services.GBrowserService
 import com.github.gbrowser.settings.bookmarks.GBrowserBookmark
 import com.github.gbrowser.ui.gcef.impl.GBrowserCefDisplayChangeHandler
 import com.github.gbrowser.ui.gcef.impl.GBrowserCefLifeSpanDelegate
 import com.github.gbrowser.ui.gcef.impl.GBrowserCefRequestHandler
 import com.github.gbrowser.ui.toolwindow.dev_tools.GBrowserToolWindowDevToolsFactory
+import com.github.gbrowser.ui.toolwindow.gbrowser.GBrowserToolWindowActionBarDelegate
 import com.github.gbrowser.util.GBrowserToolWindowUtil
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
@@ -113,11 +114,9 @@ class GCefBrowser(val project: Project,
     }
   }
 
-
   fun setVisibility(isVisible: Boolean) {
     component.isVisible = isVisible
   }
-
 
   fun deleteCookies() {
     val manager = CefCookieManager.getGlobalManager()
@@ -156,8 +155,7 @@ class GCefBrowser(val project: Project,
 
   }
 
-
-  fun addDisplayHandler(delegate: GBrowserCefDisplayChangeDelegate) {
+  fun addDisplayHandler(delegate: GBrowserToolWindowActionBarDelegate) {
     cefBrowser.client?.addDisplayHandler(GBrowserCefDisplayChangeHandler(delegate))
   }
 
@@ -169,6 +167,10 @@ class GCefBrowser(val project: Project,
     cefBrowser.client?.removeDisplayHandler()
   }
 
+  fun removeLifeSpanHandler() {
+    cefBrowser.client?.removeLifeSpanHandler()
+  }
+
   fun addRequestHandler(handler: GBrowserCefRequestHandler) {
     cefBrowser.client?.removeRequestHandler()
     cefBrowser.client?.addRequestHandler(handler)
@@ -178,15 +180,14 @@ class GCefBrowser(val project: Project,
     cefBrowser.client?.removeRequestHandler()
   }
 
-
   override fun dispose() {
     removeDisplayHandler()
     removeRequestHandler()
     devToolsDelegates.forEach {
-
       it.onDisposeDevtools()
     }
     removeDevToolsListener()
+    removeLifeSpanHandler()
 
     super.dispose()
   }

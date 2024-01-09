@@ -1,6 +1,6 @@
 package com.github.gbrowser.actions.toolwindow
 
-import com.github.gbrowser.settings.GBrowserService
+import com.github.gbrowser.services.GBrowserService
 import com.github.gbrowser.util.GBrowserToolWindowUtil
 import com.github.gbrowser.util.GBrowserUtil
 import com.intellij.openapi.actionSystem.ActionUpdateThread

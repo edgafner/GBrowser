@@ -1,14 +1,11 @@
 package com.github.gbrowser.ui.toolwindow.gbrowser
 
+import com.github.gbrowser.services.GBrowserService
 import com.github.gbrowser.services.providers.CachingFavIconLoader
-import com.github.gbrowser.settings.GBrowserService
-import com.github.gbrowser.settings.bookmarks.GBrowserBookmark
 import com.github.gbrowser.settings.dao.GBrowserHistory
 import com.github.gbrowser.ui.gcef.GBrowserCefDevToolsListener
-import com.github.gbrowser.ui.gcef.GBrowserCefDisplayChangeDelegate
 import com.github.gbrowser.ui.gcef.GCefBrowser
 import com.github.gbrowser.ui.gcef.impl.GBrowserCefRequestHandler
-import com.github.gbrowser.ui.search.GBrowserSearchPopUpItemImpl
 import com.github.gbrowser.util.GBrowserUtil
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
@@ -18,34 +15,33 @@ import com.intellij.openapi.wm.ToolWindow
 import com.intellij.util.application
 import com.intellij.util.messages.MessageBus
 import com.intellij.util.messages.MessageBusConnection
+import javax.swing.SwingUtilities
 
 class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleToolWindowPanel(true, true), Disposable,
-                                                                      GBrowserToolWindowActionBarDelegate, GBrowserCefDisplayChangeDelegate,
-                                                                      GBrowserCefDevToolsListener {
+                                                                      GBrowserToolWindowActionBarDelegate, GBrowserCefDevToolsListener {
   private val settings: GBrowserService = GBrowserService.instance()
-  private var gBrowserToolBar: GBrowserToolWindowActionBar = GBrowserToolWindowActionBar(this)
   private var currentUrl: String = settings.defaultUrl
+  private var gBrowserToolBar: GBrowserToolWindowActionBar = GBrowserToolWindowActionBar(this)
   private var currentTitle: String = ""
   private var zoomLevel: Double = 0.0
-  private var browser: GCefBrowser = GCefBrowser(toolWindow.project, currentUrl, null, null)
-  private val devTools = GCefBrowser(toolWindow.project, null, browser.client, browser.devTools, browser.id)
+  private var gbrowser: GCefBrowser = GCefBrowser(toolWindow.project, currentUrl, null, null)
+  private val devTools = GCefBrowser(toolWindow.project, null, gbrowser.client, gbrowser.devTools, gbrowser.id)
   private val favIconLoader: CachingFavIconLoader = service()
   private val bus: MessageBus = ApplicationManager.getApplication().messageBus
   private val settingsConnection: MessageBusConnection = bus.connect()
   private var isSearchFocused: Boolean = false
 
   init {
-    toolbar = gBrowserToolBar.component
-    setSearchText(currentUrl)
+    toolbar = gBrowserToolBar.mainToolBarComponent
+    gBrowserToolBar.search.text = currentTitle
     setupBrowser()
-    addSettingsListener()
   }
 
   private fun setupBrowser() {
-    browser.addDisplayHandler(this)
-    browser.addLifeSpanHandler(toolWindow)
-    browser.addRequestHandler(GBrowserCefRequestHandler(null))
-    setContent(browser.component)
+    gbrowser.addDisplayHandler(this)
+    gbrowser.addLifeSpanHandler(toolWindow)
+    gbrowser.addRequestHandler(GBrowserCefRequestHandler(null))
+    setContent(gbrowser.component)
   }
 
   fun getCurrentUrl(): String = currentUrl
@@ -60,64 +56,51 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
     currentTitle = title
   }
 
-  fun getBrowser(): GCefBrowser = browser
+  fun getBrowser(): GCefBrowser = gbrowser
 
   fun getDevToolsBrowser(): GCefBrowser = devTools
 
   override fun dispose() {
-    browser.dispose()
+    gbrowser.dispose()
     gBrowserToolBar.dispose()
     removeSettingsListener()
   }
 
-  private fun addSettingsListener() {
-    settings.addListener { state: GBrowserService.SettingsState ->
-      state.let {
-        gBrowserToolBar.search?.let {
-          it.isHostHighlighted = state.isHostHighlight
-          it.isHostHidden = state.isProtocolHidden
-          it.setSearchHighlighted(state.isSuggestionSearchHighlighted)
-        }
-
-      }
-    }
-  }
-
-  // Other methods (reload, loadUrl, stopLoad, loadDefaultUrl, etc.) would be similarly converted.
 
   fun reload() {
-    browser.cefBrowser.reloadIgnoreCache()
+    gbrowser.cefBrowser.reloadIgnoreCache()
   }
 
 
   // Example of a method conversion:
   fun loadUrl(url: String) {
-    browser.loadURL(url)
+    if (!gbrowser.cefBrowser.isLoading) {
+      gbrowser.cefBrowser.loadURL(url)
+    } else {
+      gbrowser.cefBrowser.stopLoad()
+      gbrowser.cefBrowser.loadURL(url)
+    }
   }
 
   fun stopLoad() {
-    browser.cefBrowser.stopLoad()
-  }
-
-  fun loadDefaultUrl() {
-    browser.loadURL(settings.defaultUrl)
+    gbrowser.cefBrowser.stopLoad()
   }
 
 
   fun canGoBack(): Boolean {
-    return browser.cefBrowser.canGoBack()
+    return gbrowser.cefBrowser.canGoBack()
   }
 
   fun canGoForward(): Boolean {
-    return browser.cefBrowser.canGoForward()
+    return gbrowser.cefBrowser.canGoForward()
   }
 
   fun goBack() {
-    browser.cefBrowser.goBack()
+    gbrowser.cefBrowser.goBack()
   }
 
   fun goForward() {
-    browser.cefBrowser.goForward()
+    gbrowser.cefBrowser.goForward()
   }
 
   fun zoomIn() {
@@ -135,32 +118,32 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
   }
 
   private fun setZoom(level: Double) {
-    browser.cefBrowser.zoomLevel = level
+    gbrowser.cefBrowser.zoomLevel = level
     zoomLevel = level
   }
 
   fun hasContent(): Boolean {
-    val url = browser.cefBrowser.url ?: return false
+    val url = gbrowser.cefBrowser.url ?: return false
     return url.isNotEmpty()
   }
 
 
   fun deleteCookies() {
-    browser.deleteCookies()
+    gbrowser.deleteCookies()
   }
 
 
   fun setToolBarVisible(isVisible: Boolean) {
-    gBrowserToolBar.component.isVisible = isVisible
+    gBrowserToolBar.mainToolBarComponent.isVisible = isVisible
   }
 
   fun isToolBarVisible(): Boolean {
-    return gBrowserToolBar.component.isVisible
+    return gBrowserToolBar.mainToolBarComponent.isVisible
   }
 
 
   private fun setFocusOnBrowserUI() {
-    browser.cefBrowser.uiComponent.requestFocus()
+    gbrowser.cefBrowser.uiComponent.requestFocus()
   }
 
 
@@ -184,10 +167,6 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
     }
   }
 
-  private fun setSearchText(text: String) {
-    gBrowserToolBar.search?.setText(text)
-  }
-
   private fun setHistoryItem() {
     if (currentUrl.trim().isNotEmpty()) {
       if (settings.isHistoryEnabled) {
@@ -205,7 +184,7 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
   }
 
   override fun onSearchEnter(text: String) {
-    val canSuggestion = GBrowserUtil.isValidBrowserURL(text) && settings.isSuggestionSearchEnabled
+    val canSuggestion = !GBrowserUtil.isValidBrowserURL(text) && settings.isSuggestionSearchEnabled
     val url = if (canSuggestion) "https://www.google.com/search?q=$text" else text
     loadUrl(url)
   }
@@ -220,49 +199,31 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
     isSearchFocused = false
   }
 
-  override fun onKeyReleased(text: String,
-                             popupItems: (List<GBrowserSearchPopUpItemImpl>, List<GBrowserSearchPopUpItemImpl>, List<GBrowserSearchPopUpItemImpl>) -> Unit) {
-    val historyItems = mutableListOf<GBrowserSearchPopUpItemImpl>()
-
-    val history: MutableSet<GBrowserHistory> = settings.history
-    historyItems.addAll(getHistoryItemsWidthValue(text, history, favIconLoader, settings.isFavIconEnabled))
-
-    val bookMarksItems = mutableListOf<GBrowserSearchPopUpItemImpl>()
-    val bookmarks: MutableSet<GBrowserBookmark> = settings.bookmarks
-    bookMarksItems.addAll(getHBookmarkItemsWidthValue(text, bookmarks))
-
-    val suggestedItems = mutableListOf<GBrowserSearchPopUpItemImpl>()
-    val isSuggestionEnabled: Boolean = settings.isSuggestionSearchEnabled
-    if (isSuggestionEnabled) {
-      suggestedItems.addAll(getSuggestionItems(text))
-    }
-
-    popupItems.invoke(historyItems, bookMarksItems, suggestedItems)
-  }
 
   override fun onDisposeDevtools() {
-    browser.disposeDevTools()
+    gbrowser.disposeDevTools()
   }
 
   override fun onAddressChange(url: String) {
     if (!isSearchFocused) {
-      setSearchText(url)
+      setFocusOnBrowserUI()
     }
-
     setTabIcon(url)
     setHistoryItem()
     setCurrentUrl(url)
+    gbrowser.setVisibility(true)
+    SwingUtilities.invokeLater {
+      gBrowserToolBar.search.text = url
+    }
+
 
   }
 
   override fun onTitleChange(title: String) {
-    if (!isSearchFocused) {
-      setFocusOnBrowserUI()
-    }
     setTabName(title)
     setCurrentTitle(title)
-    browser.setVisibility(true)
-    browser.notifyTitleChanged(title)
+    gbrowser.setVisibility(true)
+    gbrowser.notifyTitleChanged(title)
     devTools.notifyTitleChanged(title)
   }
 

@@ -1,12 +1,12 @@
 package com.github.gbrowser.ui.gcef.impl
 
 
-import com.github.gbrowser.ui.gcef.GBrowserCefDisplayChangeDelegate
+import com.github.gbrowser.ui.toolwindow.gbrowser.GBrowserToolWindowActionBarDelegate
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
 import org.cef.handler.CefDisplayHandlerAdapter
 
-class GBrowserCefDisplayChangeHandler(private val delegate: GBrowserCefDisplayChangeDelegate) : CefDisplayHandlerAdapter() {
+class GBrowserCefDisplayChangeHandler(private val delegate: GBrowserToolWindowActionBarDelegate) : CefDisplayHandlerAdapter() {
 
   override fun onAddressChange(browser: CefBrowser?, frame: CefFrame?, url: String?) {
     val isValidURL = !url.isNullOrBlank() && !url.startsWith("devtools") && !url.startsWith("file:///jbcefbrowser")

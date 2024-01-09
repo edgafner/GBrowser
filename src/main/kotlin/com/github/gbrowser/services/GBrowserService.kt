@@ -1,4 +1,4 @@
-package com.github.gbrowser.settings
+package com.github.gbrowser.services
 
 import com.github.gbrowser.settings.bookmarks.GBrowserBookmark
 import com.github.gbrowser.settings.dao.GBrowserHistory

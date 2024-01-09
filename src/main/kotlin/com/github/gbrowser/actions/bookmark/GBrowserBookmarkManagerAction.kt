@@ -1,6 +1,6 @@
 package com.github.gbrowser.actions.bookmark
 
-import com.github.gbrowser.settings.GBrowserService
+import com.github.gbrowser.services.GBrowserService
 import com.github.gbrowser.settings.project.GBrowserProjectSettingsConfigurable
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction

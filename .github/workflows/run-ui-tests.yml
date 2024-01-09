@@ -19,6 +19,7 @@ jobs:
 
   testUI:
     runs-on: ${{ matrix.os }}
+    name: Test UI on ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
