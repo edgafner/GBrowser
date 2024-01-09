@@ -15,6 +15,7 @@ import com.intellij.openapi.wm.ToolWindow
 import com.intellij.util.application
 import com.intellij.util.messages.MessageBus
 import com.intellij.util.messages.MessageBusConnection
+import javax.swing.SwingUtilities
 
 class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleToolWindowPanel(true, true), Disposable,
                                                                       GBrowserToolWindowActionBarDelegate, GBrowserCefDevToolsListener {
@@ -23,8 +24,8 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
   private var gBrowserToolBar: GBrowserToolWindowActionBar = GBrowserToolWindowActionBar(this)
   private var currentTitle: String = ""
   private var zoomLevel: Double = 0.0
-  private var browser: GCefBrowser = GCefBrowser(toolWindow.project, currentUrl, null, null)
-  private val devTools = GCefBrowser(toolWindow.project, null, browser.client, browser.devTools, browser.id)
+  private var gbrowser: GCefBrowser = GCefBrowser(toolWindow.project, currentUrl, null, null)
+  private val devTools = GCefBrowser(toolWindow.project, null, gbrowser.client, gbrowser.devTools, gbrowser.id)
   private val favIconLoader: CachingFavIconLoader = service()
   private val bus: MessageBus = ApplicationManager.getApplication().messageBus
   private val settingsConnection: MessageBusConnection = bus.connect()
@@ -37,10 +38,10 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
   }
 
   private fun setupBrowser() {
-    browser.addDisplayHandler(this)
-    browser.addLifeSpanHandler(toolWindow)
-    browser.addRequestHandler(GBrowserCefRequestHandler(null))
-    setContent(browser.component)
+    gbrowser.addDisplayHandler(this)
+    gbrowser.addLifeSpanHandler(toolWindow)
+    gbrowser.addRequestHandler(GBrowserCefRequestHandler(null))
+    setContent(gbrowser.component)
   }
 
   fun getCurrentUrl(): String = currentUrl
@@ -55,51 +56,51 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
     currentTitle = title
   }
 
-  fun getBrowser(): GCefBrowser = browser
+  fun getBrowser(): GCefBrowser = gbrowser
 
   fun getDevToolsBrowser(): GCefBrowser = devTools
 
   override fun dispose() {
-    browser.dispose()
+    gbrowser.dispose()
     gBrowserToolBar.dispose()
     removeSettingsListener()
   }
 
-  // Other methods (reload, loadUrl, stopLoad, loadDefaultUrl, etc.) would be similarly converted.
 
   fun reload() {
-    browser.cefBrowser.reloadIgnoreCache()
+    gbrowser.cefBrowser.reloadIgnoreCache()
   }
 
 
   // Example of a method conversion:
   fun loadUrl(url: String) {
-    browser.loadURL(url)
+    if (!gbrowser.cefBrowser.isLoading) {
+      gbrowser.cefBrowser.loadURL(url)
+    } else {
+      gbrowser.cefBrowser.stopLoad()
+      gbrowser.cefBrowser.loadURL(url)
+    }
   }
 
   fun stopLoad() {
-    browser.cefBrowser.stopLoad()
-  }
-
-  fun loadDefaultUrl() {
-    browser.loadURL(settings.defaultUrl)
+    gbrowser.cefBrowser.stopLoad()
   }
 
 
   fun canGoBack(): Boolean {
-    return browser.cefBrowser.canGoBack()
+    return gbrowser.cefBrowser.canGoBack()
   }
 
   fun canGoForward(): Boolean {
-    return browser.cefBrowser.canGoForward()
+    return gbrowser.cefBrowser.canGoForward()
   }
 
   fun goBack() {
-    browser.cefBrowser.goBack()
+    gbrowser.cefBrowser.goBack()
   }
 
   fun goForward() {
-    browser.cefBrowser.goForward()
+    gbrowser.cefBrowser.goForward()
   }
 
   fun zoomIn() {
@@ -117,18 +118,18 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
   }
 
   private fun setZoom(level: Double) {
-    browser.cefBrowser.zoomLevel = level
+    gbrowser.cefBrowser.zoomLevel = level
     zoomLevel = level
   }
 
   fun hasContent(): Boolean {
-    val url = browser.cefBrowser.url ?: return false
+    val url = gbrowser.cefBrowser.url ?: return false
     return url.isNotEmpty()
   }
 
 
   fun deleteCookies() {
-    browser.deleteCookies()
+    gbrowser.deleteCookies()
   }
 
 
@@ -142,7 +143,7 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
 
 
   private fun setFocusOnBrowserUI() {
-    browser.cefBrowser.uiComponent.requestFocus()
+    gbrowser.cefBrowser.uiComponent.requestFocus()
   }
 
 
@@ -200,7 +201,7 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
 
 
   override fun onDisposeDevtools() {
-    browser.disposeDevTools()
+    gbrowser.disposeDevTools()
   }
 
   override fun onAddressChange(url: String) {
@@ -210,19 +211,19 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
     setTabIcon(url)
     setHistoryItem()
     setCurrentUrl(url)
-    browser.setVisibility(true)
-    gBrowserToolBar.search.text = url
+    gbrowser.setVisibility(true)
+    SwingUtilities.invokeLater {
+      gBrowserToolBar.search.text = url
+    }
+
 
   }
 
   override fun onTitleChange(title: String) {
-    if (!isSearchFocused) {
-      setFocusOnBrowserUI()
-    }
     setTabName(title)
     setCurrentTitle(title)
-    browser.setVisibility(true)
-    browser.notifyTitleChanged(title)
+    gbrowser.setVisibility(true)
+    gbrowser.notifyTitleChanged(title)
     devTools.notifyTitleChanged(title)
   }
 
