@@ -11,16 +11,22 @@ class GBrowserForwardAction : AnAction(), DumbAware {
 
   override fun update(e: AnActionEvent) {
     val panel = GBrowserToolWindowUtil.getSelectedBrowserPanel(e)
-    e.presentation.isEnabled = panel?.canGoForward() ?: false
+    if (panel == null) {
+      e.presentation.isEnabled = false
+      return
+    }
+    panel.canGoForward().let {
+      e.presentation.isEnabled = it
+    }
+
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread {
-    return ActionUpdateThread.EDT
+    return ActionUpdateThread.BGT
   }
 
   override fun actionPerformed(e: AnActionEvent) {
     val panel = GBrowserToolWindowUtil.getSelectedBrowserPanel(e) ?: return
     panel.goForward()
-    panel.updateUI()
   }
 }

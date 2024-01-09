@@ -8,7 +8,7 @@ class GBrowserSearchPopModel : AbstractListModel<GBrowserSearchPopUpItem>() {
 
   override fun getElementAt(index: Int): GBrowserSearchPopUpItem = items.elementAt(index)
 
-  override fun getSize(): Int = minOf(15, items.size)
+  override fun getSize(): Int = minOf(10, items.size)
 
   fun setItems(popUpItem: List<GBrowserSearchPopUpItem>) {
     items.clear() // Clear the existing items

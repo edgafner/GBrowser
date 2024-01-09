@@ -2,13 +2,10 @@ package com.github.gbrowser.ui.toolwindow.gbrowser
 
 import com.github.gbrowser.services.providers.CachingFavIconLoader
 import com.github.gbrowser.settings.GBrowserService
-import com.github.gbrowser.settings.bookmarks.GBrowserBookmark
 import com.github.gbrowser.settings.dao.GBrowserHistory
 import com.github.gbrowser.ui.gcef.GBrowserCefDevToolsListener
-import com.github.gbrowser.ui.gcef.GBrowserCefDisplayChangeDelegate
 import com.github.gbrowser.ui.gcef.GCefBrowser
 import com.github.gbrowser.ui.gcef.impl.GBrowserCefRequestHandler
-import com.github.gbrowser.ui.search.GBrowserSearchPopUpItem
 import com.github.gbrowser.util.GBrowserUtil
 import com.intellij.ide.ui.UISettings
 import com.intellij.openapi.Disposable
@@ -21,11 +18,10 @@ import com.intellij.util.messages.MessageBus
 import com.intellij.util.messages.MessageBusConnection
 
 class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleToolWindowPanel(true, true), Disposable,
-                                                                      GBrowserToolWindowActionBarDelegate, GBrowserCefDisplayChangeDelegate,
-                                                                      GBrowserCefDevToolsListener {
+                                                                      GBrowserToolWindowActionBarDelegate, GBrowserCefDevToolsListener {
   private val settings: GBrowserService = GBrowserService.instance()
-  private var gBrowserToolBar: GBrowserToolWindowActionBar = GBrowserToolWindowActionBar(this)
   private var currentUrl: String = settings.defaultUrl
+  private var gBrowserToolBar: GBrowserToolWindowActionBar = GBrowserToolWindowActionBar(this)
   private var currentTitle: String = ""
   private var zoomLevel: Double = 0.0
   private var browser: GCefBrowser = GCefBrowser(toolWindow.project, currentUrl, null, null)
@@ -36,10 +32,9 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
   private var isSearchFocused: Boolean = false
 
   init {
-    toolbar = gBrowserToolBar.component
-    setSearchText(currentUrl)
+    toolbar = gBrowserToolBar.mainToolBarComponent
+    gBrowserToolBar.search.text = currentTitle
     setupBrowser()
-    addSettingsListener()
   }
 
   private fun setupBrowser() {
@@ -69,19 +64,6 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
     browser.dispose()
     gBrowserToolBar.dispose()
     removeSettingsListener()
-  }
-
-  private fun addSettingsListener() {
-    settings.addListener { state: GBrowserService.SettingsState ->
-      state.let {
-        gBrowserToolBar.search?.let {
-          it.isHostHighlighted = state.isHostHighlight
-          it.isHostHidden = state.isProtocolHidden
-          it.setSearchHighlighted(state.isSuggestionSearchHighlighted)
-        }
-
-      }
-    }
   }
 
   // Other methods (reload, loadUrl, stopLoad, loadDefaultUrl, etc.) would be similarly converted.
@@ -152,11 +134,11 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
 
 
   fun setToolBarVisible(isVisible: Boolean) {
-    gBrowserToolBar.component.isVisible = isVisible
+    gBrowserToolBar.mainToolBarComponent.isVisible = isVisible
   }
 
   fun isToolBarVisible(): Boolean {
-    return gBrowserToolBar.component.isVisible
+    return gBrowserToolBar.mainToolBarComponent.isVisible
   }
 
 
@@ -185,10 +167,6 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
     }
   }
 
-  private fun setSearchText(text: String) {
-    gBrowserToolBar.search?.setText(text)
-  }
-
   private fun setHistoryItem() {
     if (currentUrl.trim().isNotEmpty()) {
       if (settings.isHistoryEnabled) {
@@ -206,7 +184,7 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
   }
 
   override fun onSearchEnter(text: String) {
-    val canSuggestion = GBrowserUtil.isValidBrowserURL(text) && settings.isSuggestionSearchEnabled
+    val canSuggestion = !GBrowserUtil.isValidBrowserURL(text) && settings.isSuggestionSearchEnabled
     val url = if (canSuggestion) "https://www.google.com/search?q=$text" else text
     loadUrl(url)
   }
@@ -221,42 +199,19 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
     isSearchFocused = false
   }
 
-  override fun onKeyReleased(text: String, popupItems: (List<GBrowserSearchPopUpItem>) -> Unit) {
-    val items = mutableListOf<GBrowserSearchPopUpItem>()
-
-    val history: MutableSet<GBrowserHistory> = settings.history
-    items.addAll(getHistoryItemsWidthValue(text, history, favIconLoader, settings.isFavIconEnabled))
-
-    mutableListOf<GBrowserSearchPopUpItem>()
-    val bookmarks: MutableSet<GBrowserBookmark> = settings.bookmarks
-    items.addAll(getHBookmarkItemsWidthValue(text, bookmarks))
-
-    mutableListOf<GBrowserSearchPopUpItem>()
-    val isSuggestionEnabled: Boolean = settings.isSuggestionSearchEnabled
-    if (isSuggestionEnabled) {
-      items.addAll(getSuggestionItems(text))
-    }
-
-    popupItems.invoke(items)
-  }
 
   override fun onDisposeDevtools() {
     browser.disposeDevTools()
   }
 
   override fun onAddressChange(url: String) {
-    if (!isSearchFocused) {
-      setSearchText(url)
-    }
-
     setTabIcon(url)
     setHistoryItem()
     setCurrentUrl(url)
+    gBrowserToolBar.search.text = url
     application.invokeLater {
       UISettings.getInstance().fireUISettingsChanged()
     }
-
-
   }
 
   override fun onTitleChange(title: String) {

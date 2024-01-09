@@ -8,6 +8,7 @@ import com.github.gbrowser.ui.gcef.impl.GBrowserCefDisplayChangeHandler
 import com.github.gbrowser.ui.gcef.impl.GBrowserCefLifeSpanDelegate
 import com.github.gbrowser.ui.gcef.impl.GBrowserCefRequestHandler
 import com.github.gbrowser.ui.toolwindow.dev_tools.GBrowserToolWindowDevToolsFactory
+import com.github.gbrowser.ui.toolwindow.gbrowser.GBrowserToolWindowActionBarDelegate
 import com.github.gbrowser.util.GBrowserToolWindowUtil
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
@@ -157,7 +158,7 @@ class GCefBrowser(val project: Project,
   }
 
 
-  fun addDisplayHandler(delegate: GBrowserCefDisplayChangeDelegate) {
+  fun addDisplayHandler(delegate: GBrowserToolWindowActionBarDelegate) {
     cefBrowser.client?.addDisplayHandler(GBrowserCefDisplayChangeHandler(delegate))
   }
 

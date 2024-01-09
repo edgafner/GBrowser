@@ -1,149 +1,91 @@
 package com.github.gbrowser.ui.toolwindow.gbrowser
 
+import com.github.gbrowser.actions.GBrowserActionId
+import com.github.gbrowser.actions.GBrowserDynamicGroupAction
 import com.github.gbrowser.services.providers.CachingFavIconLoader
 import com.github.gbrowser.settings.GBrowserService
 import com.github.gbrowser.settings.bookmarks.GBrowserBookmark
-import com.github.gbrowser.ui.search.GBrowserSearchFieldDelegate
-import com.github.gbrowser.ui.search.GBrowserSearchPopUpItem
-import com.github.gbrowser.ui.search.impl.GBrowserSearchField
+import com.github.gbrowser.ui.search.impl.GBrowserSearchTextField
 import com.intellij.collaboration.ui.HorizontalListPanel
-import com.intellij.ide.ui.UISettings
+import com.intellij.icons.AllIcons
 import com.intellij.ide.ui.UISettingsListener
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.actionSystem.ActionGroup
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.ActionToolbar
+import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.ui.JBPopupMenu
-import com.intellij.ui.dsl.builder.AlignX
-import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.util.minimumWidth
+import com.intellij.openapi.util.Disposer
 import com.intellij.ui.util.preferredHeight
-import com.intellij.util.application
 import com.intellij.util.ui.InlineIconButton
-import com.intellij.util.ui.JBEmptyBorder
-import com.intellij.util.ui.JBInsets
 import com.intellij.util.ui.JBUI
-import java.awt.Dimension
-import java.awt.GridBagConstraints
-import java.awt.GridBagLayout
+import net.miginfocom.layout.CC
+import net.miginfocom.layout.LC
+import net.miginfocom.swing.MigLayout
+import java.awt.BorderLayout
 import java.awt.event.*
-import javax.swing.*
+import javax.swing.BoxLayout
+import javax.swing.JMenuItem
+import javax.swing.JPanel
+import javax.swing.SwingUtilities
 
 @Suppress("UnstableApiUsage")
 class GBrowserToolWindowActionBar(private val delegate: GBrowserToolWindowActionBarDelegate) : ComponentAdapter(), Disposable {
-
-
+  private val settings = GBrowserService.instance()
   private val favIconLoader: CachingFavIconLoader = service()
-  val settings = GBrowserService.instance()
-
-  private val componentBorder: JBEmptyBorder by lazy {
-    if (UISettings.getInstance().compactMode) {
-      JBUI.Borders.empty(2, 0)
-    } else {
-      JBUI.Borders.empty(3, 0)
-    }
-  }
-
-  private val searchInsets: JBInsets by lazy {
-    if (UISettings.getInstance().compactMode) {
-      JBUI.insets(2, 0)
-    } else {
-      JBUI.insets(5, 0)
-    }
-  }
-
-  private val searchConstraints: GridBagConstraints by lazy {
-    GridBagConstraints().apply {
-      insets = searchInsets
-      fill = GridBagConstraints.HORIZONTAL
-      weightx = 1.0
-      weighty = 1.0
-    }
-  }
-
-  private val bookmarksComponent = HorizontalListPanel(7).apply {
+  private val rightActionGroup = DefaultActionGroup()
+  private val leftActionGroup = DefaultActionGroup()
+  private lateinit var leftToolActionBarComponent: ActionToolbar
+  private lateinit var rightToolActionBarComponent: ActionToolbar
+  val disposable: Disposable = Disposer.newDisposable(this)
+  private val bookmarksComponent = HorizontalListPanel(2).apply {
     layout = BoxLayout(this, BoxLayout.X_AXIS)
     preferredHeight = 22
-
-
-  }
-  private val browserComponent = JPanel(GridBagLayout()).apply {
-    border = componentBorder
-    minimumWidth = 50
+    border = JBUI.Borders.empty(2)
   }
 
-  val component: JPanel = panel {
-    row {
-      cell(browserComponent).align(AlignX.FILL).component
+  lateinit var search: GBrowserSearchTextField
+
+  private val browserComponent by lazy {
+    JPanel().apply { //layout = MigLayout(LC().gridGap("2", "0").insets("0").fillX().hideMode(3))
+      layout = MigLayout(LC().fill().flowY().gridGap("4", "4") // Increased gap between components
+                           .insets("2", "2", "2", "2").hideMode(3))
+      border = JBUI.Borders.empty(2)
+
+      leftToolActionBarComponent = createToolBarAction(leftActionGroup)
+      add(leftToolActionBarComponent.component, CC().wrap().dockWest())
+
+      search = GBrowserSearchTextField(delegate)
+      add(search, CC().growX().minWidth("0"))
+
+      rightToolActionBarComponent = createToolBarAction(rightActionGroup)
+      add(rightToolActionBarComponent.component, CC().wrap().dockEast())
     }
-    row {
-      cell(bookmarksComponent).align(
-        AlignX.LEFT).component.apply { // Override the maximum size to ensure it doesn't stretch to fill the space.
-        maximumSize = Dimension(Int.MAX_VALUE, preferredSize.height)
-      }
-    }
-  }.apply {
-    layout = BoxLayout(this, BoxLayout.Y_AXIS)
   }
 
-  var search: GBrowserSearchField? = null
-  private var actionsLeftComponent: JComponent? = null
-  private var actionsRightComponent: JComponent? = null
 
   init {
-    setupLeftActionBars()
-    setupSearchField()
-    setupRightActionBars()
+
+    leftActionGroup.addAll(GBrowserActionId.LEFT)
+    rightActionGroup.add(GBrowserActionId.toAction(GBrowserActionId.GBROWSER_BOOKMARK_ADD_ID))
+    val groupAll = GBrowserDynamicGroupAction(GBrowserActionId.allActions(), AllIcons.General.ArrowDown, "More Options")
+    rightActionGroup.add(groupAll)
     setupBookmarks()
     ApplicationManager.getApplication().messageBus.connect().subscribe(UISettingsListener.TOPIC,
                                                                        UISettingsListener { updateUIForSettings() })
 
   }
 
-  private fun setupLeftActionBars() {
-    val actionsLeft = GBrowserToolBarSectionLeftAction(browserComponent)
-    val actionToolbarLeft = createToolBarAction(actionsLeft, browserComponent)
-
-    browserComponent.add(actionToolbarLeft.component)
-    actionsLeftComponent = actionToolbarLeft.component
-    actionsLeftComponent?.addComponentListener(this as ComponentListener)
-
+  val mainToolBarComponent: JPanel = JPanel(BorderLayout()).apply {
+    add(browserComponent, BorderLayout.NORTH)
+    add(bookmarksComponent, BorderLayout.SOUTH)
   }
 
-  private fun setupRightActionBars() {
-    val actionsRight = GBrowserToolBarSectionRightAction(browserComponent)
-    val actionToolbarRight = createToolBarAction(actionsRight, browserComponent)
-    browserComponent.add(actionToolbarRight.component)
-    this.actionsRightComponent = actionToolbarRight.component
-    actionsRightComponent?.addComponentListener(this as ComponentListener)
-  }
-
-  private fun setupSearchField() {
-    search = GBrowserSearchField(object : GBrowserSearchFieldDelegate {
-      override fun onEnter(url: String) {
-        delegate.onSearchEnter(url)
-      }
-
-      override fun onFocus() {
-        delegate.onSearchFocus()
-      }
-
-      override fun onFocusLost() {
-        delegate.onSearchFocusLost()
-      }
-
-      override fun onKeyReleased(text: String, popupItems: (List<GBrowserSearchPopUpItem>) -> Unit) {
-        delegate.onKeyReleased(text, popupItems)
-      }
-    })
-    browserComponent.layout = GridBagLayout()
-    browserComponent.border = componentBorder
-
-    search?.let {
-      browserComponent.add(it.component, searchConstraints)
-    }
-  }
 
   private fun setupBookmarks() {
+    initBookMarks(settings.bookmarks)
     settings.addListener { state: GBrowserService.SettingsState ->
       bookmarksComponent.removeAll()
       state.let { currentState ->
@@ -154,6 +96,8 @@ class GBrowserToolWindowActionBar(private val delegate: GBrowserToolWindowAction
           bookmarksComponent.isVisible = false
         }
       }
+
+
     }
   }
 
@@ -202,38 +146,30 @@ class GBrowserToolWindowActionBar(private val delegate: GBrowserToolWindowAction
 
 
   private fun updateUIForSettings() {
-    this.searchConstraints.insets = searchInsets
-    this.search?.let {
-      browserComponent.remove(it.component)
-      browserComponent.add(it.component, searchConstraints, 1)
-
-    }
-
-    browserComponent.border = componentBorder
-
-    bookmarksComponent.removeAll()
-    initBookMarks(settings.bookmarks)
-    application.invokeLater {
-      component.repaint()
-    }
-
-
+    leftToolActionBarComponent.component.revalidate()
+    leftToolActionBarComponent.component.repaint()
+    rightToolActionBarComponent.component.revalidate()
+    rightToolActionBarComponent.component.repaint()
+    mainToolBarComponent.repaint()
   }
 
   override fun dispose() { // Disposal logic
-    actionsLeftComponent?.removeComponentListener(this)
-    actionsRightComponent?.removeComponentListener(this)
-    search?.dispose()
-    component.removeAll()
+    mainToolBarComponent.removeAll()
   }
 
   override fun componentShown(e: ComponentEvent?) {
-    search?.component?.isVisible = true
-    component.border = componentBorder
+    mainToolBarComponent.isVisible = true
   }
 
   override fun componentHidden(e: ComponentEvent?) {
-    search?.component?.isVisible = false
-    component.border = JBUI.Borders.empty()
+    mainToolBarComponent.isVisible = false
+  }
+
+  private fun createToolBarAction(actionGroup: ActionGroup): ActionToolbar {
+    val actionManager = ActionManager.getInstance()
+    val actionToolbar = actionManager.createActionToolbar("ToolwindowToolbar", actionGroup, true)
+    actionToolbar.layoutPolicy = ActionToolbar.NOWRAP_LAYOUT_POLICY
+    actionToolbar.targetComponent = null
+    return actionToolbar
   }
 }

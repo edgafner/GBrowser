@@ -24,7 +24,8 @@ class GBrowserBookmarkAddAction : AnAction(), DumbAware {
   override fun update(e: AnActionEvent) {
 
     val panel = GBrowserToolWindowUtil.getSelectedBrowserPanel(e)
-    if (panel == null || !panel.hasContent()) {
+    //if (panel == null || !panel.hasContent()) {
+    if (panel == null) {
       e.presentation.isEnabled = false
       return
     }
@@ -37,7 +38,7 @@ class GBrowserBookmarkAddAction : AnAction(), DumbAware {
     e.presentation.text = if (existBookmarks) textRemove else textAdd
   }
 
-  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
 
   override fun actionPerformed(e: AnActionEvent) {
     val panel = GBrowserToolWindowUtil.getSelectedBrowserPanel(e) ?: return
@@ -50,6 +51,6 @@ class GBrowserBookmarkAddAction : AnAction(), DumbAware {
         settings.addBookmarks(favorite)
       }
     }
-    panel.updateUI()
+    //panel.updateUI()
   }
 }

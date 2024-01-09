@@ -20,6 +20,5 @@ class GBrowserHomeAction : AnAction(), DumbAware {
   override fun actionPerformed(e: AnActionEvent) {
     val panel = GBrowserToolWindowUtil.getSelectedBrowserPanel(e) ?: return
     panel.loadDefaultUrl()
-    panel.updateUI()
   }
 }

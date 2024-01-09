@@ -4,7 +4,7 @@ package com.github.gbrowser.ui.toolwindow.gbrowser
 import java.awt.*
 import javax.swing.JPanel
 
-class GBrowserRoundedPanel(private var cornerRadius: Int = 15, internal var backgroundColor: Color? = null) :
+class GBrowserRoundedPanel(private var cornerRadius: Int = 15, private var backgroundColor: Color? = null) :
   JPanel() {
 
   init {
@@ -24,8 +24,4 @@ class GBrowserRoundedPanel(private var cornerRadius: Int = 15, internal var back
     graphics.fillRoundRect(0, 0, width, height, arcs.width, arcs.height)
   }
 
-  fun setBackgroundColor(bgColor: Color?) {
-    backgroundColor = bgColor
-    repaint()
-  }
 }

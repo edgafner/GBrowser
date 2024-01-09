@@ -22,7 +22,8 @@ fun getHistoryItemsWidthValue(searchValue: String,
 
   history.forEach { entry ->
     val url = entry.url
-    val isMatch = url.contains(searchValue, ignoreCase = true)
+    @Suppress("HttpUrlsUsage") val shortUrl = entry.url.removePrefix("http://").removePrefix("https://").removePrefix("www.")
+    val isMatch = shortUrl.contains(searchValue, ignoreCase = true)
     val isMinCount = displayItems.size <= displayCount
 
     if (isMatch && isMinCount) {
@@ -44,7 +45,8 @@ fun getHBookmarkItemsWidthValue(searchValue: String, bookmarks: MutableSet<GBrow
 
   bookmarks.forEach { item ->
     val url = item.url
-    if (url.contains(searchValue, ignoreCase = true)) {
+    @Suppress("HttpUrlsUsage") val shortUrl = item.url.removePrefix("http://").removePrefix("https://").removePrefix("www.")
+    if (shortUrl.contains(searchValue, ignoreCase = true)) {
       val name = item.name
       val icon = GBrowserIcons.BOOKMARK_ADD
       displayItems.add(GBrowserSearchPopUpItem(searchValue, icon, null, false, name, url))
@@ -71,7 +73,7 @@ fun getSuggestionItems(text: String): List<GBrowserSearchPopUpItem> {
           val query = name.replace(" ", "+")
           val url = "https://www.google.com/search?q=$query"
           val icon = Actions.Search
-          val item = GBrowserSearchPopUpItem(text, icon, null, false, name, url)
+          val item = GBrowserSearchPopUpItem(text, icon, null, true, name, url)
           displayItems.add(item)
         }
       }

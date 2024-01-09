@@ -10,16 +10,21 @@ class GBrowserBackwardAction : AnAction(), DumbAware {
 
   override fun update(e: AnActionEvent) {
     val panel = GBrowserToolWindowUtil.getSelectedBrowserPanel(e)
-    e.presentation.isEnabled = panel?.canGoBack() ?: false
+    if (panel == null) {
+      e.presentation.isEnabled = false
+      return
+    }
+    panel.canGoBack().let {
+      e.presentation.isEnabled = it
+    }
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread {
-    return ActionUpdateThread.EDT
+    return ActionUpdateThread.BGT
   }
 
   override fun actionPerformed(e: AnActionEvent) {
     val panel = GBrowserToolWindowUtil.getSelectedBrowserPanel(e) ?: return
     panel.goBack()
-    panel.updateUI()
   }
 }

@@ -32,8 +32,7 @@ class GBrowserSearchPopCellRenderer(private val highlightEnabled: Boolean) : Lis
                                             isSelected: Boolean,
                                             cellHasFocus: Boolean): JComponent = JPanel(BorderLayout()).apply {
     isOpaque = true
-    border = CompoundBorder(null, JBUI.Borders.empty(0, 8))
-
+    border = JBUI.Borders.empty(0, 8)
 
     val labelIcon = JLabel(value.icon ?: AllIcons.General.Web, SwingConstants.LEFT).apply {
       border = JBUI.Borders.emptyLeft(0)
@@ -43,8 +42,8 @@ class GBrowserSearchPopCellRenderer(private val highlightEnabled: Boolean) : Lis
     val name = value.name.let { if (it.length >= 50) it.take(50) + "..." else it }
     val labelName = createLabel(name, JBColor.BLACK, 8, value.highlight)
 
-    @Suppress("HttpUrlsUsage") val urlValue =
-      if (value.isURLVisible) value.url.removePrefix("https://").removePrefix("http://").removePrefix("www.") else ""
+    @Suppress("HttpUrlsUsage")
+    val urlValue = if (value.isURLVisible) value.url.removePrefix("https://").removePrefix("http://").removePrefix("www.") else ""
     val maxWidth = (60 - name.length).let { if (it <= 4) 50 else it }
     val url = if (urlValue.length >= maxWidth) urlValue.take(maxWidth) + "..." else urlValue
     val labelURL = createLabel(url, JBColor.gray, 0, value.highlight)
