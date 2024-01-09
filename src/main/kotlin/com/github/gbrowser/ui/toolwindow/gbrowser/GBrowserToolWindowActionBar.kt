@@ -8,16 +8,13 @@ import com.github.gbrowser.settings.bookmarks.GBrowserBookmark
 import com.github.gbrowser.ui.search.impl.GBrowserSearchTextField
 import com.intellij.collaboration.ui.HorizontalListPanel
 import com.intellij.icons.AllIcons
-import com.intellij.ide.ui.UISettingsListener
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionGroup
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionToolbar
 import com.intellij.openapi.actionSystem.DefaultActionGroup
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.ui.JBPopupMenu
-import com.intellij.openapi.util.Disposer
 import com.intellij.ui.util.preferredHeight
 import com.intellij.util.ui.InlineIconButton
 import com.intellij.util.ui.JBUI
@@ -39,7 +36,6 @@ class GBrowserToolWindowActionBar(private val delegate: GBrowserToolWindowAction
   private val leftActionGroup = DefaultActionGroup()
   private lateinit var leftToolActionBarComponent: ActionToolbar
   private lateinit var rightToolActionBarComponent: ActionToolbar
-  val disposable: Disposable = Disposer.newDisposable(this)
   private val bookmarksComponent = HorizontalListPanel(2).apply {
     layout = BoxLayout(this, BoxLayout.X_AXIS)
     preferredHeight = 22
@@ -73,9 +69,6 @@ class GBrowserToolWindowActionBar(private val delegate: GBrowserToolWindowAction
     val groupAll = GBrowserDynamicGroupAction(GBrowserActionId.allActions(), AllIcons.General.ArrowDown, "More Options")
     rightActionGroup.add(groupAll)
     setupBookmarks()
-    ApplicationManager.getApplication().messageBus.connect().subscribe(UISettingsListener.TOPIC,
-                                                                       UISettingsListener { updateUIForSettings() })
-
   }
 
   val mainToolBarComponent: JPanel = JPanel(BorderLayout()).apply {
@@ -141,10 +134,6 @@ class GBrowserToolWindowActionBar(private val delegate: GBrowserToolWindowAction
     return popupMenu
   }
 
-
-  private fun updateUIForSettings() {
-    mainToolBarComponent.repaint()
-  }
 
   override fun dispose() { // Disposal logic
     mainToolBarComponent.removeAll()

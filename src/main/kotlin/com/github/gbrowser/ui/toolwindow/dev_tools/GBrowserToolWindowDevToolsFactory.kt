@@ -4,7 +4,6 @@ import com.github.gbrowser.GBrowserIcons
 import com.github.gbrowser.ui.gcef.GBrowserCefDevToolsListener
 import com.github.gbrowser.ui.gcef.GCefBrowser
 import com.github.gbrowser.util.GBrowserUtil
-import com.intellij.ide.ui.UISettingsListener
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
@@ -36,10 +35,6 @@ class GBrowserToolWindowDevToolsFactory : ToolWindowFactory, DumbAware {
     ApplicationManager.getApplication().invokeLater {
       toolWindow.setIcon(getToolWindowIcon())
     }
-    val messageBus = ApplicationManager.getApplication().messageBus
-    val connection = messageBus.connect(toolWindow.disposable)
-    connection.subscribe(UISettingsListener.TOPIC, UISettingsListener { toolWindow.setIcon(getToolWindowIcon()) })
-
     toolWindow.setContentUiType(ToolWindowContentUiType.TABBED, null)
     toolWindow.component.apply {
       putClientProperty("HideIdLabel", false)

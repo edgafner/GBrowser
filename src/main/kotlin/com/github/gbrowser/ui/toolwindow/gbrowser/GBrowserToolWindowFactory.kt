@@ -42,7 +42,6 @@ class GBrowserToolWindowFactory : ToolWindowFactory, DumbAware, ContentManagerLi
     if (!myGBrowserService.reloadTabOnStartup || myGBrowserProjectService.tabs.isEmpty()) {
       GBrowserToolWindowUtil.createContentTab(toolWindow, myGBrowserService.defaultUrl, "")
     }
-    //createTabActions(toolWindow)
     createTitleActions(toolWindow)
     createAdditionalGearActions(toolWindow)
 

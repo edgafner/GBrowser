@@ -1,13 +1,12 @@
 package com.github.gbrowser.ui.toolwindow.gbrowser
 
-import com.github.gbrowser.services.providers.CachingFavIconLoader
 import com.github.gbrowser.services.GBrowserService
+import com.github.gbrowser.services.providers.CachingFavIconLoader
 import com.github.gbrowser.settings.dao.GBrowserHistory
 import com.github.gbrowser.ui.gcef.GBrowserCefDevToolsListener
 import com.github.gbrowser.ui.gcef.GCefBrowser
 import com.github.gbrowser.ui.gcef.impl.GBrowserCefRequestHandler
 import com.github.gbrowser.util.GBrowserUtil
-import com.intellij.ide.ui.UISettings
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
@@ -213,9 +212,7 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
     setCurrentUrl(url)
     browser.setVisibility(true)
     gBrowserToolBar.search.text = url
-    application.invokeLater {
-      UISettings.getInstance().fireUISettingsChanged()
-    }
+
   }
 
   override fun onTitleChange(title: String) {
@@ -227,9 +224,6 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
     browser.setVisibility(true)
     browser.notifyTitleChanged(title)
     devTools.notifyTitleChanged(title)
-    application.invokeLater {
-      UISettings.getInstance().fireUISettingsChanged()
-    }
   }
 
 
