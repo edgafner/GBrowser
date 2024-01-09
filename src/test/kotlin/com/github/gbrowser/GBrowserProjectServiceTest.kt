@@ -1,7 +1,7 @@
 package com.github.gbrowser
 
 import com.github.gbrowser.services.DateAsStringSerializer
-import com.github.gbrowser.settings.GBrowserProjectService
+import com.github.gbrowser.services.GBrowserProjectService
 import com.github.gbrowser.ui.toolwindow.gbrowser.GBrowserTab
 import com.intellij.configurationStore.serialize
 import com.intellij.openapi.components.service

@@ -1,7 +1,7 @@
 package com.github.gbrowser.util
 
 import com.github.gbrowser.services.providers.CachingWebPageTitleLoader
-import com.github.gbrowser.settings.GBrowserService
+import com.github.gbrowser.services.GBrowserService
 import com.github.gbrowser.ui.toolwindow.gbrowser.GBrowserToolWindowBrowser
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent

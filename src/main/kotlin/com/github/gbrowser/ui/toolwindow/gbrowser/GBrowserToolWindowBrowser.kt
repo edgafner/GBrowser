@@ -1,7 +1,7 @@
 package com.github.gbrowser.ui.toolwindow.gbrowser
 
 import com.github.gbrowser.services.providers.CachingFavIconLoader
-import com.github.gbrowser.settings.GBrowserService
+import com.github.gbrowser.services.GBrowserService
 import com.github.gbrowser.settings.dao.GBrowserHistory
 import com.github.gbrowser.ui.gcef.GBrowserCefDevToolsListener
 import com.github.gbrowser.ui.gcef.GCefBrowser
@@ -205,9 +205,13 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
   }
 
   override fun onAddressChange(url: String) {
+    if (!isSearchFocused) {
+      setFocusOnBrowserUI()
+    }
     setTabIcon(url)
     setHistoryItem()
     setCurrentUrl(url)
+    browser.setVisibility(true)
     gBrowserToolBar.search.text = url
     application.invokeLater {
       UISettings.getInstance().fireUISettingsChanged()

@@ -73,7 +73,7 @@ fun getSuggestionItems(text: String): List<GBrowserSearchPopUpItem> {
           val query = name.replace(" ", "+")
           val url = "https://www.google.com/search?q=$query"
           val icon = Actions.Search
-          val item = GBrowserSearchPopUpItem(text, icon, null, true, name, url)
+          val item = GBrowserSearchPopUpItem(text, icon, null, false, name, url)
           displayItems.add(item)
         }
       }

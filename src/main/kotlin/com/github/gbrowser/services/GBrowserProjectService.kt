@@ -1,4 +1,4 @@
-package com.github.gbrowser.settings
+package com.github.gbrowser.services
 
 import com.github.gbrowser.ui.toolwindow.gbrowser.GBrowserTab
 import com.intellij.openapi.components.*

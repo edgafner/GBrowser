@@ -1,7 +1,7 @@
 package com.github.gbrowser.ui.gcef.impl
 
 import com.github.gbrowser.ui.gcef.GBrowserCefRequestDelegate
-import com.github.gbrowser.settings.GBrowserService
+import com.github.gbrowser.services.GBrowserService
 import org.cef.handler.CefResourceRequestHandlerAdapter
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame

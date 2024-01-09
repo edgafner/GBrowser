@@ -1,7 +1,7 @@
 package com.github.gbrowser.ui.gcef.impl
 
 import com.github.gbrowser.services.providers.CachingWebPageTitleLoader
-import com.github.gbrowser.settings.GBrowserService
+import com.github.gbrowser.services.GBrowserService
 import com.github.gbrowser.util.GBrowserToolWindowUtil
 import com.intellij.openapi.components.service
 import com.intellij.openapi.wm.ToolWindow

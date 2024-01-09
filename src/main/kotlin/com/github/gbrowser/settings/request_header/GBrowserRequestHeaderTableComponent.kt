@@ -1,7 +1,7 @@
 package com.github.gbrowser.settings.request_header
 
 
-import com.github.gbrowser.settings.GBrowserService
+import com.github.gbrowser.services.GBrowserService
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.ui.SideBorder

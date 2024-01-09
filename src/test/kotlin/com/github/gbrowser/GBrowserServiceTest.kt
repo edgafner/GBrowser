@@ -1,7 +1,7 @@
 package com.github.gbrowser
 
 
-import com.github.gbrowser.settings.GBrowserService
+import com.github.gbrowser.services.GBrowserService
 import com.github.gbrowser.settings.bookmarks.GBrowserBookmark
 import com.intellij.configurationStore.serialize
 import com.intellij.openapi.util.JDOMUtil

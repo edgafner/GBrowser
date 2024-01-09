@@ -3,7 +3,7 @@ package com.github.gbrowser.ui.toolwindow.gbrowser
 import com.github.gbrowser.actions.GBrowserActionId
 import com.github.gbrowser.actions.GBrowserDynamicGroupAction
 import com.github.gbrowser.services.providers.CachingFavIconLoader
-import com.github.gbrowser.settings.GBrowserService
+import com.github.gbrowser.services.GBrowserService
 import com.github.gbrowser.settings.bookmarks.GBrowserBookmark
 import com.github.gbrowser.ui.search.impl.GBrowserSearchTextField
 import com.intellij.collaboration.ui.HorizontalListPanel
@@ -96,8 +96,6 @@ class GBrowserToolWindowActionBar(private val delegate: GBrowserToolWindowAction
           bookmarksComponent.isVisible = false
         }
       }
-
-
     }
   }
 

@@ -4,7 +4,7 @@ package com.github.gbrowser.actions.bookmark
 import com.github.gbrowser.GBrowserIcons
 import com.github.gbrowser.i18n.GBrowserBundle
 import com.github.gbrowser.services.providers.CachingFavIconLoader
-import com.github.gbrowser.settings.GBrowserService
+import com.github.gbrowser.services.GBrowserService
 import com.github.gbrowser.util.GBrowserToolWindowUtil
 import com.github.gbrowser.util.GBrowserUtil
 import com.intellij.icons.AllIcons
