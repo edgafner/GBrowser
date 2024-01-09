@@ -2,8 +2,8 @@ package com.github.gbrowser.ui.toolwindow.gbrowser
 
 import com.github.gbrowser.actions.GBrowserActionId
 import com.github.gbrowser.actions.GBrowserDynamicGroupAction
-import com.github.gbrowser.services.providers.CachingFavIconLoader
 import com.github.gbrowser.services.GBrowserService
+import com.github.gbrowser.services.providers.CachingFavIconLoader
 import com.github.gbrowser.settings.bookmarks.GBrowserBookmark
 import com.github.gbrowser.ui.search.impl.GBrowserSearchTextField
 import com.intellij.collaboration.ui.HorizontalListPanel
@@ -134,7 +134,6 @@ class GBrowserToolWindowActionBar(private val delegate: GBrowserToolWindowAction
       addActionListener { // Add logic here to remove the bookmark
         settings.removeBookmark(bookmark)
         bookmarksComponent.remove(button)
-        bookmarksComponent.revalidate()
         bookmarksComponent.repaint()
       }
     }
@@ -144,10 +143,6 @@ class GBrowserToolWindowActionBar(private val delegate: GBrowserToolWindowAction
 
 
   private fun updateUIForSettings() {
-    leftToolActionBarComponent.component.revalidate()
-    leftToolActionBarComponent.component.repaint()
-    rightToolActionBarComponent.component.revalidate()
-    rightToolActionBarComponent.component.repaint()
     mainToolBarComponent.repaint()
   }
 
