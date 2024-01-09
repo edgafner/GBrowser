@@ -89,6 +89,7 @@ class GBrowserUITest {
       initWaiting()
 
       showGBrowserToolWindow()
+
       Thread.sleep(6_000)
 
       button(byXpath("//div[@myicon='add.svg']")).click()
@@ -124,8 +125,8 @@ class GBrowserUITest {
           ideaFrame.dragAndDrop(Point(location.x + dimension.width + dimension.width, location.y))
 
           gBrowserPRPanel {
-            textField(byXpath("//div[@class='GBrowserSearchFieldPane']")).text = "https://github.com/"
-            textField(byXpath("//div[@class='GBrowserSearchFieldPane']")).keyboard {
+            textField(byXpath("//div[@class='TextFieldWithProcessing']")).text = "https://github.com/"
+            textField(byXpath("//div[@class='TextFieldWithProcessing']")).keyboard {
               enter()
             }
           }
