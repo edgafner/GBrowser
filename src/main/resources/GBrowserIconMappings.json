@@ -4,6 +4,7 @@
       "gbrowser": {
         "expui": {
           "gbrowser.svg": "com/github/gbrowser/gbrowser.svg",
+          "gbrowser_search.svg": "com/github/gbrowser/gbrowser_search.svg",
           "gbrowser_larger.svg": "com/github/gbrowser/gbrowser_larger.svg",
           "bookmark_add.svg": "com/github/gbrowser/bookmark_add.svg",
           "bookmark_group.svg": "com/github/gbrowser/bookmark_group.svg",

@@ -1,5 +1,6 @@
 package com.github.gbrowser.ui.toolwindow.gbrowser
 
+import com.github.gbrowser.GBrowserIcons
 import com.github.gbrowser.services.GBrowserService
 import com.github.gbrowser.services.providers.CachingFavIconLoader
 import com.github.gbrowser.settings.dao.GBrowserHistory
@@ -187,6 +188,7 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
     val canSuggestion = !GBrowserUtil.isValidBrowserURL(text) && settings.isSuggestionSearchEnabled
     val url = if (canSuggestion) "https://www.google.com/search?q=$text" else text
     loadUrl(url)
+
   }
 
 
@@ -214,6 +216,9 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
     gbrowser.setVisibility(true)
     SwingUtilities.invokeLater {
       gBrowserToolBar.search.text = url
+    }
+    favIconLoader.loadFavIcon(url.trim(), targetSize = 13).thenAccept {
+      gBrowserToolBar.search.textEditor.putClientProperty("JTextField.Search.Icon", it ?: GBrowserIcons.GBROWSER_LOGO)
     }
 
 
