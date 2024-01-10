@@ -8,6 +8,9 @@ object GBrowserIcons {
   val GBROWSER_LOGO = IconLoader.getIcon("/com/github/gbrowser/gbrowser.svg", javaClass)
 
   @JvmField
+  val GBROWSER_SEARCH = IconLoader.getIcon("/com/github/gbrowser/gbrowser_search.svg", javaClass)
+
+  @JvmField
   val GBROWSER_LOGO_LARGER = IconLoader.getIcon("/com/github/gbrowser/gbrowser_larger.svg", javaClass)
 
 

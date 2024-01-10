@@ -6,7 +6,6 @@ import com.github.gbrowser.settings.bookmarks.GBrowserBookmark
 import com.github.gbrowser.settings.dao.GBrowserHistory
 import com.github.gbrowser.ui.search.GBrowserSearchPopUpItem
 import com.github.gbrowser.util.GBrowserUtil.suggestQuery
-import com.intellij.icons.AllIcons.Actions
 import com.intellij.icons.AllIcons.General
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
@@ -72,7 +71,7 @@ fun getSuggestionItems(text: String): List<GBrowserSearchPopUpItem> {
           val name = suggestion.jsonPrimitive.content.replace("\"", "")
           val query = name.replace(" ", "+")
           val url = "https://www.google.com/search?q=$query"
-          val icon = Actions.Search
+          val icon = GBrowserIcons.GBROWSER_SEARCH
           val item = GBrowserSearchPopUpItem(text, icon, null, false, name, url)
           displayItems.add(item)
         }

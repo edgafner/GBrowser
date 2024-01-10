@@ -110,7 +110,7 @@ class GBrowserUITest {
     waitFor(ofMinutes(5)) { isDumbMode().not() }
     Thread.sleep(5_000)
     waitForBackgroundTasks()
-    Thread.sleep(2_000)
+    Thread.sleep(4_000)
   }
 
   private fun RemoteRobot.basicTab(ideaFrame: IdeaFrame) {
@@ -131,13 +131,17 @@ class GBrowserUITest {
             }
           }
 
-          Thread.sleep(4_000)
+          Thread.sleep(5_000)
 
           gBrowserPRPanel { //
             button(byXpath("//div[@myicon='bookmark_remove.svg']")).click()
-
-            Thread.sleep(3_000)
-            button(byXpath("//div[@myicon='left.svg']")).isEnabled()
+            moveMouse(location)
+            click()
+            keyboard {
+              escape()
+            }
+            Thread.sleep(5_000)
+            assert(button(byXpath("//div[@myicon='left.svg']")).isEnabled())
           }
         }
       }

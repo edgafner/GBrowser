@@ -1,8 +1,8 @@
 package com.github.gbrowser.ui.search.impl
 
 import com.github.gbrowser.GBrowserIcons
-import com.github.gbrowser.services.providers.CachingFavIconLoader
 import com.github.gbrowser.services.GBrowserService
+import com.github.gbrowser.services.providers.CachingFavIconLoader
 import com.github.gbrowser.ui.search.GBrowserSearchPopUpItem
 import com.github.gbrowser.ui.toolwindow.gbrowser.GBrowserToolWindowActionBarDelegate
 import com.github.gbrowser.ui.toolwindow.gbrowser.getHBookmarkItemsWidthValue
