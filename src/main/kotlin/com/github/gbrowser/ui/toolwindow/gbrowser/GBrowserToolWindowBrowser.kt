@@ -110,7 +110,7 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
   }
 
   fun zoomOut() {
-    zoomLevel += -1.0
+    zoomLevel -= 1.0
     setZoom(zoomLevel)
   }
 
