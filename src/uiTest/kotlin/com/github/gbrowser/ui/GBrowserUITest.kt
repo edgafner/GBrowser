@@ -129,6 +129,10 @@ class GBrowserUITest {
             textField(byXpath("//div[@class='TextFieldWithProcessing']")).keyboard {
               enter()
             }
+            textField(byXpath("//div[@class='TextFieldWithProcessing']")).text = "https://github.com/"
+            textField(byXpath("//div[@class='TextFieldWithProcessing']")).keyboard {
+              enter()
+            }
           }
 
           Thread.sleep(5_000)
@@ -140,7 +144,7 @@ class GBrowserUITest {
             keyboard {
               escape()
             }
-            Thread.sleep(5_000)
+            button(byXpath("//div[@myicon='refresh.svg']")).click()
             assert(button(byXpath("//div[@myicon='left.svg']")).isEnabled())
           }
         }
