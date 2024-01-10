@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2024.1.10] - 2024-01-10
+
 ### Added
 
 - 🚀 Add Google Authentication support - you can now login with your Google account
@@ -316,7 +318,8 @@
 -- First Jetbrains Public
 -- First Jetbrains Public
 
-[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2024.1.9...HEAD
+[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2024.1.10...HEAD
+[2024.1.10]: https://github.com/edgafner/GBrowser/compare/v2024.1.9...v2024.1.10
 [2024.1.9]: https://github.com/edgafner/GBrowser/compare/v2024.1.8...v2024.1.9
 [2024.1.8]: https://github.com/edgafner/GBrowser/compare/v2024.1.3...v2024.1.8
 [2024.1.3]: https://github.com/edgafner/GBrowser/compare/v2023.9.41...v2024.1.3
