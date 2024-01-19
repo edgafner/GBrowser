@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Caffeine
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.Service
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.ui.JreHiDpiUtil
 import com.intellij.util.ImageLoader
 import com.intellij.util.JBHiDPIScaledImage
@@ -37,6 +38,7 @@ class CachingFavIconLoader : Disposable {
 
 
           val originalIcon = if (JreHiDpiUtil.isJreHiDPIEnabled()) {
+            logger<CachingFavIconLoader>().info("JreHiDpiUtil is enable")
             @Suppress("UnstableApiUsage")
             (iconImage as JBHiDPIScaledImage).delegate ?: return@let AllIcons.General.Web
           } else {
