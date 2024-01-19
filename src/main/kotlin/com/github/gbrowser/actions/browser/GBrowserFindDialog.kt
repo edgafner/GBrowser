@@ -15,7 +15,7 @@ import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 
 
-class GBrowserFindDialog(project: Project, private val jbCefBrowser: JBCefBrowser) : DialogWrapper(project, false, false) {
+class GBrowserFindDialog(project: Project, private val jbCefBrowser: JBCefBrowser) : DialogWrapper(project, false, true) {
 
   private val myFindComponent: SearchPanel
 

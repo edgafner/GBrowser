@@ -173,7 +173,10 @@ class GBrowserUITest {
           gBrowserPRPanel {
             button(byXpath("//div[@myicon='chevronDown.svg']")).click()
             val itemList = ideaFrame.heavyWeightWindow().itemsList
-            itemList.clickItem("Reload Page", false)
+            itemList.collectItems().forEach {
+              LOG.info("Item: --${it}--")
+            }
+            itemList.clickItem("Reload Pa", false)
           }
 
           Thread.sleep(2_000)
@@ -219,7 +222,7 @@ class GBrowserUITest {
           gBrowserPRPanel {
             button(byXpath("//div[@myicon='chevronDown.svg']")).click()
             val itemList = ideaFrame.heavyWeightWindow().itemsList
-            itemList.clickItem("Prefere", false)
+            itemList.clickItem("Preferences", false)
           }
         }
       }
@@ -252,6 +255,7 @@ class GBrowserUITest {
           gBrowserPRPanel {
             assertThrows<WaitForConditionTimeoutException> {
               button(byXpath("//div[@tooltiptext='https://github.com/']")).isShowing
+
             }
           }
         }

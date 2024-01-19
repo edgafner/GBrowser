@@ -1,5 +1,6 @@
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
+import org.jetbrains.intellij.tasks.RunPluginVerifierTask
 
 fun properties(key: String) = providers.gradleProperty(key)
 fun environment(key: String) = providers.environmentVariable(key)
@@ -70,7 +71,6 @@ dependencies {
 
 kotlin {
   jvmToolchain(17)
-
 }
 
 // Configure Gradle IntelliJ Plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
@@ -181,12 +181,19 @@ tasks {
     }
   }
 
+  runPluginVerifier {
+    downloadDir.set(System.getProperty("user.home") + "/.pluginVerifier/ides")
+    ideVersions.set(listOf("233.11799.300", "233.13135.65", "233.13135.103", "241.8102.112"))
+    verificationReportsFormats.set(
+      mutableListOf(RunPluginVerifierTask.VerificationReportsFormats.MARKDOWN, RunPluginVerifierTask.VerificationReportsFormats.HTML))
+  }
+
   // Configure UI tests plugin
   // Read more: https://github.com/JetBrains/intellij-ui-test-robot
   runIdeForUiTests {
+    jvmArgs = listOf("-Xmx4G","-Dsun.java2d.uiScale=1.0")
     systemProperty("ide.browser.jcef.enabled", true)
-    systemProperty("ide.browser.jcef.headless.enabled", true)
-    //systemProperty("ide.browser.jcef.testMode.enabled", true)
+    systemProperty("ide.browser.jcef.headless.enabled", true) //systemProperty("ide.browser.jcef.testMode.enabled", true)
     systemProperty("ide.experimental.ui", true)
     systemProperty("apple.laf.useScreenMenuBar", false)
     systemProperty("ide.mac.file.chooser.native", false)
@@ -213,7 +220,7 @@ tasks {
   }
 
   downloadRobotServerPlugin {
-    version = "0.11.20"
+    version = "0.11.21"
   }
 
   signPlugin {
@@ -256,8 +263,7 @@ tasks {
       skipTestsProvider.isPresent
     }
 
-    configure<JacocoTaskExtension> {
-      // sync with testing-subplugin
+    configure<JacocoTaskExtension> { // sync with testing-subplugin
       isEnabled = false
     }
 

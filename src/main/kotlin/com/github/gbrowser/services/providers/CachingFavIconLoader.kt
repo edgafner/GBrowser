@@ -1,9 +1,15 @@
 package com.github.gbrowser.services.providers
 
 import com.github.benmanes.caffeine.cache.Caffeine
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.Service
+import com.intellij.openapi.diagnostic.logger
+import com.intellij.ui.JreHiDpiUtil
+import com.intellij.ui.scale.DerivedScaleType
+import com.intellij.ui.scale.ScaleContext
 import com.intellij.util.ImageLoader
+import com.intellij.util.JBHiDPIScaledImage
 import java.net.URI
 import java.net.URL
 import java.util.concurrent.CompletableFuture
@@ -14,11 +20,9 @@ import javax.swing.ImageIcon
 @Service(Service.Level.APP)
 class CachingFavIconLoader : Disposable {
 
-  private val favIconCache = Caffeine.newBuilder()
-    .expireAfterWrite(5, TimeUnit.MINUTES)
-    .build<String, CompletableFuture<Icon?>>()
+  private val favIconCache = Caffeine.newBuilder().expireAfterWrite(5, TimeUnit.MINUTES).build<String, CompletableFuture<Icon?>>()
 
-  fun loadFavIcon(url: String, size: Int = 32, targetSize: Int = 16): CompletableFuture<Icon?> {
+  fun loadFavIcon(url: String, size: Int = 64, targetSize: Int = 16): CompletableFuture<Icon?> {
     return favIconCache.get(url) { loadImageAsync(url, size, targetSize) }
   }
 
@@ -27,8 +31,25 @@ class CachingFavIconLoader : Disposable {
       try {
         val domain = getDomainName(url.trim())
         val iconUrl = URL("https://www.google.com/s2/favicons?domain=$domain&sz=$size")
+
+        //ImageLoader.loadFromResource("/faviconV2.png", javaClass)?.let { iconImage ->
+        //  val iconScaled = ImageLoader.scaleImage(iconImage, targetSize)
+        //  ImageIcon(iconImage)
+        //}
         ImageLoader.loadFromUrl(iconUrl)?.let { iconImage ->
-          val iconScaled = ImageLoader.scaleImage(iconImage, targetSize)
+
+
+          val scale = ScaleContext.create().getScale(DerivedScaleType.PIX_SCALE).toFloat()
+          val originalIcon = if (scale != 1f && JreHiDpiUtil.isJreHiDPIEnabled()) {
+            logger<CachingFavIconLoader>().info("JreHiDpiUtil is enable")
+
+            @Suppress("UnstableApiUsage")
+            (iconImage as JBHiDPIScaledImage).delegate ?: return@let AllIcons.General.Web
+          } else {
+            iconImage
+          }
+
+          val iconScaled = ImageLoader.scaleImage(originalIcon, targetSize)
           ImageIcon(iconScaled)
         }
       } catch (e: Exception) {
