@@ -191,6 +191,7 @@ tasks {
   // Configure UI tests plugin
   // Read more: https://github.com/JetBrains/intellij-ui-test-robot
   runIdeForUiTests {
+    jvmArgs = listOf("-Xmx4G","-Dsun.java2d.uiScale=1.0")
     systemProperty("ide.browser.jcef.enabled", true)
     systemProperty("ide.browser.jcef.headless.enabled", true) //systemProperty("ide.browser.jcef.testMode.enabled", true)
     systemProperty("ide.experimental.ui", true)
