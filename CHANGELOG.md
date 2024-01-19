@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2024.1.12] - 2024-01-19
+
 ### Added
 
 - 🚀 Support for 241 EAP
@@ -326,7 +328,8 @@
 -- First Jetbrains Public
 -- First Jetbrains Public
 
-[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2024.1.10...HEAD
+[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2024.1.12...HEAD
+[2024.1.12]: https://github.com/edgafner/GBrowser/compare/v2024.1.10...v2024.1.12
 [2024.1.10]: https://github.com/edgafner/GBrowser/compare/v2024.1.9...v2024.1.10
 [2024.1.9]: https://github.com/edgafner/GBrowser/compare/v2024.1.8...v2024.1.9
 [2024.1.8]: https://github.com/edgafner/GBrowser/compare/v2024.1.3...v2024.1.8
