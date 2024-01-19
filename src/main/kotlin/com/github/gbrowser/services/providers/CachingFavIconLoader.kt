@@ -6,6 +6,8 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.ui.JreHiDpiUtil
+import com.intellij.ui.scale.DerivedScaleType
+import com.intellij.ui.scale.ScaleContext
 import com.intellij.util.ImageLoader
 import com.intellij.util.JBHiDPIScaledImage
 import java.net.URI
@@ -37,8 +39,10 @@ class CachingFavIconLoader : Disposable {
         ImageLoader.loadFromUrl(iconUrl)?.let { iconImage ->
 
 
-          val originalIcon = if (JreHiDpiUtil.isJreHiDPIEnabled()) {
+          val scale = ScaleContext.create().getScale(DerivedScaleType.PIX_SCALE).toFloat()
+          val originalIcon = if (scale != 1f && JreHiDpiUtil.isJreHiDPIEnabled()) {
             logger<CachingFavIconLoader>().info("JreHiDpiUtil is enable")
+
             @Suppress("UnstableApiUsage")
             (iconImage as JBHiDPIScaledImage).delegate ?: return@let AllIcons.General.Web
           } else {
