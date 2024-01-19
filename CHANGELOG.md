@@ -6,6 +6,10 @@
 
 - 🚀 Support for 241 EAP
 
+### Fixed
+
+- 🪲 Mac Retina is not displaying correctly bookmarks icons
+
 ## [2024.1.10] - 2024-01-10
 
 ### Added

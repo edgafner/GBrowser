@@ -185,8 +185,7 @@ tasks {
   // Read more: https://github.com/JetBrains/intellij-ui-test-robot
   runIdeForUiTests {
     systemProperty("ide.browser.jcef.enabled", true)
-    systemProperty("ide.browser.jcef.headless.enabled", true)
-    //systemProperty("ide.browser.jcef.testMode.enabled", true)
+    systemProperty("ide.browser.jcef.headless.enabled", true) //systemProperty("ide.browser.jcef.testMode.enabled", true)
     systemProperty("ide.experimental.ui", true)
     systemProperty("apple.laf.useScreenMenuBar", false)
     systemProperty("ide.mac.file.chooser.native", false)
@@ -213,7 +212,7 @@ tasks {
   }
 
   downloadRobotServerPlugin {
-    version = "0.11.20"
+    version = "0.11.21"
   }
 
   signPlugin {
@@ -256,8 +255,7 @@ tasks {
       skipTestsProvider.isPresent
     }
 
-    configure<JacocoTaskExtension> {
-      // sync with testing-subplugin
+    configure<JacocoTaskExtension> { // sync with testing-subplugin
       isEnabled = false
     }
 
