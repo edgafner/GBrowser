@@ -1,5 +1,6 @@
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
+import org.jetbrains.intellij.tasks.RunPluginVerifierTask
 
 fun properties(key: String) = providers.gradleProperty(key)
 fun environment(key: String) = providers.environmentVariable(key)
@@ -179,6 +180,13 @@ tasks {
       xml.required = true
       html.required = true
     }
+  }
+
+  runPluginVerifier {
+    downloadDir.set(System.getProperty("user.home") + "/.pluginVerifier/ides")
+    ideVersions.set(listOf("233.11799.300", "233.13135.65", "233.13135.103", "241.8102.112"))
+    verificationReportsFormats.set(
+      mutableListOf(RunPluginVerifierTask.VerificationReportsFormats.MARKDOWN, RunPluginVerifierTask.VerificationReportsFormats.HTML))
   }
 
   // Configure UI tests plugin
