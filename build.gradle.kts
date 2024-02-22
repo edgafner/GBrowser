@@ -58,7 +58,7 @@ dependencies {
   }
 
   implementation("com.squareup.okhttp3:okhttp:4.12.0")
-  compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
+  compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
   uiTestImplementation("com.intellij.remoterobot:remote-fixtures:0.11.21")
 
