@@ -38,7 +38,6 @@ class CachingFavIconLoader : Disposable {
         //}
         ImageLoader.loadFromUrl(iconUrl)?.let { iconImage ->
 
-
           val scale = ScaleContext.create().getScale(DerivedScaleType.PIX_SCALE).toFloat()
           val originalIcon = if (scale != 1f && JreHiDpiUtil.isJreHiDPIEnabled()) {
             logger<CachingFavIconLoader>().info("JreHiDpiUtil is enable")
