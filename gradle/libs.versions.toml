@@ -11,7 +11,7 @@ mockkTest = "1.13.9"
 changelog = "2.2.0"
 gradleIntelliJPlugin = "1.17.2"
 qodana = "0.1.13"
-kover = "0.7.5"
+kover = "0.7.6"
 koinPrevVersion = "3.5.3"
 koinKotestExtension = "1.3.0"
 
