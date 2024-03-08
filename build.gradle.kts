@@ -62,7 +62,7 @@ dependencies {
 
   uiTestImplementation("com.intellij.remoterobot:remote-fixtures:0.11.22")
 
-  uiTestImplementation("com.intellij.remoterobot:remote-robot:0.11.21")
+  uiTestImplementation("com.intellij.remoterobot:remote-robot:0.11.22")
 
   uiTestImplementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
   uiTestImplementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
