@@ -66,7 +66,7 @@ dependencies {
 
   uiTestImplementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
   uiTestImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
-  uiTestRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
+  uiTestRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")
 }
 
 kotlin {
