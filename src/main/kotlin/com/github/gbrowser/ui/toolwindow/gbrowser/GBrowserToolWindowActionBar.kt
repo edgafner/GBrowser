@@ -13,9 +13,9 @@ import com.intellij.openapi.actionSystem.ActionGroup
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionToolbar
 import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.actionSystem.toolbarLayout.ToolbarLayoutStrategy
 import com.intellij.openapi.components.service
 import com.intellij.openapi.ui.JBPopupMenu
-import com.intellij.ui.util.preferredHeight
 import com.intellij.util.ui.InlineIconButton
 import com.intellij.util.ui.JBUI
 import net.miginfocom.layout.CC
@@ -38,7 +38,6 @@ class GBrowserToolWindowActionBar(private val delegate: GBrowserToolWindowAction
   private lateinit var rightToolActionBarComponent: ActionToolbar
   private val bookmarksComponent = HorizontalListPanel(2).apply {
     layout = BoxLayout(this, BoxLayout.X_AXIS)
-    preferredHeight = 22
     border = JBUI.Borders.empty(2)
   }
 
@@ -150,7 +149,7 @@ class GBrowserToolWindowActionBar(private val delegate: GBrowserToolWindowAction
   private fun createToolBarAction(actionGroup: ActionGroup): ActionToolbar {
     val actionManager = ActionManager.getInstance()
     val actionToolbar = actionManager.createActionToolbar("ToolwindowToolbar", actionGroup, true)
-    actionToolbar.layoutPolicy = ActionToolbar.NOWRAP_LAYOUT_POLICY
+    actionToolbar.layoutStrategy = ToolbarLayoutStrategy.NOWRAP_STRATEGY
     actionToolbar.targetComponent = null
     return actionToolbar
   }
