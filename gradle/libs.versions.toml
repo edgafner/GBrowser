@@ -4,7 +4,7 @@ annotations = "24.1.0"
 kotest = "5.8.0"
 
 # plugins
-dokka = "1.9.10"
+dokka = "1.9.20"
 kotlin = "1.9.22"
 kotlinTest = "1.8.0"
 mockkTest = "1.13.10"
