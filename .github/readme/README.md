@@ -26,9 +26,9 @@ An embedded web browser window within your IDE. Cut the context switch between t
 
 <!-- Plugin description end -->
 
-![image](.github/dorkag.png)
+![image](../dorkag.png)
 
-![image](.github/other_actions.png)
+![image](../other_actions.png)
 
 
 
