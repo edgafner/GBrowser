@@ -6,6 +6,8 @@
 [![Version](https://img.shields.io/jetbrains/plugin/v/14458-gbrowser.svg)](https://plugins.jetbrains.com/plugin/14458-gbrowser)
 [![Downloads](https://img.shields.io/jetbrains/plugin/d/14458-gbrowser.svg)](https://plugins.jetbrains.com/plugin/14458-gbrowser)
 
+![GBrowser][file:GBrowser]
+
 ## Idea Browser Tool Window
 
 <!-- Plugin description -->
@@ -32,7 +34,7 @@ An embedded web browser window within your IDE. Cut the context switch between t
 ![image](.github/other_actions.png)
 
 
-[file:gbrowser]: ./.github/readme/Gbrowser.svg
+[file:GBrowser]: ./.github/readme/Gbrowser.svg
 
 
 
