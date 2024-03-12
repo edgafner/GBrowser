@@ -12,6 +12,7 @@
 An embedded web browser window within your IDE. Cut the context switch between the browser and you IDE.
 
 ## Features
+
 - Browser Actions:
     - Open close Tabs
     - History Back & Forward
@@ -26,9 +27,9 @@ An embedded web browser window within your IDE. Cut the context switch between t
 
 <!-- Plugin description end -->
 
-![image](../dorkag.png)
+![image](.github/dorkag.png)
 
-![image](../other_actions.png)
+![image](.github/other_actions.png)
 
 
 [file:gbrowser]: ./.github/readme/gbrowser.svg
