@@ -91,14 +91,6 @@ changelog {
   headerParserRegex.set("""(\d+\.\d+\.\d+)""".toRegex())
 }
 
-// Configure Gradle Qodana Plugin - read more: https://github.com/JetBrains/gradle-qodana-plugin
-qodana {
-  cachePath = provider { file(".qodana").canonicalPath }
-  reportPath = provider { file("build/reports/inspections").canonicalPath }
-  saveReport = true
-  showReport = environment("QODANA_SHOW_REPORT").map { it.toBoolean() }.getOrElse(false)
-}
-
 
 // Configure Gradle Kover Plugin - read more: https://github.com/Kotlin/kotlinx-kover#configuration
 koverReport {
@@ -136,7 +128,7 @@ tasks {
     untilBuild = properties("pluginUntilBuild")
 
     // Extract the <!-- Plugin description --> section from README.md and provide for the plugin's manifest
-    pluginDescription = providers.fileContents(layout.projectDirectory.file("README.md")).asText.map {
+    pluginDescription = providers.fileContents(layout.projectDirectory.dir(".github/readme").file("README.md")).asText.map {
       val start = "<!-- Plugin description -->"
       val end = "<!-- Plugin description end -->"
 
@@ -183,7 +175,7 @@ tasks {
 
   runPluginVerifier {
     downloadDir.set(System.getProperty("user.home") + "/.pluginVerifier/ides")
-    ideVersions.set(listOf("233.11799.300", "233.13135.65", "233.13135.103", "241.8102.112"))
+    ideVersions.set(listOf("241.14494.17"))
     verificationReportsFormats.set(
       mutableListOf(RunPluginVerifierTask.VerificationReportsFormats.MARKDOWN, RunPluginVerifierTask.VerificationReportsFormats.HTML))
   }
@@ -235,8 +227,7 @@ tasks {
       "PUBLISH_TOKEN") // The pluginVersion is based on the SemVer (https://semver.org) and supports pre-release labels, like 2.1.7-alpha.3
     // Specify pre-release label to publish the plugin in a custom Release Channel automatically. Read more:
     // https://plugins.jetbrains.com/docs/intellij/deployment.html#specifying-a-release-channel
-    channels = properties("pluginVersion").map { listOf(it.split('-').getOrElse(1) { "default" }.split('.').first()) }
-  }
+    channels = properties("pluginVersion").map { listOf(it.substringAfter('-', "").substringBefore('.').ifEmpty { "default" }) }  }
 
   test {
     useJUnitPlatform()
