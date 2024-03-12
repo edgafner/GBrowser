@@ -31,7 +31,7 @@ An embedded web browser window within your IDE. Cut the context switch between t
 ![image](../other_actions.png)
 
 
-
+[file:gbrowser]: ./.github/readme/gbrowser.svg
 
 
 
