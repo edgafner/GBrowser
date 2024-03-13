@@ -29,6 +29,8 @@ An embedded web browser window within your IDE. Cut the context switch between t
 
 <!-- Plugin description end -->
 
+![Alt](https://repobeats.axiom.co/api/embed/d61494dbc011c5f6769f8fd484094cb2e0b47da6.svg "Repobeats analytics image")
+
 ![image](.github/dorkag.png)
 
 ![image](.github/other_actions.png)
