@@ -13,7 +13,8 @@ import com.intellij.openapi.actionSystem.ActionGroup
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionToolbar
 import com.intellij.openapi.actionSystem.DefaultActionGroup
-import com.intellij.openapi.actionSystem.toolbarLayout.ToolbarLayoutStrategy
+
+
 import com.intellij.openapi.components.service
 import com.intellij.openapi.ui.JBPopupMenu
 import com.intellij.util.ui.InlineIconButton
@@ -45,8 +46,10 @@ class GBrowserToolWindowActionBar(private val delegate: GBrowserToolWindowAction
 
   private val browserComponent by lazy {
     JPanel().apply { //layout = MigLayout(LC().gridGap("2", "0").insets("0").fillX().hideMode(3))
-      layout = MigLayout(LC().fill().flowY().gridGap("4", "4") // Increased gap between components
-                           .insets("2", "2", "2", "2").hideMode(3))
+      layout = MigLayout(
+        LC().fill().flowY().gridGap("4", "4") // Increased gap between components
+          .insets("2", "2", "2", "2").hideMode(3)
+      )
       border = JBUI.Borders.empty(2)
 
       leftToolActionBarComponent = createToolBarAction(leftActionGroup)
@@ -149,7 +152,7 @@ class GBrowserToolWindowActionBar(private val delegate: GBrowserToolWindowAction
   private fun createToolBarAction(actionGroup: ActionGroup): ActionToolbar {
     val actionManager = ActionManager.getInstance()
     val actionToolbar = actionManager.createActionToolbar("ToolwindowToolbar", actionGroup, true)
-    actionToolbar.layoutStrategy = ToolbarLayoutStrategy.NOWRAP_STRATEGY
+    actionToolbar.layoutPolicy = ActionToolbar.NOWRAP_LAYOUT_POLICY
     actionToolbar.targetComponent = null
     return actionToolbar
   }

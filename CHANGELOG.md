@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- 🪲 FIX ClassNotFound exception when running the plugin in not compatible IDEs version backwards compatability
+
 ## [2024.1.14] - 2024-03-12
 
 ### Fixed
