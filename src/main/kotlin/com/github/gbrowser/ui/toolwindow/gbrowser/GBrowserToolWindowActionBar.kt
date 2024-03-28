@@ -14,7 +14,6 @@ import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionToolbar
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.toolbarLayout.ToolbarLayoutStrategy
-
 import com.intellij.openapi.components.service
 import com.intellij.openapi.ui.JBPopupMenu
 import com.intellij.util.ui.InlineIconButton
