@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- 🪲 Revert fix for backwards compatability ClassNotFound 
+
 ## [2024.1.15] - 2024-03-28
 
 ### Fixed
