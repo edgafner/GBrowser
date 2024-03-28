@@ -175,7 +175,7 @@ tasks {
 
   runPluginVerifier {
     downloadDir.set(System.getProperty("user.home") + "/.pluginVerifier/ides")
-    ideVersions.set(listOf("241.14494.17"))
+    ideVersions.set(listOf("241.14494.158"))
     verificationReportsFormats.set(
       mutableListOf(RunPluginVerifierTask.VerificationReportsFormats.MARKDOWN, RunPluginVerifierTask.VerificationReportsFormats.HTML))
   }
