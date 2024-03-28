@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2024.1.15] - 2024-03-28
+
 ### Fixed
 
 - 🪲 FIX ClassNotFound exception when running the plugin in not compatible IDEs version backwards compatability
@@ -344,7 +346,8 @@
 -- First Jetbrains Public
 -- First Jetbrains Public
 
-[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2024.1.14...HEAD
+[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2024.1.15...HEAD
+[2024.1.15]: https://github.com/edgafner/GBrowser/compare/v2024.1.14...v2024.1.15
 [2024.1.14]: https://github.com/edgafner/GBrowser/compare/v2024.1.13...v2024.1.14
 [2024.1.13]: https://github.com/edgafner/GBrowser/compare/v2024.1.12...v2024.1.13
 [2024.1.12]: https://github.com/edgafner/GBrowser/compare/v2024.1.10...v2024.1.12
