@@ -53,7 +53,7 @@ dependencies {
 
   testImplementation(libs.bundles.kTest)
 
-  implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.0") {
+  implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.1") {
     isTransitive = false
   }
 
