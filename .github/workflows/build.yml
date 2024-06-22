@@ -48,7 +48,7 @@ jobs:
 
       # Setup Gradle
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3.3.2
+        uses: gradle/actions/setup-gradle@v3.4.2
         with:
           gradle-home-cache-cleanup: true
 
@@ -113,7 +113,7 @@ jobs:
 
       # Setup Gradle
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3.3.2
+        uses: gradle/actions/setup-gradle@v3.4.2
         with:
           gradle-home-cache-cleanup: true
 
@@ -169,7 +169,7 @@ jobs:
 
       # Run Qodana inspections -
       - name: Qodana - Code Inspection
-        uses: JetBrains/qodana-action@v2024.1.4
+        uses: JetBrains/qodana-action@v2024.1.5
         with:
           cache-default-branch-only: true
         env:
@@ -204,7 +204,7 @@ jobs:
 
       # Setup Gradle
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3.3.2
+        uses: gradle/actions/setup-gradle@v3.4.2
         with:
           gradle-home-cache-cleanup: true
 

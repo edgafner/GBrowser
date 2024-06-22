@@ -13,7 +13,7 @@ plugins {
     alias(libs.plugins.changelog) // Gradle Changelog Plugin
     alias(libs.plugins.qodana) // Gradle Qodana Plugin
     alias(libs.plugins.kover) // Gradle Kover Plugin
-    kotlin("plugin.serialization") version "1.9.24"
+  kotlin("plugin.serialization") version "2.0.0"
     jacoco
 }
 
