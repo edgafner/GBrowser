@@ -2,9 +2,11 @@
 
 ## [Unreleased]
 
+## [2024.1.17] - 2024-06-22
+
 ### Fixed
 
-- 🚀 Enable for all version until 241.1.4 
+- 🚀 Enable for all version until 241.1.4
 
 ## [2024.1.15] - 2024-03-28
 
@@ -350,7 +352,8 @@
 -- First Jetbrains Public
 -- First Jetbrains Public
 
-[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2024.1.15...HEAD
+[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2024.1.17...HEAD
+[2024.1.17]: https://github.com/edgafner/GBrowser/compare/v2024.1.15...v2024.1.17
 [2024.1.15]: https://github.com/edgafner/GBrowser/compare/v2024.1.14...v2024.1.15
 [2024.1.14]: https://github.com/edgafner/GBrowser/compare/v2024.1.13...v2024.1.14
 [2024.1.13]: https://github.com/edgafner/GBrowser/compare/v2024.1.12...v2024.1.13
