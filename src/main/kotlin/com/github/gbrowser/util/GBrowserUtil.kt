@@ -13,7 +13,7 @@ object GBrowserUtil {
   const val GBROWSER_TOOL_WINDOW_ID = "GBrowser"
   const val DEVTOOLS_TOOL_WINDOW_ID = "GDevTools"
 
-  fun suggestQuery(text: String): String {
+  internal fun suggestQuery(text: String): String {
     if (text.isEmpty()) return ""
     val url = "https://suggestqueries.google.com/complete/search?client=firefox&q=$text"
     val request = Request.Builder().url(url).build()

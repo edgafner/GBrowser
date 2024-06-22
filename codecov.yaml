@@ -41,5 +41,3 @@ flag_management:
 
 ignore:
   - src/main/kotlin/com/github/gbrowser/reports/GBrowserPluginErrorReportSubmitter.kt
-  - src/main/kotlin/com/gafner/plugin/azd/api/dto
-  - src/main/kotlin/com/gafner/plugin/azd/api/data/post_request
