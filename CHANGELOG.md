@@ -4,7 +4,7 @@
 
 ### Fixed
 
-- 🚀 Enable for all version till 241.1.4 
+- 🚀 Enable for all version until 241.1.4 
 
 ## [2024.1.15] - 2024-03-28
 
