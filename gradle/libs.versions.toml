@@ -6,7 +6,7 @@ kotest = "5.9.0"
 # plugins
 dokka = "1.9.20"
 kotlin = "1.9.24"
-kotlinTest = "1.8.0"
+kotlinTest = "1.8.1"
 mockkTest = "1.13.10"
 changelog = "2.2.0"
 gradleIntelliJPlugin = "1.17.3"
