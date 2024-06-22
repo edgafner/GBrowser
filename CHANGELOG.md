@@ -4,7 +4,7 @@
 
 ### Fixed
 
-- 🪲 Revert fix for backwards compatability ClassNotFound 
+- 🚀 Enable for all version till 241.1.4 
 
 ## [2024.1.15] - 2024-03-28
 
