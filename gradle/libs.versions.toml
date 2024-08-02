@@ -1,7 +1,7 @@
 [versions]
 # libraries
 annotations = "24.1.0"
-kotest = "5.9.0"
+kotest = "5.9.1"
 
 # plugins
 kotlin = "1.9.24"
