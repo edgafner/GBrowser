@@ -5,7 +5,7 @@
 name: Release
 on:
   release:
-    types: [prereleased, released]
+    types: [ prereleased, released ]
 
 jobs:
 
@@ -24,20 +24,21 @@ jobs:
         with:
           ref: ${{ github.event.release.tag_name }}
 
-      # Setup Java environment for the next steps
-      - name: Setup Java
-        uses: actions/setup-java@v4
+      # Set up Java environment for the next steps
+      - name: Setup JBR 21
+        uses: gmitch215/setup-java@6d2c5e1f82f180ae79f799f0ed6e3e5efb4e664d
         with:
-          distribution: zulu
-          java-version: 17
-          cache: gradle
-
+          distribution: 'jetbrains'
+          java-version: 21
+          cache: 'gradle'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Setup Gradle
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3.5.0
+        uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-home-cache-cleanup: true
+          cache-cleanup: on-success
 
       # Set environment variables
       - name: Export Properties
@@ -73,6 +74,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh release upload ${{ github.event.release.tag_name }} ./build/distributions/*
 
+
       # Create a pull request
       - name: Create Pull Request
         if: ${{ steps.properties.outputs.changelog != '' }}
@@ -89,7 +91,7 @@ jobs:
           git checkout -b $BRANCH
           git commit -am "Changelog update - $VERSION"
           git push --set-upstream origin $BRANCH
-
+          
           gh label create "$LABEL" \
             --description "Pull requests with release changelog update" \
             --force \

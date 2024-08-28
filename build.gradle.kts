@@ -119,7 +119,7 @@ kotlin {
         vendor = JvmVendorSpec.JETBRAINS
     }
     compilerOptions {
-        apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_1)
+        apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9)
         jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
         languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_1)
         freeCompilerArgs.add("-Xjvm-default=all")
@@ -297,39 +297,38 @@ tasks {
         )
     }
 
-    jacocoTestReport {
-        classDirectories.setFrom(instrumentCode)
-        register<Test>("uiTest") {
-            description = "Run UI Tests."
-            group = "verification"
-            testClassesDirs = sourceSets["uiTest"].output.classesDirs
-            classpath = sourceSets["uiTest"].runtimeClasspath
 
-            useJUnitPlatform {
-                includeTags("uitest")
-            }
+    register<Test>("uiTest") {
+        description = "Run UI Tests."
+        group = "verification"
+        testClassesDirs = sourceSets["uiTest"].output.classesDirs
+        classpath = sourceSets["uiTest"].runtimeClasspath
 
-
-            jvmArgs(
-                "--add-opens=java.base/java.lang=ALL-UNNAMED",
-                "--add-opens=java.base/java.util=ALL-UNNAMED",
-                "-Xmx2G" // Increase to 2 GB heap space, adjust as needed
-            )
-
-
-            val skipTestsProvider: Provider<String> = providers.gradleProperty("runUiTests")
-            onlyIf("runUiTests property is set") {
-                skipTestsProvider.isPresent
-            }
-
-            configure<JacocoTaskExtension> {
-                isEnabled = false
-            }
-
-            outputs.upToDateWhen { false }
-
+        useJUnitPlatform {
+            includeTags("uitest")
         }
+
+
+        jvmArgs(
+            "--add-opens=java.base/java.lang=ALL-UNNAMED",
+            "--add-opens=java.base/java.util=ALL-UNNAMED",
+            "-Xmx2G" // Increase to 2 GB heap space, adjust as needed
+        )
+
+
+        val skipTestsProvider: Provider<String> = providers.gradleProperty("runUiTests")
+        onlyIf("runUiTests property is set") {
+            skipTestsProvider.isPresent
+        }
+
+        configure<JacocoTaskExtension> {
+            isEnabled = false
+        }
+
+        outputs.upToDateWhen { false }
+
     }
+
 
 
     publishPlugin {
@@ -353,27 +352,4 @@ tasks {
     }
 }
 
-task<Test>("uiTest") {
-    description = "Runs ui tests."
-    group = "verification"
-
-    testClassesDirs = sourceSets["uiTest"].output.classesDirs
-    classpath = sourceSets["uiTest"].runtimeClasspath
-    shouldRunAfter("test")
-
-    useJUnitPlatform {
-        includeTags("uitest")
-    }
-
-    val skipTestsProvider: Provider<String> = providers.gradleProperty("runUiTests")
-    onlyIf("runUiTests property is set") {
-        skipTestsProvider.isPresent
-    }
-
-    configure<JacocoTaskExtension> { // sync with testing-subplugin
-        isEnabled = false
-    }
-
-
-}
 
