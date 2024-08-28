@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2024.2.1] - 2024-08-28
+
 ### Added
 
 - 🚀 Support for 242
@@ -356,7 +358,8 @@
 -- First Jetbrains Public
 -- First Jetbrains Public
 
-[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2024.1.17...HEAD
+[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2024.2.1...HEAD
+[2024.2.1]: https://github.com/edgafner/GBrowser/compare/v2024.1.17...v2024.2.1
 [2024.1.17]: https://github.com/edgafner/GBrowser/compare/v2024.1.15...v2024.1.17
 [2024.1.15]: https://github.com/edgafner/GBrowser/compare/v2024.1.14...v2024.1.15
 [2024.1.14]: https://github.com/edgafner/GBrowser/compare/v2024.1.13...v2024.1.14
