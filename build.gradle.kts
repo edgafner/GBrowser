@@ -103,7 +103,7 @@ dependencies {
     testImplementation("org.opentest4j:opentest4j:1.3.0")
     testCompileOnly("junit:junit:4.13.2")
 
-    uiTestImplementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+    uiTestImplementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
     uiTestImplementation("junit:junit:4.13.2")
     uiTestImplementation("org.opentest4j:opentest4j:1.3.0")
     uiTestImplementation(libs.bundles.robot)
