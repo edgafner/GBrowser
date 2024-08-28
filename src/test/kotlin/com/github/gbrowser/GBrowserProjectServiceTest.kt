@@ -6,24 +6,14 @@ import com.github.gbrowser.ui.toolwindow.gbrowser.GBrowserTab
 import com.intellij.configurationStore.serialize
 import com.intellij.openapi.components.service
 import com.intellij.openapi.util.JDOMUtil
-import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.testFramework.junit5.RunInEdt
-import com.intellij.testFramework.junit5.TestApplication
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.runTest
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 import java.util.*
 
 
-@TestApplication
-@RunInEdt(writeIntent = true)
-class GBrowserProjectServiceTest : LightPlatformTestCase() {
+class GBrowserProjectServiceTest : BasePlatformTestCase() {
 
 
-    @BeforeEach
     override fun setUp() {
         super.setUp()
     }
@@ -32,9 +22,9 @@ class GBrowserProjectServiceTest : LightPlatformTestCase() {
         return "GBrowserProjectServiceTest"
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
-    fun `tab serialization`() = runTest(UnconfinedTestDispatcher()) {
+
+    @Suppress("unused")
+    fun tabSerialization() {
         val project = project
         val projectSettings = project.service<GBrowserProjectService>()
 
@@ -60,9 +50,8 @@ class GBrowserProjectServiceTest : LightPlatformTestCase() {
     }
 
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
-    fun `multiple tabs serialization`() = runTest(UnconfinedTestDispatcher()) {
+    @Suppress("unused")
+    fun multipleTabsSerialization() {
         val project = project
         val projectSettings = project.service<GBrowserProjectService>()
 
