@@ -30,6 +30,7 @@ class GBrowserOpenInAction : AnAction(), DumbAware {
     GBrowserToolWindowUtil.getSelectedBrowserPanel(e)?.getCurrentUrl()?.let { BrowserUtil.browse(it) }
   }
 
+  @Suppress("UnstableApiUsage")
   private fun findUsingBrowser(): Icon {
     val browserManager = WebBrowserManager.getInstance()
     val defaultBrowserPolicy = browserManager.defaultBrowserPolicy

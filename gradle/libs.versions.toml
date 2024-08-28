@@ -1,39 +1,34 @@
 [versions]
-# libraries
-annotations = "24.1.0"
-kotest = "5.9.0"
-
-# plugins
-kotlin = "1.9.24"
 changelog = "2.2.0"
-gradleIntelliJPlugin = "1.17.4"
-qodana = "2024.1.5"
-kover = "0.8.1"
-dokka = "1.9.20"
-mockkTest = "1.13.11"
+intelliJPlatform = "2.0.1"
+kotlin = "2.0.10"
+kover = "0.8.3"
+qodana = "2024.1.9"
+mockkTest = "1.13.12"
 kotlinTest = "1.8.1"
+intellijRemoteRobot = "0.11.23"
 koinPrevVersion = "3.5.6"
-koinKotestExtension = "1.3.0"
+
+
+
 
 [libraries]
-annotations = { group = "org.jetbrains", name = "annotations", version.ref = "annotations" }
-kotest-runner = { group = "io.kotest", name = "kotest-runner-junit5", version.ref = "kotest" }
-kotest-assertion = { group = "io.kotest", name = "kotest-assertions-core", version.ref = "kotest" }
-kotest-property = { group = "io.kotest", name = "kotest-property", version.ref = "kotest" }
-korutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinTest" }
-mockk-test = { group = "io.mockk", name = "mockk", version.ref = "mockkTest" }
-mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version = "5.3.1" }
+intellijRemoteFixtures = { module = "com.intellij.remoterobot:remote-fixtures", version.ref = "intellijRemoteRobot" }
+intellijRemoteRobot = { module = "com.intellij.remoterobot:remote-robot", version.ref = "intellijRemoteRobot" }
 io-insert-koin = { group = "io.insert-koin", name = "koin-test", version.ref = "koinPrevVersion" }
 io-insert-koin-junit = { group = "io.insert-koin", name = "koin-test-junit5", version.ref = "koinPrevVersion" }
-io-kotest-extensions = { group = "io.kotest.extensions", name = "kotest-extensions-koin", version.ref = "koinKotestExtension" }
+korutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinTest" }
+korutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinTest" }
+mockk-test = { group = "io.mockk", name = "mockk", version.ref = "mockkTest" }
+
 
 [plugins]
 changelog = { id = "org.jetbrains.changelog", version.ref = "changelog" }
-dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
-gradleIntelliJPlugin = { id = "org.jetbrains.intellij", version.ref = "gradleIntelliJPlugin" }
+intelliJPlatform = { id = "org.jetbrains.intellij.platform", version.ref = "intelliJPlatform" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 qodana = { id = "org.jetbrains.qodana", version.ref = "qodana" }
 
 [bundles]
-kTest = ["kotest-runner", "kotest-assertion", "kotest-property", "korutines-test", "mockk-test", "mockito-kotlin", "io-insert-koin", "io-insert-koin-junit", "io-kotest-extensions"]
+kTest = ["korutines-core", "korutines-test", "mockk-test", "io-insert-koin", "io-insert-koin-junit"]
+robot = ["intellijRemoteFixtures", "intellijRemoteRobot"]
