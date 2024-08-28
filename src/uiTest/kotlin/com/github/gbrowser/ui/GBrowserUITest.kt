@@ -23,29 +23,30 @@ import java.awt.Point
 import java.nio.file.Path
 import java.time.Duration.ofMinutes
 
-@ExtendWith(RemoteRobotExtension::class)
 @UITest
+@ExtendWith(RemoteRobotExtension::class)
 class GBrowserUITest {
 
-  @TempDir
-  lateinit var tempDir: Path
+    @TempDir
+    lateinit var tempDir: Path
 
-  init {
-    StepsLogger.init()
-  }
-
-  @BeforeEach
-  fun waitForIde(remoteRobot: RemoteRobot) {
-    waitForIgnoringError(ofMinutes(3)) {
-      remoteRobot.callJs("true")
+    init {
+        StepsLogger.init()
     }
-  }
+
+    @BeforeEach
+    fun waitForIde(remoteRobot: RemoteRobot) {
+        waitForIgnoringError(ofMinutes(3)) {
+            remoteRobot.callJs("true")
+        }
+    }
 
 
-  @Suppress("JSUnresolvedReference")
-  @AfterEach
-  fun closeProject(remoteRobot: RemoteRobot) = with(remoteRobot) {
-    this.runJs("""
+    @Suppress("JSUnresolvedReference")
+    @AfterEach
+    fun closeProject(remoteRobot: RemoteRobot) = with(remoteRobot) {
+        this.runJs(
+            """
             importClass(com.intellij.openapi.application.ApplicationManager)
 
             const actionId = "Exit";
@@ -58,214 +59,215 @@ class GBrowserUITest {
                 }
             })
             ApplicationManager.getApplication().invokeLater(runAction)
-        """, true)
-    try {
-      idea {
+        """, true
+        )
+        try {
+            idea {
 
-        dialogByXpath("//div[@title.key='exit.confirm.title' and @class='MyDialog']") {
-          button("Exit").click()
+                dialogByXpath("//div[@title.key='exit.confirm.title' and @class='MyDialog']") {
+                    button("Exit").click()
+                }
+            }
+        } catch (ignored: Exception) { // No confirm dialog
+
         }
-      }
-    } catch (ignored: Exception) { // No confirm dialog
-
-    }
-    Thread.sleep(2_000)
-  }
-
-  @Test
-  fun gBrowserToolWindow(remoteRobot: RemoteRobot) = with(remoteRobot) {
-
-    welcomeFrame {
-      createNewProjectLink.click()
-      dialog("New Project") {
-        findText("Java").click()
-        checkBox("Add sample code").select()
-        textField(byXpath("//div[@class='ExtendableTextField']")).text = tempDir.toAbsolutePath().toString()
-        button("Create").click()
-      }
+        Thread.sleep(2_000)
     }
 
-    idea {
-      initWaiting()
+    @Test
+    fun gBrowserToolWindow(remoteRobot: RemoteRobot) = with(remoteRobot) {
 
-      showGBrowserToolWindow()
-
-      Thread.sleep(6_000)
-
-      button(byXpath("//div[@myicon='add.svg']")).click()
-
-      Thread.sleep(3_000)
-      basicTab(this)
-
-      browserActions(this)
-
-      presencesActions(this)
-
-
-    }
-  }
-
-
-  private fun IdeaFrame.initWaiting() {
-    waitFor(ofMinutes(5)) { isDumbMode().not() }
-    Thread.sleep(5_000)
-    waitForBackgroundTasks()
-    Thread.sleep(4_000)
-  }
-
-  private fun RemoteRobot.basicTab(ideaFrame: IdeaFrame) {
-    step("Basic actions") {
-      gBrowserToolWindow {
-
-        gBrowserToolWindowMyNonOpaquePanel {
-          val dimension = toolWindowDimension
-          val location = location
-          moveMouse(location)
-          moveMouse(Point(dimension.width, location.y))
-          ideaFrame.dragAndDrop(Point(location.x + dimension.width + dimension.width, location.y))
-
-          gBrowserPRPanel {
-            textField(byXpath("//div[@class='TextFieldWithProcessing']")).text = "https://github.com/"
-            textField(byXpath("//div[@class='TextFieldWithProcessing']")).keyboard {
-              enter()
+        welcomeFrame {
+            createNewProjectLink.click()
+            dialog("New Project") {
+                findText("Java").click()
+                checkBox("Add sample code").select()
+                textField(byXpath("//div[@class='ExtendableTextField']")).text = tempDir.toAbsolutePath().toString()
+                button("Create").click()
             }
-            textField(byXpath("//div[@class='TextFieldWithProcessing']")).text = "https://github.com/"
-            textField(byXpath("//div[@class='TextFieldWithProcessing']")).keyboard {
-              enter()
-            }
-          }
-
-          Thread.sleep(5_000)
-
-          gBrowserPRPanel { //
-            button(byXpath("//div[@myicon='bookmark_remove.svg']")).click()
-            moveMouse(location)
-            click()
-            keyboard {
-              escape()
-            }
-            button(byXpath("//div[@myicon='refresh.svg']")).click()
-            assert(button(byXpath("//div[@myicon='left.svg']")).isEnabled())
-          }
         }
-      }
-    }
-  }
 
-  private fun RemoteRobot.browserActions(ideaFrame: IdeaFrame) {
-    step("Validate various actions") {
-      gBrowserToolWindow {
-        gBrowserToolWindowMyNonOpaquePanel {
-          gBrowserPRPanel {
-            button(byXpath("//div[@myicon='chevronDown.svg']")).click()
-            val itemList = ideaFrame.heavyWeightWindow().itemsList
-            itemList.clickItem("Home", false)
-          }
-          gBrowserPRPanel {
-            button(byXpath("//div[@myicon='chevronDown.svg']")).click()
-            val itemList = ideaFrame.heavyWeightWindow().itemsList
-            itemList.clickItem("Find...", false)
-            keyboard {
-              escape()
-            }
+        idea {
+            initWaiting()
 
-          }
-          gBrowserPRPanel {
-            button(byXpath("//div[@myicon='chevronDown.svg']")).click()
-            val itemList = ideaFrame.heavyWeightWindow().itemsList
-            itemList.collectItems().forEach {
-              LOG.info("Item: --${it}--")
-            }
-            itemList.clickItem("Reload Pa", false)
-          }
+            showGBrowserToolWindow()
 
-          Thread.sleep(2_000)
-          gBrowserPRPanel {
-            button(byXpath("//div[@myicon='chevronDown.svg']")).click()
-            val itemList = ideaFrame.heavyWeightWindow().itemsList
-            itemList.collectItems().forEach {
-              LOG.info("Item: --${it}--")
-            }
-            itemList.clickItem("Add to Bo", false)
-          }
+            Thread.sleep(6_000)
 
-          gBrowserPRPanel {
-            button(byXpath("//div[@myicon='chevronDown.svg']")).click()
-            val itemList = ideaFrame.heavyWeightWindow().itemsList
-            itemList.clickItem("Open Dev", false)
-          }
+            button(byXpath("//div[@myicon='add.svg']")).click()
 
-          ideaFrame.showGBrowserDevToolsToolWindow()
+            Thread.sleep(3_000)
+            basicTab(this)
 
-          gBrowserPRPanel {
-            button(byXpath("//div[@myicon='chevronDown.svg']")).click()
-            val itemList = ideaFrame.heavyWeightWindow().itemsList
-            itemList.clickItem("Zoom Out", false)
-          }
+            browserActions(this)
 
-          gBrowserPRPanel {
-            button(byXpath("//div[@myicon='chevronDown.svg']")).click()
-            val itemList = ideaFrame.heavyWeightWindow().itemsList
-            itemList.clickItem("Zoom In", false)
-          }
+            presencesActions(this)
 
-          gBrowserPRPanel {
-            button(byXpath("//div[@myicon='chevronDown.svg']")).click()
-            val itemList = ideaFrame.heavyWeightWindow().itemsList
-            itemList.clickItem("Close Tab", false)
-          }
 
-          gBrowserPRPanel {
-            assert(button(byXpath("//div[@tooltiptext='https://github.com/']")).isShowing)
-          }
-
-          gBrowserPRPanel {
-            button(byXpath("//div[@myicon='chevronDown.svg']")).click()
-            val itemList = ideaFrame.heavyWeightWindow().itemsList
-            itemList.clickItem("Preferences", false)
-          }
         }
-      }
     }
-  }
 
-  private fun RemoteRobot.presencesActions(ideaFrame: IdeaFrame) {
-    step("Validate preferences actions") {
 
-      with(ideaFrame.dialog("GBrowser")) {
-        assert(checkBox(byXpath("//div[@text='Highlight URL host']")).isSelected())
-        assert(checkBox(byXpath("//div[@text='Highlight suggestion query']")).isSelected())
-        assert(checkBox(byXpath("//div[@text='Hide URL protocol']")).isSelected())
-        assert(checkBox(byXpath("//div[@text='Load favicon in popup']")).isSelected())
-        assert(checkBox(byXpath("//div[@text='Enable suggestion search']")).isSelected().not())
-        assert(checkBox(byXpath("//div[@text='Life Span in new tab']")).isSelected())
+    private fun IdeaFrame.initWaiting() {
+        waitFor(ofMinutes(5)) { isDumbMode().not() }
+        Thread.sleep(5_000)
+        waitForBackgroundTasks()
+        Thread.sleep(4_000)
+    }
 
-        assert(checkBox(byXpath("//div[@text='History enable']")).isSelected())
-        assert(checkBox(byXpath("//div[@text='Debug port']")).isSelected().not())
-        assert(checkBox(byXpath("//div[@text='Hide toolwindow label']")).isSelected())
-        assert(checkBox(byXpath("//div[contains(@text, 'toolbar')]")).isSelected())
-        checkBox(byXpath("//div[contains(@text, 'toolbar')]")).click()
+    private fun RemoteRobot.basicTab(ideaFrame: IdeaFrame) {
+        step("Basic actions") {
+            gBrowserToolWindow {
 
-        button("OK").click()
-      }
+                gBrowserToolWindowMyNonOpaquePanel {
+                    val dimension = toolWindowDimension
+                    val location = location
+                    moveMouse(location)
+                    moveMouse(Point(dimension.width, location.y))
+                    ideaFrame.dragAndDrop(Point(location.x + dimension.width + dimension.width, location.y))
 
-      gBrowserToolWindow {
+                    gBrowserPRPanel {
+                        textField(byXpath("//div[@class='TextFieldWithProcessing']")).text = "https://github.com/"
+                        textField(byXpath("//div[@class='TextFieldWithProcessing']")).keyboard {
+                            enter()
+                        }
+                        textField(byXpath("//div[@class='TextFieldWithProcessing']")).text = "https://github.com/"
+                        textField(byXpath("//div[@class='TextFieldWithProcessing']")).keyboard {
+                            enter()
+                        }
+                    }
 
-        gBrowserToolWindowMyNonOpaquePanel {
-          gBrowserPRPanel {
-            assertThrows<WaitForConditionTimeoutException> {
-              button(byXpath("//div[@tooltiptext='https://github.com/']")).isShowing
+                    Thread.sleep(5_000)
 
+                    gBrowserPRPanel { //
+                        button(byXpath("//div[@myicon='bookmark_remove.svg']")).click()
+                        moveMouse(location)
+                        click()
+                        keyboard {
+                            escape()
+                        }
+                        button(byXpath("//div[@myicon='refresh.svg']")).click()
+                        assert(button(byXpath("//div[@myicon='left.svg']")).isEnabled())
+                    }
+                }
             }
-          }
         }
-      }
     }
-  }
 
-  companion object {
-    val LOG: Logger = LoggerFactory.getLogger("GBrowserTollWindowUITest")
-  }
+    private fun RemoteRobot.browserActions(ideaFrame: IdeaFrame) {
+        step("Validate various actions") {
+            gBrowserToolWindow {
+                gBrowserToolWindowMyNonOpaquePanel {
+                    gBrowserPRPanel {
+                        button(byXpath("//div[@myicon='chevronDown.svg']")).click()
+                        val itemList = ideaFrame.heavyWeightWindow().itemsList
+                        itemList.clickItem("Home", false)
+                    }
+                    gBrowserPRPanel {
+                        button(byXpath("//div[@myicon='chevronDown.svg']")).click()
+                        val itemList = ideaFrame.heavyWeightWindow().itemsList
+                        itemList.clickItem("Find...", false)
+                        keyboard {
+                            escape()
+                        }
+
+                    }
+                    gBrowserPRPanel {
+                        button(byXpath("//div[@myicon='chevronDown.svg']")).click()
+                        val itemList = ideaFrame.heavyWeightWindow().itemsList
+                        itemList.collectItems().forEach {
+                            LOG.info("Item: --${it}--")
+                        }
+                        itemList.clickItem("Reload Pa", false)
+                    }
+
+                    Thread.sleep(2_000)
+                    gBrowserPRPanel {
+                        button(byXpath("//div[@myicon='chevronDown.svg']")).click()
+                        val itemList = ideaFrame.heavyWeightWindow().itemsList
+                        itemList.collectItems().forEach {
+                            LOG.info("Item: --${it}--")
+                        }
+                        itemList.clickItem("Add to Bo", false)
+                    }
+
+                    gBrowserPRPanel {
+                        button(byXpath("//div[@myicon='chevronDown.svg']")).click()
+                        val itemList = ideaFrame.heavyWeightWindow().itemsList
+                        itemList.clickItem("Open Dev", false)
+                    }
+
+                    ideaFrame.showGBrowserDevToolsToolWindow()
+
+                    gBrowserPRPanel {
+                        button(byXpath("//div[@myicon='chevronDown.svg']")).click()
+                        val itemList = ideaFrame.heavyWeightWindow().itemsList
+                        itemList.clickItem("Zoom Out", false)
+                    }
+
+                    gBrowserPRPanel {
+                        button(byXpath("//div[@myicon='chevronDown.svg']")).click()
+                        val itemList = ideaFrame.heavyWeightWindow().itemsList
+                        itemList.clickItem("Zoom In", false)
+                    }
+
+                    gBrowserPRPanel {
+                        button(byXpath("//div[@myicon='chevronDown.svg']")).click()
+                        val itemList = ideaFrame.heavyWeightWindow().itemsList
+                        itemList.clickItem("Close Tab", false)
+                    }
+
+                    gBrowserPRPanel {
+                        assert(button(byXpath("//div[@tooltiptext='https://github.com/']")).isShowing)
+                    }
+
+                    gBrowserPRPanel {
+                        button(byXpath("//div[@myicon='chevronDown.svg']")).click()
+                        val itemList = ideaFrame.heavyWeightWindow().itemsList
+                        itemList.clickItem("Preferences", false)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun RemoteRobot.presencesActions(ideaFrame: IdeaFrame) {
+        step("Validate preferences actions") {
+
+            with(ideaFrame.dialog("GBrowser")) {
+                assert(checkBox(byXpath("//div[@text='Highlight URL host']")).isSelected())
+                assert(checkBox(byXpath("//div[@text='Highlight suggestion query']")).isSelected())
+                assert(checkBox(byXpath("//div[@text='Hide URL protocol']")).isSelected())
+                assert(checkBox(byXpath("//div[@text='Load favicon in popup']")).isSelected())
+                assert(checkBox(byXpath("//div[@text='Enable suggestion search']")).isSelected().not())
+                assert(checkBox(byXpath("//div[@text='Life Span in new tab']")).isSelected())
+
+                assert(checkBox(byXpath("//div[@text='History enable']")).isSelected())
+                assert(checkBox(byXpath("//div[@text='Debug port']")).isSelected().not())
+                assert(checkBox(byXpath("//div[@text='Hide toolwindow label']")).isSelected())
+                assert(checkBox(byXpath("//div[contains(@text, 'toolbar')]")).isSelected())
+                checkBox(byXpath("//div[contains(@text, 'toolbar')]")).click()
+
+                button("OK").click()
+            }
+
+            gBrowserToolWindow {
+
+                gBrowserToolWindowMyNonOpaquePanel {
+                    gBrowserPRPanel {
+                        assertThrows<WaitForConditionTimeoutException> {
+                            button(byXpath("//div[@tooltiptext='https://github.com/']")).isShowing
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    companion object {
+        val LOG: Logger = LoggerFactory.getLogger("GBrowserTollWindowUITest")
+    }
 
 }
 

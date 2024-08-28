@@ -1,35 +1,39 @@
+@file:Suppress("UnstableApiUsage")
+
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
-import org.jetbrains.intellij.tasks.RunPluginVerifierTask
+import org.jetbrains.intellij.platform.gradle.Constants.Configurations.Attributes
+import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 
 fun properties(key: String) = providers.gradleProperty(key)
 fun environment(key: String) = providers.environmentVariable(key)
 
 plugins {
-
-    id("java") // Java support
-    alias(libs.plugins.kotlin) // Kotlin support
-    alias(libs.plugins.gradleIntelliJPlugin) // Gradle IntelliJ Plugin
-    alias(libs.plugins.changelog) // Gradle Changelog Plugin
-    alias(libs.plugins.qodana) // Gradle Qodana Plugin
-    alias(libs.plugins.kover) // Gradle Kover Plugin
-  kotlin("plugin.serialization") version "2.0.0"
+    alias(libs.plugins.kotlin) //`jvm-test-suite`
+    alias(libs.plugins.intelliJPlatform)
+    alias(libs.plugins.changelog)
+    alias(libs.plugins.qodana)
+    alias(libs.plugins.kover)
+    kotlin("plugin.serialization") version "2.0.10"
     jacoco
 }
 
 group = properties("pluginGroup").get()
 version = properties("pluginVersion").get()
 
-// Configure project's dependencies
+
 repositories {
     mavenCentral()
-    maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
+    intellijPlatform {
+        defaultRepositories()
+        snapshots()
+    }
 }
 
 sourceSets {
     create("uiTest") {
-        compileClasspath += sourceSets.main.get().output
-        runtimeClasspath += sourceSets.main.get().output
+        compileClasspath += sourceSets["main"].output + sourceSets["test"].output
+        runtimeClasspath += sourceSets["main"].output + sourceSets["test"].output
     }
 }
 
@@ -37,101 +41,99 @@ idea {
     module {
         testSources.from(sourceSets["uiTest"].kotlin.srcDirs)
         testResources.from(sourceSets["uiTest"].resources.srcDirs)
+
     }
 }
+
+
+configurations.all {
+    resolutionStrategy.force("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+    resolutionStrategy.force("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
+}
+
 
 val uiTestImplementation: Configuration by configurations.getting {
     extendsFrom(configurations.testImplementation.get())
 }
-
 val uiTestRuntimeOnly: Configuration by configurations.getting {
     extendsFrom(configurations.testRuntimeOnly.get())
 }
 
+
+configurations.named("uiTestCompileClasspath").configure {
+    extendsFrom(configurations.getByName(JavaPlugin.TEST_COMPILE_CLASSPATH_CONFIGURATION_NAME))
+    attributes {
+        attribute(Attributes.extracted, true)
+        attribute(Attributes.collected, true)
+    }
+}
+
+configurations.named("uiTestRuntimeClasspath").configure {
+    extendsFrom(configurations.getByName(JavaPlugin.TEST_RUNTIME_CLASSPATH_CONFIGURATION_NAME))
+    extendsFrom(configurations.getByName("intellijPlatformDependency"))
+    attributes {
+        attribute(Attributes.extracted, true)
+        attribute(Attributes.collected, true)
+    }
+    exclude(group = "junit", module = "junit")
+    exclude(group = "com.jetbrains.intellij.platform", module = "test-framework-junit5")
+    exclude(group = "com.jetbrains.intellij.platform", module = "test-framework")
+    isCanBeResolved = true
+}
+
 dependencies {
-    implementation(libs.annotations)
+    intellijPlatform {
+        create(
+            providers.gradleProperty("platformType"), providers.gradleProperty("platformVersion"), useInstaller = false
+        )
+        instrumentationTools()
+        pluginVerifier()
 
-    testImplementation(libs.bundles.kTest)
-
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.1") {
-        isTransitive = false
+        zipSigner()
+        testFramework(TestFrameworkType.JUnit5)
+        testFramework(TestFrameworkType.Platform)
     }
 
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.0") { isTransitive = false }
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.0") { isTransitive = false }
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
 
-    uiTestImplementation("com.intellij.remoterobot:remote-fixtures:0.11.23")
+    testImplementation(libs.bundles.kTest)
+    testImplementation("org.opentest4j:opentest4j:1.3.0")
+    testCompileOnly("junit:junit:4.13.2")
 
-    uiTestImplementation("com.intellij.remoterobot:remote-robot:0.11.23")
-
-    uiTestImplementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
-    uiTestImplementation("org.junit.jupiter:junit-jupiter-api:5.10.3")
-    uiTestRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")
+    uiTestImplementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+    uiTestImplementation("junit:junit:4.13.2")
+    uiTestImplementation("org.opentest4j:opentest4j:1.3.0")
+    uiTestImplementation(libs.bundles.robot)
+    uiTestImplementation(libs.bundles.kTest)
+    uiTestImplementation("org.opentest4j:opentest4j:1.3.0")
+    uiTestImplementation("org.junit.jupiter:junit-jupiter-api:5.11.0")
+    uiTestRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.0")
 }
 
 kotlin {
-    jvmToolchain(17)
-}
-
-// Configure Gradle IntelliJ Plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
-intellij {
-
-    pluginName = properties("pluginName")
-    version = properties("platformVersion")
-    type = properties("platformType")
-
-    // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file.
-    plugins = properties("platformPlugins").map { it.split(',').map(String::trim).filter(String::isNotEmpty) }
-}
-
-// Configure Gradle Changelog Plugin - read more: https://github.com/JetBrains/gradle-changelog-plugin
-changelog {
-    groups.empty()
-    repositoryUrl = properties("pluginRepositoryUrl")
-    headerParserRegex.set("""(\d+\.\d+\.\d+)""".toRegex())
-}
-
-
-
-kover {
-    reports {
-        total {
-            xml {
-                onCheck = true
-            }
-            html {
-                onCheck = true
-            }
-        }
+    jvmToolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+        vendor = JvmVendorSpec.JETBRAINS
     }
-    currentProject {
-        sources {
-            excludedSourceSets.addAll(listOf("test", "uiTest"))
-        }
+    compilerOptions {
+        apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_1)
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+        languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_1)
+        freeCompilerArgs.add("-Xjvm-default=all")
 
     }
-
 }
 
-jacoco {
-    toolVersion = "0.8.11"
-    applyTo(tasks.runIdeForUiTests.get())
 
-}
-
-tasks {
-
-    wrapper {
-        gradleVersion = properties("gradleVersion").get()
-    }
-
-    patchPluginXml {
-        version = properties("pluginVersion")
-        sinceBuild = properties("pluginSinceBuild")
-        untilBuild = properties("pluginUntilBuild")
+intellijPlatform {
+    pluginConfiguration {
+        version = providers.gradleProperty("pluginVersion")
 
         // Extract the <!-- Plugin description --> section from README.md and provide for the plugin's manifest
-        pluginDescription = providers.fileContents(layout.projectDirectory.file("README.md")).asText.map {
+        description = providers.fileContents(layout.projectDirectory.file("README.md")).asText.map {
             val start = "<!-- Plugin description -->"
             val end = "<!-- Plugin description end -->"
 
@@ -143,9 +145,8 @@ tasks {
             }
         }
 
-        val changelog =
-            project.changelog // local variable for configuration cache compatibility // Get the latest available change notes from the changelog file
-        changeNotes = properties("pluginVersion").map { pluginVersion ->
+        val changelog = project.changelog
+        changeNotes = providers.gradleProperty("pluginVersion").map { pluginVersion ->
             with(changelog) {
                 renderItem(
                     (getOrNull(pluginVersion) ?: getUnreleased()).withHeader(false).withEmptySections(false),
@@ -153,94 +154,183 @@ tasks {
                 )
             }
         }
-    }
 
-    runIde {
-        jvmArgs = listOf("-Xmx4G")
-        systemProperty("ide.experimental.ui", "true")
-        systemProperty("ide.show.tips.on.startup.default.value", false)
-        systemProperty("idea.trust.all.projects", true)
-        systemProperty("jb.consents.confirmation.enabled", false)
-        systemProperty("ide.browser.jcef.enabled", true)
-        systemProperty("ide.browser.jcef.headless.enabled", true)
-        systemProperty("ide.browser.jcef.testMode.enabled", true)
-    }
+        ideaVersion {
+            sinceBuild = providers.gradleProperty("pluginSinceBuild")
+            untilBuild = providers.gradleProperty("pluginUntilBuild")
 
-    val runIdeUiCodeCoverageReport = register<JacocoReport>("runIdeUiCodeCoverageReport") {
-        executionData(runIdeForUiTests.get())
-        sourceSets(sourceSets.main.get())
-
-        reports {
-            xml.required = true
-            html.required = true
         }
     }
 
-    runPluginVerifier {
-        downloadDir.set(System.getProperty("user.home") + "/.pluginVerifier/ides")
-        ideVersions.set(listOf("241.14494.158"))
-        verificationReportsFormats.set(
-            mutableListOf(
-                RunPluginVerifierTask.VerificationReportsFormats.MARKDOWN,
-                RunPluginVerifierTask.VerificationReportsFormats.HTML
+
+
+    pluginVerification {
+        ides {
+            recommended()
+        }
+    }
+
+    signing {
+        certificateChain = providers.environmentVariable("CERTIFICATE_CHAIN")
+        privateKey = providers.environmentVariable("PRIVATE_KEY")
+        password = providers.environmentVariable("PRIVATE_KEY_PASSWORD")
+    }
+
+    publishing {
+        token = providers.environmentVariable("PUBLISH_TOKEN")
+        channels = providers.gradleProperty("pluginVersion").map {
+            listOf(it.substringAfter('-', "").substringBefore('.').ifEmpty { "default" })
+        }
+    }
+}
+
+// Configure Gradle Changelog Plugin - read more: https://github.com/JetBrains/gradle-changelog-plugin
+changelog {
+    groups.empty()
+    repositoryUrl = providers.gradleProperty("pluginRepositoryUrl")
+    headerParserRegex.set("""(\d+\.\d+\.\d+)""".toRegex())
+}
+
+
+kover {
+    reports {
+        total {
+            xml { onCheck = true }
+            html { onCheck = true }
+        }
+    }
+    currentProject {
+        sources {
+            excludedSourceSets.addAll(listOf("test", "uiTest"))
+        }
+    }
+}
+
+
+val runIdeForUiTests by intellijPlatformTesting.runIde.registering {
+
+    task {
+
+        jvmArgumentProviders += CommandLineArgumentProvider {
+            listOf(
+                "--add-opens=java.base/java.lang=ALL-UNNAMED",
+                "--add-opens=java.base/java.util=ALL-UNNAMED",
+                "-Dide.experimental.ui=true",
+                "-Dide.mac.message.dialogs.as.sheets=false",
+                "-Dide.mac.file.chooser.native=false",
+                "-Dide.show.tips.on.startup.default.value=false",
+                "-Didea.trust.all.projects=true",
+                "-Djb.consents.confirmation.enabled=false",
+                "-Djb.privacy.policy.text=<!--999.999-->",
+                "-DjbScreenMenuBar.enabled=false",
+                "-Djunit.jupiter.extensions.autodetection.enabled=true",
+                "-Drobot-server.port=8082",
+                "-Dshared.indexes.download.auto.consent=true",
             )
-        )
+        }
+
+        dependsOn("buildPlugin")
+        finalizedBy("runIdeUiCodeCoverageReport")
+
+    }
+
+    plugins { robotServerPlugin() }
+}
+
+jacoco {
+    toolVersion = "0.8.12"
+    applyTo(runIdeForUiTests.get().task.get())
+}
+
+runIdeForUiTests.configure {
+    task {
+        configure<JacocoTaskExtension> {
+
+            // 221+ uses a custom classloader and jacoco fails to find classes
+            isIncludeNoLocationClasses = true
+            excludes = listOf("jdk.internal.*")
+        }
+    }
+}
+
+tasks {
+    wrapper {
+        gradleVersion = properties("gradleVersion").get()
+    }
+
+
+    register<JacocoReport>("runIdeUiCodeCoverageReport") {
+        executionData(runIdeForUiTests.get().task.get())
+        sourceSets(sourceSets.main.get())
+        classDirectories.setFrom(instrumentCode)
+        reports {
+            xml.required.set(true)
+            html.required.set(true)
+        }
     }
 
     // Configure UI tests plugin
     // Read more: https://github.com/JetBrains/intellij-ui-test-robot
-    runIdeForUiTests {
-        jvmArgs = listOf("-Xmx4G", "-Dsun.java2d.uiScale=1.0")
-        systemProperty("ide.browser.jcef.enabled", true)
-        systemProperty(
-            "ide.browser.jcef.headless.enabled",
-            true
-        ) //systemProperty("ide.browser.jcef.testMode.enabled", true)
-        systemProperty("ide.experimental.ui", true)
-        systemProperty("apple.laf.useScreenMenuBar", false)
-        systemProperty("ide.mac.file.chooser.native", false)
-        systemProperty("ide.mac.message.dialogs.as.sheets", false)
-        systemProperty("ide.show.tips.on.startup.default.value", false)
-        systemProperty("idea.trust.all.projects", true)
-        systemProperty("jb.consents.confirmation.enabled", false)
-        systemProperty("jb.privacy.policy.text", "<!--999.999-->")
-        systemProperty(
-            "jbScreenMenuBar.enabled",
-            false
-        ) //systemProperty("junit.jupiter.extensions.autodetection.enabled", true)
-        systemProperty("robot-server.port", 8082) //systemProperty("shared.indexes.download.auto.consent", true)
+    runIde {
+        jvmArgs = listOf("-Xmx4G")
+        systemProperties(
+            "ide.experimental.ui" to "true",
+            "ide.show.tips.on.startup.default.value" to false,
+            "idea.trust.all.projects" to true,
+            "jb.consents.confirmation.enabled" to false,
+        )
+    }
 
-        jvmArgs("--add-opens=java.desktop/javax.swing.text=ALL-UNNAMED")
+    publishPlugin {
+        dependsOn(patchChangelog)
+    }
 
 
-        configure<JacocoTaskExtension> {
-
-            // sync with testing-sub plugin
-            // 221+ uses a custom classloader and jacoco fails to find classes
-            isIncludeNoLocationClasses = true
-            excludes = listOf("jdk.internal.*","com.github.gbrowser.i18n.GBrowserBundle")
+    test {
+        useJUnitPlatform()
+        val skipTestsProvider: Provider<String> = providers.gradleProperty("runUiTests")
+        onlyIf("runUiTests property is not set") {
+            !skipTestsProvider.isPresent
         }
-
-        finalizedBy(runIdeUiCodeCoverageReport)
+        jvmArgs(
+            "--add-opens=java.base/java.lang=ALL-UNNAMED", "--add-opens=java.desktop/sun.awt=ALL-UNNAMED"
+        )
     }
 
     jacocoTestReport {
         classDirectories.setFrom(instrumentCode)
+        register<Test>("uiTest") {
+            description = "Run UI Tests."
+            group = "verification"
+            testClassesDirs = sourceSets["uiTest"].output.classesDirs
+            classpath = sourceSets["uiTest"].runtimeClasspath
+
+            useJUnitPlatform {
+                includeTags("uitest")
+            }
+
+
+            jvmArgs(
+                "--add-opens=java.base/java.lang=ALL-UNNAMED",
+                "--add-opens=java.base/java.util=ALL-UNNAMED",
+                "-Xmx2G" // Increase to 2 GB heap space, adjust as needed
+            )
+
+
+            val skipTestsProvider: Provider<String> = providers.gradleProperty("runUiTests")
+            onlyIf("runUiTests property is set") {
+                skipTestsProvider.isPresent
+            }
+
+            configure<JacocoTaskExtension> {
+                isEnabled = false
+            }
+
+            outputs.upToDateWhen { false }
+
+        }
     }
 
-    jacocoTestCoverageVerification {
-        classDirectories.setFrom(instrumentCode)
-    }
-
-    downloadRobotServerPlugin {
-        version = "0.11.23"
-    }
-
-    signPlugin {
-        certificateChain = environment("CERTIFICATE_CHAIN")
-        privateKey = environment("PRIVATE_KEY")
-        password = environment("PRIVATE_KEY_PASSWORD")
-    }
 
     publishPlugin {
         dependsOn("patchChangelog")
@@ -250,8 +340,7 @@ tasks {
         // Specify pre-release label to publish the plugin in a custom Release Channel automatically. Read more:
         // https://plugins.jetbrains.com/docs/intellij/deployment.html#specifying-a-release-channel
         channels = properties("pluginVersion").map {
-            listOf(
-                it.substringAfter('-', "").substringBefore('.').ifEmpty { "default" })
+            listOf(it.substringAfter('-', "").substringBefore('.').ifEmpty { "default" })
         }
     }
 
@@ -262,29 +351,29 @@ tasks {
             !skipTestsProvider.isPresent
         }
     }
+}
 
-    task<Test>("uiTest") {
-        description = "Runs ui tests."
-        group = "verification"
+task<Test>("uiTest") {
+    description = "Runs ui tests."
+    group = "verification"
 
-        testClassesDirs = sourceSets["uiTest"].output.classesDirs
-        classpath = sourceSets["uiTest"].runtimeClasspath
-        shouldRunAfter("test")
+    testClassesDirs = sourceSets["uiTest"].output.classesDirs
+    classpath = sourceSets["uiTest"].runtimeClasspath
+    shouldRunAfter("test")
 
-        useJUnitPlatform {
-            includeTags("uitest")
-        }
-
-        val skipTestsProvider: Provider<String> = providers.gradleProperty("runUiTests")
-        onlyIf("runUiTests property is set") {
-            skipTestsProvider.isPresent
-        }
-
-        configure<JacocoTaskExtension> { // sync with testing-subplugin
-            isEnabled = false
-        }
-
+    useJUnitPlatform {
+        includeTags("uitest")
     }
+
+    val skipTestsProvider: Provider<String> = providers.gradleProperty("runUiTests")
+    onlyIf("runUiTests property is set") {
+        skipTestsProvider.isPresent
+    }
+
+    configure<JacocoTaskExtension> { // sync with testing-subplugin
+        isEnabled = false
+    }
+
 
 }
 

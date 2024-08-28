@@ -11,3 +11,4 @@ build
 **/*.orig
 .DS_Store
 /.run/
+/.intellijPlatform/
