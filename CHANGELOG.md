@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- 🚀 Support for 242
+
 ## [2024.2.1] - 2024-08-28
 
 ### Added
