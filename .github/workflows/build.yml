@@ -140,7 +140,7 @@ jobs:
           name: tests-report
           path: ${{ github.workspace }}/build/test-results/test/*.xml
 
-      # Upload the Kover report to CodeCov
+      # Upload the Kover report to CodeCov for code coverage
       - name: Upload Code Coverage Report
         uses: codecov/codecov-action@v4.6.0
         with:
