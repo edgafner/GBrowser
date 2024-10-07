@@ -20,7 +20,9 @@ on:
   # Trigger the workflow on any pull request
   pull_request:
 
+
 jobs:
+
   # Prepare environment and build the plugin
   build:
     name: Build
@@ -41,7 +43,7 @@ jobs:
 
       # Setup Java environment for the next steps
       - name: Setup JBR 21
-        uses: gmitch215/setup-java@6d2c5e1f82f180ae79f799f0ed6e3e5efb4e664d
+        uses: gmitch215/setup-java@cba808d047291bcc112e7af979a7622d2cd18ff0
         with:
           distribution: 'jetbrains'
           java-version: 21
@@ -51,8 +53,7 @@ jobs:
       # Setup Gradle
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
-        with:
-          cache-cleanup: on-success
+        
 
       # Set environment variables
       - name: Export Properties
@@ -87,7 +88,7 @@ jobs:
 
       # Store already-built plugin as an artifact for downloading
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.4.0
         with:
           name: ${{ steps.artifact.outputs.filename }}
           path: ./build/distributions/content/*/*
@@ -106,7 +107,7 @@ jobs:
 
       # Set up Java environment for the next steps
       - name: Setup JBR 21
-        uses: gmitch215/setup-java@6d2c5e1f82f180ae79f799f0ed6e3e5efb4e664d
+        uses: gmitch215/setup-java@cba808d047291bcc112e7af979a7622d2cd18ff0
         with:
           distribution: 'jetbrains'
           java-version: 21
@@ -126,19 +127,27 @@ jobs:
       # Collect Tests Result of failed tests
       - name: Collect Tests Result
         if: ${{ always() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.4.0
         with:
           name: tests-result
           path: ${{ github.workspace }}/build/reports/tests
 
+      # Collect Tests Result of failed tests
+      - name: Collect Tests Report
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4.4.0
+        with:
+          name: tests-report
+          path: ${{ github.workspace }}/build/test-results/test/*.xml
+
       # Upload the Kover report to CodeCov
       - name: Upload Code Coverage Report
-        uses: codecov/codecov-action@v4.1.0
+        uses: codecov/codecov-action@v4.6.0
         with:
           files: ${{ github.workspace }}/build/reports/kover/report.xml
           flags: unittests
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          token: ${{ secrets.CODECOV_TOKEN }}
+          env_vars: OS
 
   # Run Qodana inspections and provide report
   inspectCode:
@@ -161,17 +170,26 @@ jobs:
       # Check out the current repository
       - name: Fetch Sources
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0  # a full history is required for pull request analysis
 
       # Set up Java environment for the next steps
       - name: Setup JBR 21
-        uses: gmitch215/setup-java@6d2c5e1f82f180ae79f799f0ed6e3e5efb4e664d
+        uses: gmitch215/setup-java@cba808d047291bcc112e7af979a7622d2cd18ff0
         with:
           distribution: 'jetbrains'
           java-version: 21
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Run Qodana inspections -
+      # Setup Gradle
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          add-job-summary-as-pr-comment: 'on-failure'
+
+      # Run Qodana inspections
       - name: Qodana - Code Inspection
         uses: JetBrains/qodana-action@v2024.2.3
         with:
@@ -200,7 +218,7 @@ jobs:
 
       # Set up Java environment for the next steps
       - name: Setup JBR 21
-        uses: gmitch215/setup-java@6d2c5e1f82f180ae79f799f0ed6e3e5efb4e664d
+        uses: gmitch215/setup-java@cba808d047291bcc112e7af979a7622d2cd18ff0
         with:
           distribution: 'jetbrains'
           java-version: 21
@@ -210,8 +228,7 @@ jobs:
       # Setup Gradle
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
-        with:
-          cache-cleanup: on-success
+        
 
       # Cache Plugin Verifier IDEs
       - name: Setup Plugin Verifier IDEs Cache
@@ -227,17 +244,49 @@ jobs:
       # Collect Plugin Verifier Result
       - name: Collect Plugin Verifier Result
         if: ${{ always() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.4.0
         with:
           name: pluginVerifier-result
           path: ${{ github.workspace }}/build/reports/pluginVerifier
+
+  # Test report step
+  test-report:
+    name: Test Report
+    needs: [ build,test ]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      checks: write
+      pull-requests: write
+      actions: read
+    steps:
+      - name: Fetch Sources
+        uses: actions/checkout@v4
+        with:
+          token: '${{ secrets.GITHUB_TOKEN }}'
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4.1.8
+        id: download
+        with:
+          name: tests-report
+          path: ~/
+
+      - name: Generate Test Report
+        uses: dorny/test-reporter@v1.9.1
+        if: success() || failure()
+        with:
+          name: Test Report Dashboard
+          reporter: java-junit
+          fail-on-error: 'true'
+          path: '${{steps.download.outputs.download-path}}/*.xml'
 
   # Prepare a draft release for GitHub Releases page for the manual verification
   # If accepted and published, release workflow would be triggered
   releaseDraft:
     name: Release draft
     if: github.event_name != 'pull_request'
-    needs: [ build, test, inspectCode, verify ]
+    needs: [ build, test, test-report, inspectCode, verify ]
     runs-on: ubuntu-latest
     permissions:
       contents: write
