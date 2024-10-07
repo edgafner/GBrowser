@@ -1,5 +1,5 @@
 # GitHub Actions Workflow for launching UI tests on Linux, Windows, and Mac in the following steps:
-# - prepare and launch IDE with your plugin and robot-server plugin, which is needed to interact with UI
+# - prepare and launch IDE with your plugin and robot-server plugin, which is necessary to interact with UI
 # - wait for IDE to start
 # - run UI tests with separate Gradle task
 #
@@ -24,27 +24,19 @@ jobs:
       fail-fast: false
       matrix:
         include:
-#          - os: ubuntu-latest
-#            runIde: |
-#              export DISPLAY=:99.0
-#              Xvfb -ac :99 -screen 0 1920x1080x24 &
-#              sleep 10
-#              ./gradlew runIdeForUiTests &
-          #          - os: windows-latest
-          #            runIde: start gradlew.bat runIdeForUiTests
           - os: macos-latest
             runIde: ./gradlew runIdeForUiTests &
 
     steps:
 
-      # Check out current repository
+      # Check out the current repository
       - name: Fetch Sources
         uses: actions/checkout@v4
 
 
-      # Set up Java environment for the next steps -
+      # Set up Java environment for the next steps
       - name: Setup JBR 21
-        uses: gmitch215/setup-java@6d2c5e1f82f180ae79f799f0ed6e3e5efb4e664d
+        uses: gmitch215/setup-java@cba808d047291bcc112e7af979a7622d2cd18ff0
         with:
           distribution: 'jetbrains'
           java-version: 21
@@ -54,8 +46,7 @@ jobs:
       # Setup Gradle
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
-        with:
-          cache-cleanup: on-success
+
 
 
       # Run IDEA prepared for UI testing
@@ -85,15 +76,15 @@ jobs:
         # Collect Tests Result of failed tests
       - name: Collect Tests Result
         if: ${{ always() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.4.0
         with:
           name: tests-result-${{ matrix.os }}
           path: ${{ github.workspace }}/build/reports
 
       - name: Upload Code Coverage Report
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v4.6.0
         with:
           files: ${{ github.workspace }}/build/reports/jacoco/runIdeUiCodeCoverageReport/runIdeUiCodeCoverageReport.xml
           flags: ui-${{ matrix.os }}
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          token: ${{ secrets.CODECOV_TOKEN }}
+

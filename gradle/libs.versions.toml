@@ -1,13 +1,13 @@
 [versions]
 changelog = "2.2.0"
 intelliJPlatform = "2.0.1"
-kotlin = "2.0.10"
-kover = "0.8.3"
-qodana = "2024.1.9"
+kotlin = "2.0.20"
+kover = "0.9.0-RC"
+qodana = "2024.2.3"
 mockkTest = "1.13.12"
-kotlinTest = "1.8.1"
+kotlinTest = "1.9.0"
 intellijRemoteRobot = "0.11.23"
-koinPrevVersion = "3.5.6"
+koinPrevVersion = "4.0.0"
 
 
 

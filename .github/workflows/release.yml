@@ -26,11 +26,10 @@ jobs:
 
       # Set up Java environment for the next steps
       - name: Setup JBR 21
-        uses: gmitch215/setup-java@6d2c5e1f82f180ae79f799f0ed6e3e5efb4e664d
+        uses: gmitch215/setup-java@cba808d047291bcc112e7af979a7622d2cd18ff0
         with:
           distribution: 'jetbrains'
           java-version: 21
-          cache: 'gradle'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -38,7 +37,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
-          cache-cleanup: on-success
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
 
       # Set environment variables
       - name: Export Properties

@@ -14,7 +14,7 @@ plugins {
     alias(libs.plugins.changelog)
     alias(libs.plugins.qodana)
     alias(libs.plugins.kover)
-    kotlin("plugin.serialization") version "2.0.10"
+    kotlin("plugin.serialization") version "2.0.20"
     jacoco
 }
 
@@ -95,15 +95,15 @@ dependencies {
     }
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.0") { isTransitive = false }
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.0") { isTransitive = false }
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.0") { isTransitive = false }
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 
     testImplementation(libs.bundles.kTest)
     testImplementation("org.opentest4j:opentest4j:1.3.0")
     testCompileOnly("junit:junit:4.13.2")
 
-    uiTestImplementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+    uiTestImplementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
     uiTestImplementation("junit:junit:4.13.2")
     uiTestImplementation("org.opentest4j:opentest4j:1.3.0")
     uiTestImplementation(libs.bundles.robot)
