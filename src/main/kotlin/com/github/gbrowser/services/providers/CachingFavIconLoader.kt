@@ -26,6 +26,7 @@ class CachingFavIconLoader : Disposable {
     return favIconCache.get(url) { loadImageAsync(url, size, targetSize) }
   }
 
+  @Suppress("DEPRECATION")
   private fun loadImageAsync(url: String, size: Int, targetSize: Int): CompletableFuture<Icon?> {
     return CompletableFuture.supplyAsync {
       try {
