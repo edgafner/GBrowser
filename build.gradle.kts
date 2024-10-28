@@ -14,7 +14,7 @@ plugins {
     alias(libs.plugins.changelog)
     alias(libs.plugins.qodana)
     alias(libs.plugins.kover)
-    kotlin("plugin.serialization") version "2.0.20"
+    kotlin("plugin.serialization") version "2.0.21"
     jacoco
 }
 
@@ -83,11 +83,12 @@ configurations.named("uiTestRuntimeClasspath").configure {
 
 dependencies {
     intellijPlatform {
-        create(
-            providers.gradleProperty("platformType"), providers.gradleProperty("platformVersion"), useInstaller = false
-        )
+    create(providers.gradleProperty("platformType"), providers.gradleProperty("platformVersion"), useInstaller = false)
+    bundledPlugins(providers.gradleProperty("platformBundledPlugins").map { it.split(',') })
+
         instrumentationTools()
         pluginVerifier()
+        bundledModule("intellij.platform.vcs.dvcs.impl")
 
         zipSigner()
         testFramework(TestFrameworkType.JUnit5)
@@ -109,8 +110,8 @@ dependencies {
     uiTestImplementation(libs.bundles.robot)
     uiTestImplementation(libs.bundles.kTest)
     uiTestImplementation("org.opentest4j:opentest4j:1.3.0")
-    uiTestImplementation("org.junit.jupiter:junit-jupiter-api:5.11.2")
-    uiTestRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.0")
+    uiTestImplementation("org.junit.jupiter:junit-jupiter-api:5.11.3")
+    uiTestRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.3")
 }
 
 kotlin {

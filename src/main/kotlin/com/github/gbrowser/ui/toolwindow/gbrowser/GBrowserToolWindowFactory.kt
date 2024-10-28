@@ -95,7 +95,7 @@ class GBrowserToolWindowFactory : ToolWindowFactory, DumbAware, ContentManagerLi
       override fun selectionChanged(event: ContentManagerEvent) {
         if (event.content.isSelected) {
           val component = event.content.component
-          val panel = if (component is GBrowserToolWindowBrowser) component else null
+          val panel = component as? GBrowserToolWindowBrowser
           if (panel != null) {
             val browser = panel.getBrowser()
             val browserComponent = browser.component

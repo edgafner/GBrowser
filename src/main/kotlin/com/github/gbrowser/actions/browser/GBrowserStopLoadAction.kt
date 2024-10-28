@@ -11,7 +11,7 @@ class GBrowserStopLoadAction : AnAction(), DumbAware {
 
   override fun update(e: AnActionEvent) {
     val panel = GBrowserToolWindowUtil.getSelectedBrowserPanel(e)
-    e.presentation.isEnabled = panel?.hasContent() ?: false
+    e.presentation.isEnabled = panel?.hasContent() == true
 
   }
 

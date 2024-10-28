@@ -147,7 +147,7 @@ class GBrowserSearchTextField(private val delegate: GBrowserToolWindowActionBarD
       text = selectedUrl
       delegate.onSearchEnter(selectedUrl)
       hidePopup()
-    } else if (text.trim().isNotEmpty()) { // If no item is selected, but there's text in the search field
+    } else if (text.trim().isNotEmpty()) { // If no item is selected, but there's a text in the search field
       addCurrentTextToHistory()
       delegate.onSearchEnter(text.trim())
       hidePopup()

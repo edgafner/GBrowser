@@ -16,7 +16,7 @@ import javax.swing.Icon
 class GBrowserOpenInAction : AnAction(), DumbAware {
 
   override fun update(e: AnActionEvent) {
-    e.presentation.isEnabled = GBrowserToolWindowUtil.getSelectedBrowserPanel(e)?.hasContent() ?: false
+    e.presentation.isEnabled = GBrowserToolWindowUtil.getSelectedBrowserPanel(e)?.hasContent() == true
     findUsingBrowser().let {
       e.presentation.icon = it
     }
