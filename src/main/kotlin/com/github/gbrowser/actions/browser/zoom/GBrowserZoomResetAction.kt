@@ -9,7 +9,7 @@ import com.intellij.openapi.project.DumbAware
 class GBrowserZoomResetAction : AnAction(), DumbAware {
 
   override fun update(e: AnActionEvent) {
-    e.presentation.isEnabled = GBrowserToolWindowUtil.getSelectedBrowserPanel(e)?.hasContent() ?: false
+    e.presentation.isEnabled = GBrowserToolWindowUtil.getSelectedBrowserPanel(e)?.hasContent() == true
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT

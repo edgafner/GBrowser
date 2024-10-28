@@ -12,7 +12,7 @@ class GBrowserToggleToolbarAction : AnAction(), DumbAware {
 
   override fun update(e: AnActionEvent) {
     val contentManager = GBrowserToolWindowUtil.getContentManager(e.project, GBrowserUtil.GBROWSER_TOOL_WINDOW_ID)
-    e.presentation.isEnabled = contentManager?.isEmpty?.not() ?: false
+    e.presentation.isEnabled = contentManager?.isEmpty?.not() == true
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT

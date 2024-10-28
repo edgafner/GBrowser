@@ -14,7 +14,6 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.jcef.JBCefBrowser
-import com.intellij.ui.jcef.JBCefBrowserBase
 import com.intellij.ui.jcef.JBCefClient
 import com.intellij.util.application
 import org.cef.browser.CefBrowser
@@ -70,7 +69,7 @@ class GCefBrowser(val project: Project,
       private val BOOKMARK_ADD: Int = 26501
 
       override fun onBeforeContextMenu(browser: CefBrowser, frame: CefFrame, params: CefContextMenuParams, model: CefMenuModel) {
-        if (isProperty(JBCefBrowserBase.Properties.NO_CONTEXT_MENU)) {
+        if (isProperty(Properties.NO_CONTEXT_MENU)) {
           model.clear()
           return
         }

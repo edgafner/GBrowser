@@ -15,7 +15,7 @@ class GBrowserUnderlineHighlighter(color: JBColor?) : DefaultHighlighter() {
 
   override fun setDrawsLayeredHighlights(newValue: Boolean) {
     require(newValue) { "UnderlineHighlighter only draws layered highlights" }
-    super.setDrawsLayeredHighlights(true)
+      super.drawsLayeredHighlights = true
   }
 
   companion object {
@@ -33,7 +33,7 @@ class GBrowserUnderlineHighlighter(color: JBColor?) : DefaultHighlighter() {
       } else {
         try {
           view.modelToView(offs0, Position.Bias.Forward, offs1, Position.Bias.Backward, bounds)?.let { it as? Rectangle ?: it.bounds }
-        } catch (e: BadLocationException) {
+        } catch (_: BadLocationException) {
           null
         }
       }
@@ -64,7 +64,7 @@ class GBrowserUnderlineHighlighter(color: JBColor?) : DefaultHighlighter() {
       } else {
         try {
           view.modelToView(offs0, Position.Bias.Forward, offs1, Position.Bias.Backward, bounds)?.let { it as? Rectangle ?: it.bounds }
-        } catch (e: BadLocationException) {
+        } catch (_: BadLocationException) {
           null
         }
       }
