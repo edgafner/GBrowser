@@ -5,6 +5,7 @@ import com.github.gbrowser.extensions.RemoteRobotExtension
 import com.github.gbrowser.extensions.StepsLogger
 import com.github.gbrowser.fixture.*
 import com.intellij.remoterobot.RemoteRobot
+import com.intellij.remoterobot.fixtures.JListFixture
 import com.intellij.remoterobot.search.locators.byXpath
 import com.intellij.remoterobot.stepsProcessing.step
 import com.intellij.remoterobot.utils.WaitForConditionTimeoutException
@@ -17,11 +18,11 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.io.TempDir
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import java.awt.Point
+import java.awt.event.KeyEvent
 import java.nio.file.Path
 import java.time.Duration.ofMinutes
+import java.time.Duration.ofSeconds
 
 @UITest
 @ExtendWith(RemoteRobotExtension::class)
@@ -45,9 +46,12 @@ class GBrowserUITest {
     @Suppress("JSUnresolvedReference")
     @AfterEach
     fun closeProject(remoteRobot: RemoteRobot) = with(remoteRobot) {
-        this.runJs(
-            """
+        try {
+            if (remoteRobot.isLinux()) {
+                this.runJs(
+                    """
             importClass(com.intellij.openapi.application.ApplicationManager)
+            importPackage(com.intellij.openapi.application);            
 
             const actionId = "Exit";
             const actionManager = com.intellij.openapi.actionSystem.ActionManager.getInstance();
@@ -58,20 +62,40 @@ class GBrowserUITest {
                     actionManager.tryToExecute(action, com.intellij.openapi.ui.playback.commands.ActionCommand.getInputEvent(actionId), null, null, true);
                 }
             })
-            ApplicationManager.getApplication().invokeLater(runAction)
+            ApplicationManager.getApplication().invokeLater(runAction, ModalityState.any())
         """, true
-        )
-        try {
-            idea {
+                )
 
-                dialogByXpath("//div[@title.key='exit.confirm.title' and @class='MyDialog']") {
+            } else {
+                keyboard {
+                    hotKey(KeyEvent.VK_META, KeyEvent.VK_SHIFT, KeyEvent.VK_A)
+                    enterText("Exit")
+                    waitFor(ofSeconds(5)) {
+                        find<JListFixture>(byXpath("//div[@class='JBList']")).isShowing
+                    }
+                    val actionsList = find<JListFixture>(byXpath("//div[@class='JBList']"))
+                    try {
+                        waitFor(ofSeconds(5)) {
+                            actionsList.hasText("Exit")
+                        }
+                        val projectPoint = actionsList.findText("Exit").point
+                        actionsList.click(projectPoint)
+                    } catch (_: Exception) {
+                        keyboard {
+                            down()
+                            enter()
+                        }
+                    }
+                }
+            }
+
+            idea {
+                dialog("Confirm Exit") {
                     button("Exit").click()
                 }
             }
-        } catch (ignored: Exception) { // No confirm dialog
-
+        } catch (_: Exception) { // No confirm dialog
         }
-        Thread.sleep(2_000)
     }
 
     @Test
@@ -147,7 +171,11 @@ class GBrowserUITest {
                             escape()
                         }
                         button(byXpath("//div[@myicon='refresh.svg']")).click()
-                        assert(button(byXpath("//div[@myicon='left.svg']")).isEnabled())
+                        click()
+                        waitFor(ofSeconds(5)) {
+                            button(byXpath("//div[@myicon='left.svg']")).isShowing
+                        }
+
                     }
                 }
             }
@@ -175,9 +203,6 @@ class GBrowserUITest {
                     gBrowserPRPanel {
                         button(byXpath("//div[@myicon='chevronDown.svg']")).click()
                         val itemList = ideaFrame.heavyWeightWindow().itemsList
-                        itemList.collectItems().forEach {
-                            LOG.info("Item: --${it}--")
-                        }
                         itemList.clickItem("Reload Pa", false)
                     }
 
@@ -185,9 +210,6 @@ class GBrowserUITest {
                     gBrowserPRPanel {
                         button(byXpath("//div[@myicon='chevronDown.svg']")).click()
                         val itemList = ideaFrame.heavyWeightWindow().itemsList
-                        itemList.collectItems().forEach {
-                            LOG.info("Item: --${it}--")
-                        }
                         itemList.clickItem("Add to Bo", false)
                     }
 
@@ -265,9 +287,6 @@ class GBrowserUITest {
         }
     }
 
-    companion object {
-        val LOG: Logger = LoggerFactory.getLogger("GBrowserTollWindowUITest")
-    }
 
 }
 
