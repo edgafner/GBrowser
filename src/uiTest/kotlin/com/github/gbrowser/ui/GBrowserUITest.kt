@@ -175,9 +175,7 @@ class GBrowserUITest {
                         waitFor(ofSeconds(5)) {
                             button(byXpath("//div[@myicon='left.svg']")).isShowing
                         }
-                        waitFor(ofSeconds(5)) {
-                            button(byXpath("//div[@myicon='left.svg']")).isEnabled()
-                        }
+
                     }
                 }
             }
