@@ -5,6 +5,7 @@ import com.github.gbrowser.extensions.RemoteRobotExtension
 import com.github.gbrowser.extensions.StepsLogger
 import com.github.gbrowser.fixture.*
 import com.intellij.remoterobot.RemoteRobot
+import com.intellij.remoterobot.fixtures.JListFixture
 import com.intellij.remoterobot.search.locators.byXpath
 import com.intellij.remoterobot.stepsProcessing.step
 import com.intellij.remoterobot.utils.WaitForConditionTimeoutException
@@ -18,8 +19,10 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.io.TempDir
 import java.awt.Point
+import java.awt.event.KeyEvent
 import java.nio.file.Path
 import java.time.Duration.ofMinutes
+import java.time.Duration.ofSeconds
 
 @UITest
 @ExtendWith(RemoteRobotExtension::class)
@@ -43,9 +46,12 @@ class GBrowserUITest {
     @Suppress("JSUnresolvedReference")
     @AfterEach
     fun closeProject(remoteRobot: RemoteRobot) = with(remoteRobot) {
-        this.runJs(
-            """
+        try {
+            if (remoteRobot.isLinux()) {
+                this.runJs(
+                    """
             importClass(com.intellij.openapi.application.ApplicationManager)
+            importPackage(com.intellij.openapi.application);            
 
             const actionId = "Exit";
             const actionManager = com.intellij.openapi.actionSystem.ActionManager.getInstance();
@@ -56,20 +62,40 @@ class GBrowserUITest {
                     actionManager.tryToExecute(action, com.intellij.openapi.ui.playback.commands.ActionCommand.getInputEvent(actionId), null, null, true);
                 }
             })
-            ApplicationManager.getApplication().invokeLater(runAction)
+            ApplicationManager.getApplication().invokeLater(runAction, ModalityState.any())
         """, true
-        )
-        try {
-            idea {
+                )
 
-                dialogByXpath("//div[@title.key='exit.confirm.title' and @class='MyDialog']") {
+            } else {
+                keyboard {
+                    hotKey(KeyEvent.VK_META, KeyEvent.VK_SHIFT, KeyEvent.VK_A)
+                    enterText("Exit")
+                    waitFor(ofSeconds(5)) {
+                        find<JListFixture>(byXpath("//div[@class='JBList']")).isShowing
+                    }
+                    val actionsList = find<JListFixture>(byXpath("//div[@class='JBList']"))
+                    try {
+                        waitFor(ofSeconds(5)) {
+                            actionsList.hasText("Exit")
+                        }
+                        val projectPoint = actionsList.findText("Exit").point
+                        actionsList.click(projectPoint)
+                    } catch (_: Exception) {
+                        keyboard {
+                            down()
+                            enter()
+                        }
+                    }
+                }
+            }
+
+            idea {
+                dialog("Confirm Exit") {
                     button("Exit").click()
                 }
             }
         } catch (_: Exception) { // No confirm dialog
-
         }
-        Thread.sleep(2_000)
     }
 
     @Test
@@ -145,7 +171,7 @@ class GBrowserUITest {
                             escape()
                         }
                         button(byXpath("//div[@myicon='refresh.svg']")).click()
-                        button(byXpath("//div[@myicon='refresh.svg']")).click()
+                        click()
                         assert(button(byXpath("//div[@myicon='left.svg']")).isEnabled())
                     }
                 }
