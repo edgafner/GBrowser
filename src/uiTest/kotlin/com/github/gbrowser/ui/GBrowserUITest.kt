@@ -17,8 +17,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.io.TempDir
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import java.awt.Point
 import java.nio.file.Path
 import java.time.Duration.ofMinutes
@@ -68,7 +66,7 @@ class GBrowserUITest {
                     button("Exit").click()
                 }
             }
-        } catch (ignored: Exception) { // No confirm dialog
+        } catch (_: Exception) { // No confirm dialog
 
         }
         Thread.sleep(2_000)
@@ -147,6 +145,7 @@ class GBrowserUITest {
                             escape()
                         }
                         button(byXpath("//div[@myicon='refresh.svg']")).click()
+                        button(byXpath("//div[@myicon='refresh.svg']")).click()
                         assert(button(byXpath("//div[@myicon='left.svg']")).isEnabled())
                     }
                 }
@@ -175,9 +174,6 @@ class GBrowserUITest {
                     gBrowserPRPanel {
                         button(byXpath("//div[@myicon='chevronDown.svg']")).click()
                         val itemList = ideaFrame.heavyWeightWindow().itemsList
-                        itemList.collectItems().forEach {
-                            LOG.info("Item: --${it}--")
-                        }
                         itemList.clickItem("Reload Pa", false)
                     }
 
@@ -185,9 +181,6 @@ class GBrowserUITest {
                     gBrowserPRPanel {
                         button(byXpath("//div[@myicon='chevronDown.svg']")).click()
                         val itemList = ideaFrame.heavyWeightWindow().itemsList
-                        itemList.collectItems().forEach {
-                            LOG.info("Item: --${it}--")
-                        }
                         itemList.clickItem("Add to Bo", false)
                     }
 
@@ -265,9 +258,6 @@ class GBrowserUITest {
         }
     }
 
-    companion object {
-        val LOG: Logger = LoggerFactory.getLogger("GBrowserTollWindowUITest")
-    }
 
 }
 
