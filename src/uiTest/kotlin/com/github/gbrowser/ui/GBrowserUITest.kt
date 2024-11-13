@@ -172,7 +172,12 @@ class GBrowserUITest {
                         }
                         button(byXpath("//div[@myicon='refresh.svg']")).click()
                         click()
-                        assert(button(byXpath("//div[@myicon='left.svg']")).isEnabled())
+                        waitFor(ofSeconds(5)) {
+                            button(byXpath("//div[@myicon='left.svg']")).isShowing
+                        }
+                        waitFor(ofSeconds(5)) {
+                            button(byXpath("//div[@myicon='left.svg']")).isEnabled()
+                        }
                     }
                 }
             }
