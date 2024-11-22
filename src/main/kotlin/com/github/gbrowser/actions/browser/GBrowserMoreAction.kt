@@ -10,27 +10,27 @@ import com.intellij.openapi.project.DumbAware
 
 class GBrowserFindAction : AnAction(), DumbAware {
 
-  override fun update(e: AnActionEvent) {
-    val panel = GBrowserToolWindowUtil.getSelectedBrowserPanel(e)
-    if (panel == null) {
-      e.presentation.isEnabled = false
-    }
-    e.presentation.isEnabled = true
-  }
-
-  override fun getActionUpdateThread(): ActionUpdateThread {
-    return ActionUpdateThread.EDT
-  }
-
-  override fun actionPerformed(e: AnActionEvent) {
-    val browser = GBrowserToolWindowUtil.getSelectedBrowserPanel(e)?.getBrowser() ?: return
-    val project = e.getRequiredData(CommonDataKeys.PROJECT)
-    val findDialog = GBrowserFindDialog(project, browser)
-
-    if (!findDialog.isVisible) {
-      findDialog.setDialogLocation()
+    override fun update(e: AnActionEvent) {
+        val panel = GBrowserToolWindowUtil.getSelectedBrowserPanel(e)
+        if (panel == null) {
+            e.presentation.isEnabled = false
+        }
+        e.presentation.isEnabled = true
     }
 
-    findDialog.show()
-  }
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.EDT
+    }
+
+    override fun actionPerformed(e: AnActionEvent) {
+        val browser = GBrowserToolWindowUtil.getSelectedBrowserPanel(e)?.getBrowser() ?: return
+        val project = e.getData(CommonDataKeys.PROJECT) ?: return
+        val findDialog = GBrowserFindDialog(project, browser)
+
+        if (!findDialog.isVisible) {
+            findDialog.setDialogLocation()
+        }
+
+        findDialog.show()
+    }
 }

@@ -14,45 +14,45 @@ import javax.swing.Icon
 
 
 class GBrowserDevToolsAction : AnAction() {
-  private val icon: Icon = GBrowserIcons.DEV_TOOLS_ACTIVE
-  private val iconActive: Icon = GBrowserIcons.DEV_TOOLS
+    private val icon: Icon = GBrowserIcons.DEV_TOOLS_ACTIVE
+    private val iconActive: Icon = GBrowserIcons.DEV_TOOLS
 
 
-  override fun update(e: AnActionEvent) {
-    val project = e.getRequiredData(CommonDataKeys.PROJECT)
-    val panel = GBrowserToolWindowUtil.getSelectedBrowserPanel(e)
-    val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(GBrowserUtil.DEVTOOLS_TOOL_WINDOW_ID)
-    if (panel == null || toolWindow == null) {
-      e.presentation.isEnabled = false
-      e.presentation.icon = iconActive
-      return
+    override fun update(e: AnActionEvent) {
+        val project = e.getData(CommonDataKeys.PROJECT) ?: return
+        val panel = GBrowserToolWindowUtil.getSelectedBrowserPanel(e)
+        val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(GBrowserUtil.DEVTOOLS_TOOL_WINDOW_ID)
+        if (panel == null || toolWindow == null) {
+            e.presentation.isEnabled = false
+            e.presentation.icon = iconActive
+            return
+        }
+
+        val existingContent = toolWindow.contentManager.contents.any {
+            (it.component as? GBrowserToolWindowDevTools)?.browser?.id == panel.getBrowser().id
+        }
+
+        e.presentation.isEnabled = panel.hasContent()
+        if (existingContent) {
+            e.presentation.icon = icon
+            e.presentation.text = "Show DevTools"
+        } else {
+            e.presentation.icon = iconActive
+            e.presentation.text = "Open DevTools"
+        }
     }
 
-    val existingContent = toolWindow.contentManager.contents.any {
-      (it.component as? GBrowserToolWindowDevTools)?.browser?.id == panel.getBrowser().id
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.EDT
     }
 
-    e.presentation.isEnabled = panel.hasContent()
-    if (existingContent) {
-      e.presentation.icon = icon
-      e.presentation.text = "Show DevTools"
-    } else {
-      e.presentation.icon = iconActive
-      e.presentation.text = "Open DevTools"
+    override fun actionPerformed(e: AnActionEvent) {
+        val project = e.getData(CommonDataKeys.PROJECT) ?: return
+        val panel = GBrowserToolWindowUtil.getSelectedBrowserPanel(e) ?: return
+        panel.getDevToolsBrowser().let { browser ->
+            val tabName = panel.getCurrentTitle()
+            GBrowserToolWindowDevToolsFactory.Companion.createTab(project, browser, tabName)
+        }
+
     }
-  }
-
-  override fun getActionUpdateThread(): ActionUpdateThread {
-    return ActionUpdateThread.EDT
-  }
-
-  override fun actionPerformed(e: AnActionEvent) {
-    val project = e.getRequiredData(CommonDataKeys.PROJECT)
-    val panel = GBrowserToolWindowUtil.getSelectedBrowserPanel(e) ?: return
-    panel.getDevToolsBrowser().let { browser ->
-      val tabName = panel.getCurrentTitle()
-      GBrowserToolWindowDevToolsFactory.Companion.createTab(project, browser, tabName)
-    }
-
-  }
 }
