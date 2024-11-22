@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2024.3.4] - 2024-11-22
+
 ### Fixed
 
 - Exception on opening toolwindow [Issue #340](https://github.com/edgafner/GBrowser/issues/340)
@@ -375,7 +377,8 @@
 
 -- First Jetbrains Public
 
-[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2024.3.3...HEAD
+[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2024.3.4...HEAD
+[2024.3.4]: https://github.com/edgafner/GBrowser/compare/v2024.3.3...v2024.3.4
 [2024.3.3]: https://github.com/edgafner/GBrowser/compare/v2024.2.3...v2024.3.3
 [2024.2.3]: https://github.com/edgafner/GBrowser/compare/v2024.2.2...v2024.2.3
 [2024.2.2]: https://github.com/edgafner/GBrowser/compare/v2024.2.1...v2024.2.2
