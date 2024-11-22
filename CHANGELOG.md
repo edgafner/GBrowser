@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Exception on opening toolwindow [Issue #340](https://github.com/edgafner/GBrowser/issues/340)
+
 ## [2024.3.3] - 2024-11-13
 
 ### Added

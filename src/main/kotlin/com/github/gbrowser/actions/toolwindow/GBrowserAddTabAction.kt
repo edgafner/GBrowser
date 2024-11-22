@@ -12,22 +12,22 @@ import com.intellij.openapi.wm.ToolWindowManager.Companion.getInstance
 
 class GBrowserAddTabAction : AnAction(), DumbAware {
 
-  init {
-    isEnabledInModalContext = true
+    init {
+        isEnabledInModalContext = true
 
-  }
-
-  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
-
-  override fun update(e: AnActionEvent) {
-    e.presentation.isEnabled = true
-  }
-
-  override fun actionPerformed(e: AnActionEvent) {
-    val project = e.getRequiredData(CommonDataKeys.PROJECT)
-    getInstance(project).getToolWindow(GBrowserUtil.GBROWSER_TOOL_WINDOW_ID)?.let {
-      GBrowserToolWindowUtil.createContentTab(it, GBrowserService.instance().defaultUrl, "")
     }
-  }
+
+    override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
+
+    override fun update(e: AnActionEvent) {
+        e.presentation.isEnabled = true
+    }
+
+    override fun actionPerformed(e: AnActionEvent) {
+        val project = e.getData(CommonDataKeys.PROJECT) ?: return
+        getInstance(project).getToolWindow(GBrowserUtil.GBROWSER_TOOL_WINDOW_ID)?.let {
+            GBrowserToolWindowUtil.createContentTab(it, GBrowserService.instance().defaultUrl, "")
+        }
+    }
 }
 
