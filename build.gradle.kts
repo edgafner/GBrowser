@@ -14,7 +14,7 @@ plugins {
     alias(libs.plugins.changelog)
     alias(libs.plugins.qodana)
     alias(libs.plugins.kover)
-    kotlin("plugin.serialization") version "2.1.0-RC"
+    kotlin("plugin.serialization") version "2.1.0-RC2"
     jacoco
 }
 
