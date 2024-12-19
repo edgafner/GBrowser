@@ -43,7 +43,7 @@ jobs:
 
       # Setup Java environment for the next steps
       - name: Setup JBR 21
-        uses: gmitch215/setup-java@cba808d047291bcc112e7af979a7622d2cd18ff0
+        uses: actions/setup-java@v4.6.0
         with:
           distribution: 'jetbrains'
           java-version: 21
@@ -107,7 +107,7 @@ jobs:
 
       # Set up Java environment for the next steps
       - name: Setup JBR 21
-        uses: gmitch215/setup-java@cba808d047291bcc112e7af979a7622d2cd18ff0
+        uses: actions/setup-java@v4.6.0
         with:
           distribution: 'jetbrains'
           java-version: 21
@@ -149,7 +149,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           env_vars: OS
 
-  # Run Qodana inspections and provide report
+  # Run Qodana inspections and provide the report
   inspectCode:
     name: Inspect code
     needs: [ build ]
@@ -176,7 +176,7 @@ jobs:
 
       # Set up Java environment for the next steps
       - name: Setup JBR 21
-        uses: gmitch215/setup-java@cba808d047291bcc112e7af979a7622d2cd18ff0
+        uses: actions/setup-java@v4.6.0
         with:
           distribution: 'jetbrains'
           java-version: 21
@@ -218,7 +218,7 @@ jobs:
 
       # Set up Java environment for the next steps
       - name: Setup JBR 21
-        uses: gmitch215/setup-java@cba808d047291bcc112e7af979a7622d2cd18ff0
+        uses: actions/setup-java@v4.6.0
         with:
           distribution: 'jetbrains'
           java-version: 21
