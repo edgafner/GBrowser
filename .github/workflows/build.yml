@@ -47,6 +47,7 @@ jobs:
         with:
           distribution: 'jetbrains'
           java-version: 21
+          java-package: 'jdk+jcef'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -111,6 +112,7 @@ jobs:
         with:
           distribution: 'jetbrains'
           java-version: 21
+          java-package: 'jdk+jcef'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -180,6 +182,7 @@ jobs:
         with:
           distribution: 'jetbrains'
           java-version: 21
+          java-package: 'jdk+jcef'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -222,6 +225,7 @@ jobs:
         with:
           distribution: 'jetbrains'
           java-version: 21
+          java-package: 'jdk+jcef'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
