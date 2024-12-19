@@ -36,10 +36,11 @@ jobs:
 
       # Set up Java environment for the next steps
       - name: Setup JBR 21
-        uses: gmitch215/setup-java@cba808d047291bcc112e7af979a7622d2cd18ff0
+        uses: actions/setup-java@v4.6.0
         with:
           distribution: 'jetbrains'
           java-version: 21
+          java-package: 'jdk+jcef'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -76,13 +77,13 @@ jobs:
         # Collect Tests Result of failed tests
       - name: Collect Tests Result
         if: ${{ always() }}
-        uses: actions/upload-artifact@v4.4.3
+        uses: actions/upload-artifact@v4.5.0
         with:
           name: tests-result-${{ matrix.os }}
           path: ${{ github.workspace }}/build/reports
 
       - name: Upload Code Coverage Report
-        uses: codecov/codecov-action@v5.0.7
+        uses: codecov/codecov-action@v5.1.2
         with:
           files: ${{ github.workspace }}/build/reports/jacoco/runIdeUiCodeCoverageReport/runIdeUiCodeCoverageReport.xml
           flags: ui-${{ matrix.os }}
