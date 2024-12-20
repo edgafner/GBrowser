@@ -47,8 +47,8 @@ idea {
 
 
 configurations.all {
-    resolutionStrategy.force("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.0")
-    resolutionStrategy.force("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.0")
+    resolutionStrategy.force("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
+    resolutionStrategy.force("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.1")
 }
 
 
