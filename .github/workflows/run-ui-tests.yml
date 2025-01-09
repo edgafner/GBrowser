@@ -77,7 +77,7 @@ jobs:
         # Collect Tests Result of failed tests
       - name: Collect Tests Result
         if: ${{ always() }}
-        uses: actions/upload-artifact@v4.5.0
+        uses: actions/upload-artifact@v4.6.0
         with:
           name: tests-result-${{ matrix.os }}
           path: ${{ github.workspace }}/build/reports
