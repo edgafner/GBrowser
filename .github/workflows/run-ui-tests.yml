@@ -83,7 +83,7 @@ jobs:
           path: ${{ github.workspace }}/build/reports
 
       - name: Upload Code Coverage Report
-        uses: codecov/codecov-action@v5.1.2
+        uses: codecov/codecov-action@v5.2.0
         with:
           files: ${{ github.workspace }}/build/reports/jacoco/runIdeUiCodeCoverageReport/runIdeUiCodeCoverageReport.xml
           flags: ui-${{ matrix.os }}
