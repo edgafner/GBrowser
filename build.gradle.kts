@@ -83,10 +83,14 @@ configurations.named("uiTestRuntimeClasspath").configure {
 
 dependencies {
     intellijPlatform {
-    create(providers.gradleProperty("platformType"), providers.gradleProperty("platformVersion"), useInstaller = false)
-    bundledPlugins(providers.gradleProperty("platformBundledPlugins").map { it.split(',') })
+        create(
+            providers.gradleProperty("platformType"),
+            providers.gradleProperty("platformVersion"),
+            useInstaller = false
+        )
+        bundledPlugins(providers.gradleProperty("platformBundledPlugins").map { it.split(',') })
 
-        instrumentationTools()
+
         pluginVerifier()
         bundledModule("intellij.platform.vcs.dvcs.impl")
 
