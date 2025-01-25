@@ -47,8 +47,8 @@ idea {
 
 
 configurations.all {
-    resolutionStrategy.force("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.0")
-    resolutionStrategy.force("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.0")
+    resolutionStrategy.force("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
+    resolutionStrategy.force("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.1")
 }
 
 
@@ -83,10 +83,14 @@ configurations.named("uiTestRuntimeClasspath").configure {
 
 dependencies {
     intellijPlatform {
-    create(providers.gradleProperty("platformType"), providers.gradleProperty("platformVersion"), useInstaller = false)
-    bundledPlugins(providers.gradleProperty("platformBundledPlugins").map { it.split(',') })
+        create(
+            providers.gradleProperty("platformType"),
+            providers.gradleProperty("platformVersion"),
+            useInstaller = false
+        )
+        bundledPlugins(providers.gradleProperty("platformBundledPlugins").map { it.split(',') })
 
-        instrumentationTools()
+
         pluginVerifier()
         bundledModule("intellij.platform.vcs.dvcs.impl")
 
@@ -110,8 +114,8 @@ dependencies {
     uiTestImplementation(libs.bundles.robot)
     uiTestImplementation(libs.bundles.kTest)
     uiTestImplementation("org.opentest4j:opentest4j:1.3.0")
-    uiTestImplementation("org.junit.jupiter:junit-jupiter-api:5.11.3")
-    uiTestRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.3")
+    uiTestImplementation("org.junit.jupiter:junit-jupiter-api:5.11.4")
+    uiTestRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.4")
 }
 
 kotlin {

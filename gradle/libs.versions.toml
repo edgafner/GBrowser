@@ -1,11 +1,11 @@
 [versions]
 changelog = "2.2.1"
-intelliJPlatform = "2.1.0"
+intelliJPlatform = "2.2.1"
 kotlin = "2.1.0"
-kover = "0.8.3"
-qodana = "2024.2.6"
-mockkTest = "1.13.13"
-kotlinTest = "1.10.0"
+kover = "0.9.1"
+qodana = "2024.3.4"
+mockkTest = "1.13.16"
+kotlinTest = "1.10.1"
 intellijRemoteRobot = "0.11.23"
 koinPrevVersion = "4.0.0"
 
