@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Changed default home page
+
 ## [2024.3.6] - 2025-01-25
 
 ### Added

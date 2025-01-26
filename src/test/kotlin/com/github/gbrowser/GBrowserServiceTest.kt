@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test
  *   },
  *   "bookmarks": [
  *     {
- *       "url": "https://dorkag.com/dorkag",
+ *       "url": "https://plugins.jetbrains.com/plugin/14458-gbrowser",
  *       "name": "Dorkag"
  *     },
  *     {
@@ -96,7 +96,7 @@ class GBrowserServiceTest {
   @Test
   fun `test bookmarks state serialization`() = runTest {
     service.bookmarks =
-      mutableSetOf(GBrowserBookmark("https://dorkag.com/dorkag", "Dorkag"), GBrowserBookmark("https://www.google.com/", "Google"))
+      mutableSetOf(GBrowserBookmark("https://plugins.jetbrains.com/plugin/14458-gbrowser", "Dorkag"), GBrowserBookmark("https://www.google.com/", "Google"))
     val state = service.getState()
     val element = serialize(state)!!
     val xml = JDOMUtil.write(element)
@@ -104,7 +104,7 @@ class GBrowserServiceTest {
     Assertions.assertEquals("""<state><![CDATA[{
   "bookmarks": [
     {
-      "url": "https://dorkag.com/dorkag",
+      "url": "https://plugins.jetbrains.com/plugin/14458-gbrowser",
       "name": "Dorkag"
     },
     {
