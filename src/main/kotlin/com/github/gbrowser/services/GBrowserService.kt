@@ -16,7 +16,9 @@ import java.util.*
 
 @State(
     name = "GBrowserService",
-    storages = [Storage(value = "gbrowser_service.xml"), Storage(value = "gbrowser.xml", deprecated = true)],
+    storages = [Storage(value = "gbrowsers.xml"), Storage(value = "gbrowser_service.xml", deprecated = true), Storage(
+        value = "gbrowser.xml", deprecated = true
+    )],
     category = SettingsCategory.TOOLS
 )
 class GBrowserService : SerializablePersistentStateComponent<GBrowserService.SettingsState>(SettingsState()) {
@@ -25,7 +27,7 @@ class GBrowserService : SerializablePersistentStateComponent<GBrowserService.Set
 
     @Serializable
     data class SettingsState(
-        var defaultHomePage: String = "https://dorkag.com/dorkag",
+        var defaultHomePage: String = "https://plugins.jetbrains.com/plugin/14458-gbrowser",
         var hideIdLabel: Boolean = true,
         var isReloadTabsOnStartup: Boolean = false,
         var showBookMarksInToolbar: Boolean = true,

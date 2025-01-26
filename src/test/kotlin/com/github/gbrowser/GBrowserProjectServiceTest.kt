@@ -31,7 +31,7 @@ class GBrowserProjectServiceTest : BasePlatformTestCase() {
         val date = Date()
         val dateAsString = DateAsStringSerializer.dateFormat.format(date)
 
-        projectSettings.addTab(GBrowserTab(url = "https://dorkag.com/dorkag", name = "Dorkag", createdAt = date))
+        projectSettings.addTab(GBrowserTab(url = "https://plugins.jetbrains.com/plugin/14458-gbrowser", name = "Dorkag", createdAt = date))
         val state = projectSettings.getState()
         val element = serialize(state)!!
         val xml = JDOMUtil.write(element)
@@ -40,7 +40,7 @@ class GBrowserProjectServiceTest : BasePlatformTestCase() {
             """<state><![CDATA[{
   "tabs": [
     {
-      "url": "https://dorkag.com/dorkag",
+      "url": "https://plugins.jetbrains.com/plugin/14458-gbrowser",
       "name": "Dorkag",
       "createdAt": "$dateAsString"
     }
@@ -61,7 +61,7 @@ class GBrowserProjectServiceTest : BasePlatformTestCase() {
         projectSettings.addTabs(
             listOf(
                 GBrowserTab(url = "https://google.com", name = "Google", createdAt = date),
-                GBrowserTab(url = "https://dorkag.com/dorkag", name = "Dorkag", createdAt = date)
+                GBrowserTab(url = "https://plugins.jetbrains.com/plugin/14458-gbrowser", name = "Dorkag", createdAt = date)
             )
         )
         val state = projectSettings.getState()
@@ -77,7 +77,7 @@ class GBrowserProjectServiceTest : BasePlatformTestCase() {
       "createdAt": "$dateAsString"
     },
     {
-      "url": "https://dorkag.com/dorkag",
+      "url": "https://plugins.jetbrains.com/plugin/14458-gbrowser",
       "name": "Dorkag",
       "createdAt": "$dateAsString"
     }
