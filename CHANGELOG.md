@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2025.1.1] - 2025-01-26
+
 ### Changed
 
 - Changed default home page
@@ -393,7 +395,8 @@
 
 -- First Jetbrains Public
 
-[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2024.3.6...HEAD
+[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2025.1.1...HEAD
+[2025.1.1]: https://github.com/edgafner/GBrowser/compare/v2024.3.6...v2025.1.1
 [2024.3.6]: https://github.com/edgafner/GBrowser/compare/v2024.3.5...v2024.3.6
 [2024.3.5]: https://github.com/edgafner/GBrowser/compare/v2024.3.4...v2024.3.5
 [2024.3.4]: https://github.com/edgafner/GBrowser/compare/v2024.3.3...v2024.3.4
