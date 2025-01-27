@@ -102,7 +102,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.18.2") { isTransitive = false }
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.2") { isTransitive = false }
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
 
     testImplementation(libs.bundles.kTest)
     testImplementation("org.opentest4j:opentest4j:1.3.0")
