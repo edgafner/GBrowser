@@ -1,6 +1,6 @@
 [versions]
 changelog = "2.2.1"
-intelliJPlatform = "2.2.1"
+intelliJPlatform = "2.4.0"
 kotlin = "2.1.0"
 kover = "0.9.1"
 qodana = "2024.3.4"
