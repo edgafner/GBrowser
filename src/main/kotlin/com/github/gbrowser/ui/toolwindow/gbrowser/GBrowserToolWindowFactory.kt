@@ -11,7 +11,10 @@ import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
-import com.intellij.openapi.project.*
+import com.intellij.openapi.diagnostic.thisLogger
+import com.intellij.openapi.project.DumbAware
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ProjectCloseListener
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.openapi.wm.ToolWindowManager
@@ -34,7 +37,6 @@ class GBrowserToolWindowFactory : ToolWindowFactory, DumbAware, ContentManagerLi
     override fun init(toolWindow: ToolWindow) {
         project = toolWindow.project
         myGBrowserProjectService = project.service<GBrowserProjectService>()
-
     }
 
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
@@ -45,6 +47,7 @@ class GBrowserToolWindowFactory : ToolWindowFactory, DumbAware, ContentManagerLi
         createTitleActions(toolWindow)
         createAdditionalGearActions(toolWindow)
 
+        // Register listener only for tab restoration - visibility handling is done in configureToolWindow
         project.messageBus.connect(toolWindow.disposable).subscribe<ToolWindowManagerListener>(
             ToolWindowManagerListener.TOPIC, object : ToolWindowManagerListener {
                 override fun toolWindowsRegistered(
@@ -78,6 +81,7 @@ class GBrowserToolWindowFactory : ToolWindowFactory, DumbAware, ContentManagerLi
                 }
             })
 
+        // We'll handle visibility management through ToolWindowManagerListener instead
     }
 
     private fun configureToolWindow(toolWindow: ToolWindow) {
@@ -98,15 +102,115 @@ class GBrowserToolWindowFactory : ToolWindowFactory, DumbAware, ContentManagerLi
         toolWindow.component.putClientProperty(
             ToolWindowContentUi.ALLOW_DND_FOR_TABS, myGBrowserService.isDragAndDropEnabled
         )
+
+        // Add global tool window listener to detect and handle visibility changes
+        project.messageBus.connect(toolWindow.disposable).subscribe(
+            ToolWindowManagerListener.TOPIC, object : ToolWindowManagerListener {
+                private var wasVisible = false
+                private var lastPinState = toolWindow.isAutoHide // isAutoHide is true for unpinned mode
+
+                override fun stateChanged(toolWindowManager: ToolWindowManager) {
+                    val gbrowserToolWindow = toolWindowManager.getToolWindow(GBrowserUtil.GBROWSER_TOOL_WINDOW_ID)
+                    if (gbrowserToolWindow != null) {
+                        val isVisible = gbrowserToolWindow.isVisible
+                        val isUnpinned = gbrowserToolWindow.isAutoHide // unpinned mode
+
+                        // Detect visibility changes (becoming visible) or pin state changes
+                        if ((isVisible && !wasVisible) || (isUnpinned != lastPinState)) {
+                            // When becoming visible again or when pin state changes,
+
+                            // First immediate refresh
+                            ApplicationManager.getApplication().invokeLater {
+                                refreshBrowserVisibility(gbrowserToolWindow)
+                            }
+
+                            // Execute multiple refresh attempts with increasing delays
+                            // This creates a more robust approach
+                            // to ensure visibility in unpinned mode
+                            ApplicationManager.getApplication().executeOnPooledThread {
+                                val delaySequence = listOf(200L, 500L, 800L) // Progressive delays
+                                for (delay in delaySequence) {
+                                    try {
+                                        Thread.sleep(delay)
+                                        ApplicationManager.getApplication().invokeLater {
+                                            if (gbrowserToolWindow.isVisible) { // Only if still visible
+                                                refreshBrowserVisibility(gbrowserToolWindow)
+                                            }
+                                        }
+                                    } catch (e: InterruptedException) {
+                                        // Handle thread interruption
+                                        thisLogger().warn("GBrowserToolWindowFactory: Interrupted refresh thread", e)
+                                        Thread.currentThread().interrupt()
+                                        break
+                                    }
+                                }
+                            }
+                        }
+
+                        // Update state tracking
+                        wasVisible = isVisible
+                        lastPinState = isUnpinned
+                    }
+                }
+
+                override fun toolWindowsRegistered(
+                    ids: MutableList<String>, toolWindowManager: ToolWindowManager
+                ) {
+                    // Handle this case in the other listener
+                }
+
+                private fun refreshBrowserVisibility(toolWindow: ToolWindow) {
+                    toolWindow.contentManager.contents.forEach { content ->
+                        // Force visibility for all tabs, not just selected ones
+                        val component = content.component as? GBrowserToolWindowBrowser
+                        component?.let {
+                            // Force browser visibility
+                            it.getBrowser().setVisibility(true)
+
+                            // Force complete UI refresh
+                            it.invalidate()
+                            it.validate()
+                            it.repaint()
+
+                            // Also ensure the component's parent is visible and refreshed
+                            val parent = it.parent
+                            parent?.invalidate()
+                            parent?.validate()
+                            parent?.repaint()
+                        }
+                    }
+                }
+            })
         toolWindow.contentManager.addContentManagerListener((object : ContentManagerListener {
             override fun selectionChanged(event: ContentManagerEvent) {
                 if (event.content.isSelected) {
                     val component = event.content.component
                     val panel = component as? GBrowserToolWindowBrowser
                     if (panel != null) {
-                        val browser = panel.getBrowser()
-                        val browserComponent = browser.component
-                        browserComponent.requestFocus()
+                        // Don't automatically request focus - let the user maintain control
+                        // Schedule with a small delay to ensure the UI is ready
+                        ApplicationManager.getApplication().invokeLater {
+                            val browser = panel.getBrowser()
+                            // Force visibility and ensure browser is properly displayed
+                            browser.setVisibility(true)
+
+                            // Force component layout update
+                            panel.invalidate() // This is important for unpinned mode
+                            panel.validate()
+                            panel.repaint()
+
+                            // Schedule another refresh after a short delay for unpinned mode
+                            ApplicationManager.getApplication().executeOnPooledThread {
+                                Thread.sleep(200) // Short delay 
+                                ApplicationManager.getApplication().invokeLater {
+                                    if (event.content.isSelected) { // Double-check it's still selected
+                                        browser.setVisibility(true)
+                                        panel.validate()
+                                        panel.repaint()
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
