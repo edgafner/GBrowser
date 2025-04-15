@@ -4,19 +4,13 @@ intelliJPlatform = "2.5.0"
 kotlin = "2.1.20"
 kover = "0.9.1"
 qodana = "2024.3.4"
-mockkTest = "1.13.16"
-kotlinTest = "1.10.1"
-intellijRemoteRobot = "0.11.23"
-koinPrevVersion = "4.0.2"
+mockkTest = "1.14.0"
+kotlinTest = "1.10.2"
 
 
 
 
 [libraries]
-intellijRemoteFixtures = { module = "com.intellij.remoterobot:remote-fixtures", version.ref = "intellijRemoteRobot" }
-intellijRemoteRobot = { module = "com.intellij.remoterobot:remote-robot", version.ref = "intellijRemoteRobot" }
-io-insert-koin = { group = "io.insert-koin", name = "koin-test", version.ref = "koinPrevVersion" }
-io-insert-koin-junit = { group = "io.insert-koin", name = "koin-test-junit5", version.ref = "koinPrevVersion" }
 korutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinTest" }
 korutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinTest" }
 mockk-test = { group = "io.mockk", name = "mockk", version.ref = "mockkTest" }
@@ -30,5 +24,4 @@ kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 qodana = { id = "org.jetbrains.qodana", version.ref = "qodana" }
 
 [bundles]
-kTest = ["korutines-core", "korutines-test", "mockk-test", "io-insert-koin", "io-insert-koin-junit"]
-robot = ["intellijRemoteFixtures", "intellijRemoteRobot"]
+kTest = ["korutines-core", "korutines-test", "mockk-test"]

@@ -114,7 +114,30 @@ class GCefBrowser(val project: Project,
   }
 
   fun setVisibility(isVisible: Boolean) {
+    // Ensure both the main component and UI component are visible
     component.isVisible = isVisible
+    
+    // Also ensure the browser UI component is visible
+    // This addresses specific unpinned mode rendering issues
+    cefBrowser.uiComponent?.isVisible = isVisible
+    
+    // Force a repaint if becoming visible
+    if (isVisible) {
+      component.invalidate()
+      component.validate()
+      component.repaint()
+      
+      // Also repaint the UI component
+      cefBrowser.uiComponent?.invalidate()
+      cefBrowser.uiComponent?.validate()
+      cefBrowser.uiComponent?.repaint()
+      
+      // Ensure parent containers are refreshed too
+      val parent = component.parent
+      parent?.invalidate()
+      parent?.validate()
+      parent?.repaint()
+    }
   }
 
   fun deleteCookies() {
