@@ -152,8 +152,17 @@ class GBrowserToolWindowFactory : ToolWindowFactory, DumbAware, ContentManagerLi
         val topic = AppLifecycleListener.TOPIC
         messageBusConnection.subscribe(topic, object : AppLifecycleListener {
             override fun appClosing() {
+                // Dispose of all GBrowserToolWindowBrowser instances
+                ToolWindowManager.getInstance(project).getToolWindow(GBrowserUtil.GBROWSER_TOOL_WINDOW_ID)?.let { toolWindow ->
+                    toolWindow.contentManager.contents.forEach { content ->
+                        (content.component as? GBrowserToolWindowBrowser)?.dispose()
+                    }
+                }
+
+                // Remove listeners and perform additional cleanup
                 removeSettingsListener()
                 removeApplicationListener()
+
                 super.appClosing()
             }
         })
