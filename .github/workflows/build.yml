@@ -270,7 +270,7 @@ jobs:
           token: '${{ secrets.GITHUB_TOKEN }}'
 
       - name: Download artifact
-        uses: actions/download-artifact@v4.2.1
+        uses: actions/download-artifact@v4.3.0
         id: download
         with:
           name: tests-report
