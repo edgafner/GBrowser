@@ -42,7 +42,6 @@ class GBrowserUITest {
 
   @BeforeEach
   fun setupTest() {
-    // Generate a unique project name with timestamp to avoid conflicts
     projectName = "GBrowserTest_${System.currentTimeMillis()}"
 
     // Create a parent directory for our project
@@ -57,8 +56,7 @@ class GBrowserUITest {
   fun closeIde() {
     try {
       run.closeIdeAndWait()
-    } finally {
-      // Ensure cleanup happens even if the test fails
+    } finally { // Ensure cleanup happens even if the test fails
       if (::tempDir.isInitialized && Files.exists(tempDir)) {
         tempDir.toFile().deleteRecursively()
       }
@@ -136,8 +134,10 @@ class GBrowserUITest {
     selectPopupMenuItem("Home")
 
     selectPopupMenuItem("Find...")
+    keyboard {
+      escape()
+    }
     selectPopupMenuItem("Add to Bo")
-
 
     selectPopupMenuItem("Zoom Out")
     selectPopupMenuItem("Zoom In")
@@ -151,7 +151,17 @@ class GBrowserUITest {
     gBrowserPanel {
       button {
         byTooltip("https://github.com/")
-      }.shouldBe { visible() }
+      }.shouldBe { visible() }.click()
+
+      rightClick()
+      driver.ui.ideFrame {
+        popup().accessibleList().clickItem("Open DevTools", false)
+        wait(1.seconds)
+      }
+    }
+
+    keyboard {
+      escape()
     }
 
   }
@@ -159,12 +169,12 @@ class GBrowserUITest {
   private fun GBrowserToolWindowPanel.selectPopupMenuItem(menuItemText: String) {
     gBrowserPanel {
       buttonByIcon("chevronDown.svg").click()
-      wait(2.seconds)
+      wait(1.seconds)
     }
 
     driver.ui.ideFrame {
       popup().accessibleList().clickItem(menuItemText, false)
-      wait(2.seconds)
+      wait(1.seconds)
     }
 
   }

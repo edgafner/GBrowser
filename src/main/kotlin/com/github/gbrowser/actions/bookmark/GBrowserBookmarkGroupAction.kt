@@ -17,7 +17,22 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.DumbAware
 import javax.swing.Icon
 
-
+/**
+ * Represents a group action for managing browser bookmarks in the GBrowser plugin.
+ * This action group dynamically generates a list of child actions based on bookmarked URLs
+ * associated with a project.
+ *
+ * Each child action represents an individual bookmark and is displayed
+ * with an associated icon (e.g., a favicon or a default web icon).
+ *
+ * This class extends the `ActionGroup` and implements `DumbAware`, making it compatible with
+ * IntelliJ's "dumb mode."
+ *
+ * Primary features:
+ * - Dynamically lists available bookmarks as child actions.
+ * - Allows users to interact with bookmarks via generated child actions.
+ * - Uses a caching favicon loader to display bookmark-specific icons next to the bookmarks.
+ */
 class GBrowserBookmarkGroupAction : ActionGroup(GBrowserBundle.message("group.action.bookmarks"), true), DumbAware {
   private val favIconLoader: CachingFavIconLoader = service()
 

@@ -8,7 +8,11 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.DumbAware
 
-
+/**
+ * An action that navigates to the home page in the GBrowserToolWindow.
+ *
+ * This action is always enabled and does not depend on the state of the browser panel.
+ */
 class GBrowserHomeAction : AnAction(), DumbAware {
 
 
