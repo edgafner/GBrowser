@@ -2,6 +2,7 @@ package com.github.gbrowser.util
 
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.editor.EditorKind
 import com.intellij.openapi.util.registry.Registry
 import okhttp3.OkHttpClient
@@ -11,7 +12,9 @@ import java.util.regex.PatternSyntaxException
 
 object GBrowserUtil {
   const val GBROWSER_TOOL_WINDOW_ID = "GBrowser"
-  const val DEVTOOLS_TOOL_WINDOW_ID = "GDevTools"
+
+  val LOG = logger<GBrowserUtil>()
+  // DevTools toolwindow ID removed as we're now using JCef's native DevTools
 
   internal fun suggestQuery(text: String): String {
     if (text.isEmpty()) return ""
@@ -19,7 +22,7 @@ object GBrowserUtil {
     val request = Request.Builder().url(url).build()
     val client = OkHttpClient()
     client.newCall(request).execute().use { response ->
-      return response.body?.string() ?: ""
+      return response.body.string()
     }
   }
 
@@ -31,7 +34,6 @@ object GBrowserUtil {
     Registry.get("ide.browser.jcef.debug.port").setValue(port)
   }
 
-
   private fun isValidUrlWithoutProtocol(input: String): Boolean {
     return try {
       val regex =
@@ -40,6 +42,7 @@ object GBrowserUtil {
       val matcher = pattern.matcher(input)
       matcher.matches()
     } catch (e: PatternSyntaxException) {
+      LOG.warn("PatternSyntaxException occurred when validating URL: $input", e)
       false
     }
   }
@@ -50,6 +53,7 @@ object GBrowserUtil {
       val isLocalhost = input.contains("localhost", ignoreCase = true)
       isValidUrl || isLocalhost
     } catch (e: PatternSyntaxException) {
+      LOG.warn("PatternSyntaxException occurred when validating URL: $input", e)
       false
     }
   }
@@ -59,13 +63,12 @@ object GBrowserUtil {
 
     if (editor.editorKind != EditorKind.MAIN_EDITOR) return null
 
-    //anActionEvent.getData(PlatformDataKeys.VIRTUAL_FILE) ?: return ""
-
     val selected = editor.selectionModel.selectedText ?: return null
 
     if (selected.isBlank()) return null
 
-    if (isValidBrowserURL(selected)) return selected.trim()
+    val trimmed = selected.trim()
+    if (isValidBrowserURL(trimmed)) return trimmed
 
     return null
   }

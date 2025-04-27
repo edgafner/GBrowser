@@ -16,7 +16,6 @@ object GBrowserActionId {
   private const val GBROWSER_CLEAN_COOKIES_ID: @NonNls String = "GBrowserCookieDeleteAllAction"
   private const val GBROWSER_CLEAR_HISTORY_ID: @NonNls String = "GBrowserClearHistoryAction"
   private const val GBROWSER_CLOSE_TAB_ID: @NonNls String = "GBrowserCloseTabAction"
-  private const val GBROWSER_DEVTOOLS_ID: @NonNls String = "GBrowserDevToolsAction"
   private const val GBROWSER_DUPLICATE_TAB_ID: @NonNls String = "GBrowserTabDuplicateAction"
   private const val GBROWSER_FIND_ID: @NonNls String = "GBrowserFindAction"
   private const val GBROWSER_FORWARD_ID: @NonNls String = "GBrowserForwardAction"
@@ -40,7 +39,6 @@ object GBrowserActionId {
 
     titleActions.addAll(BROWSER)
     titleActions.add(Separator.create())
-    titleActions.add(toAction(GBROWSER_DEVTOOLS_ID))
     titleActions.add(Separator.create())
     val cleanGroup = GBrowserDynamicGroupAction(CLEAR_BROWSER_DATA, GBrowserIcons.COOKIES, "Clear Cookies and History")
     titleActions.add(cleanGroup)

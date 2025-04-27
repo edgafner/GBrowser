@@ -19,50 +19,50 @@ import javax.swing.Icon
 
 
 class GBrowserBookmarkGroupAction : ActionGroup(GBrowserBundle.message("group.action.bookmarks"), true), DumbAware {
-    private val favIconLoader: CachingFavIconLoader = service()
+  private val favIconLoader: CachingFavIconLoader = service()
 
-    init {
-        isSearchable = true
-        isEnabledInModalContext = true
-        templatePresentation.putClientProperty(ActionUtil.HIDE_DROPDOWN_ICON, true)
-        templatePresentation.icon = GBrowserIcons.BOOKMARK_MANAGER
+  init {
+    isSearchable = true
+    isEnabledInModalContext = true
+    templatePresentation.putClientProperty(ActionUtil.HIDE_DROPDOWN_ICON, true)
+    templatePresentation.icon = GBrowserIcons.BOOKMARK_MANAGER
+  }
+
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
+
+  override fun getChildren(e: AnActionEvent?): Array<AnAction> {
+    val project = e?.project ?: return emptyArray()
+    val actions = mutableListOf<GBrowserBookmarkGroupItemAction>()
+    project.service<GBrowserService>().bookmarks.forEach { fav ->
+      val url = fav.url
+      val name = fav.name
+      favIconLoader.loadFavIcon(url).thenAccept {
+        actions += GBrowserBookmarkGroupItemAction(name, url, it ?: AllIcons.General.Web)
+      }
     }
-
-    override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
-
-    override fun getChildren(e: AnActionEvent?): Array<AnAction> {
-        val actions = mutableListOf<GBrowserBookmarkGroupItemAction>()
-        GBrowserService.instance().bookmarks.forEach { fav ->
-            val url = fav.url
-            val name = fav.name
-            favIconLoader.loadFavIcon(url).thenAccept {
-                actions += GBrowserBookmarkGroupItemAction(name, url, it ?: AllIcons.General.Web)
-            }
-        }
-        return actions.toTypedArray()
-    }
+    return actions.toTypedArray()
+  }
 
 }
 
-class GBrowserBookmarkGroupItemAction(val name: String, val url: String, val icon: Icon) : AnAction({ name }) {
-
-    private val settings: GBrowserService = GBrowserService.instance()
+class GBrowserBookmarkGroupItemAction(val name: String, val url: String, val icon: Icon) : AnAction(name) {
 
 
-    override fun update(e: AnActionEvent) {
-        e.presentation.icon = icon
+  override fun update(e: AnActionEvent) {
+    e.presentation.icon = icon
+  }
+
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
+
+  override fun actionPerformed(anActionEvent: AnActionEvent) {
+    val project = anActionEvent.project ?: return
+    val panel = GBrowserToolWindowUtil.getSelectedBrowserPanel(anActionEvent)
+    val isDefaultUrlLoaded = panel?.getCurrentUrl() == project.service<GBrowserService>().defaultUrl
+
+    if (isDefaultUrlLoaded) {
+      panel.loadUrl(url)
+    } else {
+      GBrowserToolWindowUtil.createContentTab(anActionEvent, GBrowserUtil.GBROWSER_TOOL_WINDOW_ID, url)
     }
-
-    override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
-
-    override fun actionPerformed(anActionEvent: AnActionEvent) {
-        val panel = GBrowserToolWindowUtil.getSelectedBrowserPanel(anActionEvent)
-        val isDefaultUrlLoaded = panel?.getCurrentUrl() == settings.defaultUrl
-
-        if (isDefaultUrlLoaded) {
-            panel.loadUrl(url)
-        } else {
-            GBrowserToolWindowUtil.createContentTab(anActionEvent, GBrowserUtil.GBROWSER_TOOL_WINDOW_ID, url)
-        }
-    }
+  }
 }

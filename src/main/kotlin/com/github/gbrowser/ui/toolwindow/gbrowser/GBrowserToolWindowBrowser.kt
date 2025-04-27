@@ -11,6 +11,7 @@ import com.github.gbrowser.util.GBrowserUtil
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.ui.SimpleToolWindowPanel
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.util.application
@@ -18,11 +19,11 @@ import com.intellij.util.messages.MessageBus
 import com.intellij.util.messages.MessageBusConnection
 import javax.swing.SwingUtilities
 
-class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleToolWindowPanel(true, true), Disposable,
-                                                                      GBrowserToolWindowActionBarDelegate, GBrowserCefDevToolsListener {
-  private val settings: GBrowserService = GBrowserService.instance()
+class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleToolWindowPanel(true, true), Disposable, GBrowserToolWindowActionBarDelegate,
+                                                                      GBrowserCefDevToolsListener {
+  private val settings: GBrowserService = toolWindow.project.service<GBrowserService>()
   private var currentUrl: String = settings.defaultUrl
-  private var gBrowserToolBar: GBrowserToolWindowActionBar = GBrowserToolWindowActionBar(this)
+  private var gBrowserToolBar: GBrowserToolWindowActionBar = GBrowserToolWindowActionBar(toolWindow.project, this)
   private var currentTitle: String = ""
   private var zoomLevel: Double = 0.0
   private var gbrowser: GCefBrowser = GCefBrowser(toolWindow.project, currentUrl, null, null)
@@ -41,7 +42,7 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
   private fun setupBrowser() {
     gbrowser.addDisplayHandler(this)
     gbrowser.addLifeSpanHandler(toolWindow)
-    gbrowser.addRequestHandler(GBrowserCefRequestHandler(null))
+    gbrowser.addRequestHandler(GBrowserCefRequestHandler(toolWindow.project, null))
     setContent(gbrowser.component)
   }
 
@@ -59,7 +60,6 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
 
   fun getBrowser(): GCefBrowser = gbrowser
 
-  fun getDevToolsBrowser(): GCefBrowser = devTools
 
   override fun dispose() {
     gbrowser.dispose()
@@ -213,15 +213,43 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
     setTabIcon(url)
     setHistoryItem()
     setCurrentUrl(url)
+
     gbrowser.setVisibility(true)
+
+    // Force UI update
+    invalidate()
+    validate()
+    repaint()
+
+    // Update search text
     SwingUtilities.invokeLater {
       gBrowserToolBar.search.text = url
     }
+
+    // Load favicon
     favIconLoader.loadFavIcon(url.trim(), targetSize = 13).thenAccept {
-      gBrowserToolBar.search.textEditor.putClientProperty("JTextField.Search.Icon", it ?: GBrowserIcons.GBROWSER_LOGO)
+      gBrowserToolBar.search.textEditor.putClientProperty(
+        "JTextField.Search.Icon", it ?: GBrowserIcons.GBROWSER_LOGO
+      )
     }
 
-
+    // Extra visibility check after a short delay (helps with unpinned mode)
+    SwingUtilities.invokeLater {
+      ApplicationManager.getApplication().executeOnPooledThread {
+        try {
+          Thread.sleep(200)
+          SwingUtilities.invokeLater { // Re-check and enforce visibility
+            gbrowser.setVisibility(true)
+            invalidate()
+            validate()
+            repaint()
+          }
+        } catch (e: InterruptedException) {
+          thisLogger().warn("GBrowserToolWindowBrowser: Interrupted thread", e)
+          Thread.currentThread().interrupt()
+        }
+      }
+    }
   }
 
   override fun onTitleChange(title: String) {

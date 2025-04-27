@@ -2,6 +2,7 @@ package com.github.gbrowser.ui.gcef.impl
 
 
 import com.github.gbrowser.ui.gcef.GBrowserCefRequestDelegate
+import com.intellij.openapi.project.Project
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
 import org.cef.handler.CefRequestHandlerAdapter
@@ -9,7 +10,7 @@ import org.cef.handler.CefResourceRequestHandler
 import org.cef.misc.BoolRef
 import org.cef.network.CefRequest
 
-class GBrowserCefRequestHandler(private val delegate: GBrowserCefRequestDelegate? = null) : CefRequestHandlerAdapter() {
+class GBrowserCefRequestHandler(val project: Project, private val delegate: GBrowserCefRequestDelegate? = null) : CefRequestHandlerAdapter() {
 
   override fun getResourceRequestHandler(browser: CefBrowser?,
                                          frame: CefFrame?,
@@ -18,6 +19,6 @@ class GBrowserCefRequestHandler(private val delegate: GBrowserCefRequestDelegate
                                          isDownload: Boolean,
                                          requestInitiator: String?,
                                          disableDefaultHandling: BoolRef?): CefResourceRequestHandler {
-    return GBrowserCefResourceRequestHandler(delegate)
+    return GBrowserCefResourceRequestHandler(project , delegate)
   }
 }

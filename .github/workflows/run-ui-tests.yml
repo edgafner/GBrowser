@@ -25,7 +25,6 @@ jobs:
       matrix:
         include:
           - os: macos-latest
-            runIde: ./gradlew runIdeForUiTests &
 
     steps:
 
@@ -49,22 +48,9 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
 
-
-      # Run IDEA prepared for UI testing
-      - name: Run IDE
-        run: ${{ matrix.runIde }}
-
-      # Wait for IDEA to be started
-      - name: Health Check
-        uses: jtalk/url-health-check-action@v4
-        with:
-          url: http://127.0.0.1:8082
-          max-attempts: 18
-          retry-delay: 30s
-
           # Run tests
       - name: Tests
-        run: ./gradlew uiTest -PrunUiTests=true
+        run: ./gradlew uiTest
 
       - uses: GuillaumeFalourd/wait-sleep-action@v1
         with:
@@ -83,7 +69,7 @@ jobs:
           path: ${{ github.workspace }}/build/reports
 
       - name: Upload Code Coverage Report
-        uses: codecov/codecov-action@v5.4.0
+        uses: codecov/codecov-action@v5.4.2
         with:
           files: ${{ github.workspace }}/build/reports/jacoco/runIdeUiCodeCoverageReport/runIdeUiCodeCoverageReport.xml
           flags: ui-${{ matrix.os }}

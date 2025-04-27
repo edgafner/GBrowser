@@ -18,7 +18,8 @@ class GBrowserTabDuplicateAction : AnAction(), DumbAware {
   }
 
   override fun actionPerformed(e: AnActionEvent) {
-    val toolWindow = GBrowserToolWindowUtil.getToolWindow(e.project, GBrowserUtil.GBROWSER_TOOL_WINDOW_ID) ?: return
+    val project = e.project ?: return
+    val toolWindow = GBrowserToolWindowUtil.getToolWindow(project, GBrowserUtil.GBROWSER_TOOL_WINDOW_ID) ?: return
     toolWindow.contentManager.selectedContent?.component?.let { component ->
       if (component is GBrowserToolWindowBrowser) {
         GBrowserToolWindowUtil.createContentTab(toolWindow, component.getCurrentUrl(), component.getCurrentTitle())

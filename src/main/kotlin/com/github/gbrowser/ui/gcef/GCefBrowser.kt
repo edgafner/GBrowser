@@ -1,21 +1,18 @@
 package com.github.gbrowser.ui.gcef
 
 import com.github.gbrowser.i18n.GBrowserBundle
-import com.github.gbrowser.services.providers.CachingWebPageTitleLoader
 import com.github.gbrowser.services.GBrowserService
+import com.github.gbrowser.services.providers.CachingWebPageTitleLoader
 import com.github.gbrowser.settings.bookmarks.GBrowserBookmark
 import com.github.gbrowser.ui.gcef.impl.GBrowserCefDisplayChangeHandler
 import com.github.gbrowser.ui.gcef.impl.GBrowserCefLifeSpanDelegate
 import com.github.gbrowser.ui.gcef.impl.GBrowserCefRequestHandler
-import com.github.gbrowser.ui.toolwindow.dev_tools.GBrowserToolWindowDevToolsFactory
 import com.github.gbrowser.ui.toolwindow.gbrowser.GBrowserToolWindowActionBarDelegate
-import com.github.gbrowser.util.GBrowserToolWindowUtil
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.jcef.JBCefBrowser
 import com.intellij.ui.jcef.JBCefClient
-import com.intellij.util.application
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
 import org.cef.callback.CefContextMenuParams
@@ -27,17 +24,14 @@ import java.util.*
 
 
 @Suppress("MemberVisibilityCanBePrivate")
-class GCefBrowser(val project: Project,
-                  url: String?,
-                  client: JBCefClient? = null,
-                  browser: CefBrowser? = null,
-                  val id: String = UUID.randomUUID().toString()) : JBCefBrowser(createBuilder().apply {
-  setOffScreenRendering(false)
-  setEnableOpenDevToolsMenuItem(true)
-  setCefBrowser(browser)
-  setClient(client)
-  setUrl(url)
-}) {
+class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = null, browser: CefBrowser? = null, val id: String = UUID.randomUUID().toString()) :
+  JBCefBrowser(createBuilder().apply {
+    setOffScreenRendering(false)
+    setEnableOpenDevToolsMenuItem(true)
+    setCefBrowser(browser)
+    setClient(client)
+    setUrl(url)
+  }) {
 
   private val favIconLoader: CachingWebPageTitleLoader = service()
 
@@ -75,15 +69,14 @@ class GCefBrowser(val project: Project,
         }
 
         model.addItem(MenuId.MENU_ID_USER_LAST, "Open DevTools")
-        model.addItem(BOOKMARK_ADD, GBrowserBundle.message(
-          "action.GBrowserBookmarkAddAction.text")) //model.addItem(26502, GBrowserBundle.message("action.GBrowserBookmarkAddAction.text")) //super.onBeforeContextMenu(browser, frame, params, model)
+        model.addItem(
+          BOOKMARK_ADD, GBrowserBundle.message(
+            "action.GBrowserBookmarkAddAction.text"
+          )
+        )
       }
 
-      override fun onContextMenuCommand(browser: CefBrowser,
-                                        frame: CefFrame,
-                                        params: CefContextMenuParams,
-                                        commandId: Int,
-                                        eventFlags: Int): Boolean {
+      override fun onContextMenuCommand(browser: CefBrowser, frame: CefFrame, params: CefContextMenuParams, commandId: Int, eventFlags: Int): Boolean {
         if (commandId == BOOKMARK_ADD) {
           addToBookmarks(browser)
           return true
@@ -99,22 +92,37 @@ class GCefBrowser(val project: Project,
 
       private fun addToBookmarks(browser: CefBrowser) {
         favIconLoader.getTitleOfWebPage(browser.url).thenAccept {
-          GBrowserService.instance().addBookmarks(GBrowserBookmark(browser.url, it))
+          project.service<GBrowserService>().addBookmarks(GBrowserBookmark(browser.url, it))
         }
       }
 
-      private fun openDevtools() {
-        val selectedBrowser = GBrowserToolWindowUtil.getSelectedBrowserPanel(project) ?: return
-        val browser = selectedBrowser.getDevToolsBrowser()
-        application.invokeLater {
-          GBrowserToolWindowDevToolsFactory.Companion.createTab(project, browser, selectedBrowser.getCurrentTitle())
-        }
-      }
     }
   }
 
   fun setVisibility(isVisible: Boolean) {
     component.isVisible = isVisible
+
+    // Also ensure the browser UI component is visible
+    // This addresses specific unpinned mode rendering issues
+    cefBrowser.uiComponent?.isVisible = isVisible
+
+    // Force a repaint if becoming visible
+    if (isVisible) {
+      component.invalidate()
+      component.validate()
+      component.repaint()
+
+      // Also repaint the UI component
+      cefBrowser.uiComponent?.invalidate()
+      cefBrowser.uiComponent?.validate()
+      cefBrowser.uiComponent?.repaint()
+
+      // Ensure parent containers are refreshed too
+      val parent = component.parent
+      parent?.invalidate()
+      parent?.validate()
+      parent?.repaint()
+    }
   }
 
   fun deleteCookies() {
@@ -122,22 +130,8 @@ class GCefBrowser(val project: Project,
     manager.deleteCookies(null, null)
   }
 
-  fun addTitleChangeListener(delegate: GBrowserCefBrowserTitleDelegate) {
-    titleChangeDelegate = delegate
-  }
-
-  fun removeTitleChangeListener() {
-    titleChangeDelegate = null
-  }
-
   fun notifyTitleChanged(title: String?) {
     titleChangeDelegate?.onChangeTitle(title)
-  }
-
-  fun addDevToolsListener(delegate: GBrowserCefDevToolsListener) {
-    if (devToolsDelegates.none { it == delegate }) {
-      devToolsDelegates.add(delegate)
-    }
   }
 
   fun removeDevToolsListener() {
@@ -159,7 +153,7 @@ class GCefBrowser(val project: Project,
   }
 
   fun addLifeSpanHandler(toolWindow: ToolWindow) {
-    cefBrowser.client?.addLifeSpanHandler(GBrowserCefLifeSpanDelegate(toolWindow))
+    cefBrowser.client?.addLifeSpanHandler(GBrowserCefLifeSpanDelegate(project, toolWindow))
   }
 
   fun removeDisplayHandler() {

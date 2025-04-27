@@ -11,7 +11,7 @@ class GBrowserCefDisplayChangeHandler(private val delegate: GBrowserToolWindowAc
   override fun onAddressChange(browser: CefBrowser?, frame: CefFrame?, url: String?) {
     val isValidURL = !url.isNullOrBlank() && !url.startsWith("devtools") && !url.startsWith("file:///jbcefbrowser")
     if (isValidURL) {
-      delegate.onAddressChange(url!!)
+      delegate.onAddressChange(url)
     }
     super.onAddressChange(browser, frame, url)
   }
@@ -19,7 +19,7 @@ class GBrowserCefDisplayChangeHandler(private val delegate: GBrowserToolWindowAc
   override fun onTitleChange(browser: CefBrowser?, title: String?) {
     val isValidTitle = !title.isNullOrBlank() && !title.startsWith("DevTools")
     if (isValidTitle) {
-      delegate.onTitleChange(title!!)
+      delegate.onTitleChange(title)
     }
     super.onTitleChange(browser, title)
   }

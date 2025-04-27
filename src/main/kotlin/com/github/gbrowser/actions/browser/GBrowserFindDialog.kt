@@ -1,11 +1,11 @@
 package com.github.gbrowser.actions.browser
 
+import com.github.gbrowser.ui.gcef.GCefBrowser
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.popup.IconButton
 import com.intellij.ui.InplaceButton
-import com.intellij.ui.jcef.JBCefBrowser
 import java.awt.event.ItemListener
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
@@ -15,7 +15,7 @@ import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 
 
-class GBrowserFindDialog(project: Project, private val jbCefBrowser: JBCefBrowser) : DialogWrapper(project, false, true) {
+class GBrowserFindDialog(project: Project, private val jbCefBrowser: GCefBrowser) : DialogWrapper(project, false, true) {
 
   private val myFindComponent: SearchPanel
 
