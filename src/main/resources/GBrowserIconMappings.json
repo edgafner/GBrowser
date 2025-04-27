@@ -10,8 +10,6 @@
           "bookmark_group.svg": "com/github/gbrowser/bookmark_group.svg",
           "bookmark_remove.svg": "com/github/gbrowser/bookmark_remove.svg",
           "broom.svg": "com/github/gbrowser/broom.svg",
-          "dev_tools.svg": "com/github/gbrowser/dev_tools.svg",
-          "dev_tools_active.svg": "com/github/gbrowser/dev_tools_active.svg",
           "cookie.svg": "com/github/gbrowser/cookie.svg",
           "refresh.svg": "com/github/gbrowser/refresh.svg"
         }

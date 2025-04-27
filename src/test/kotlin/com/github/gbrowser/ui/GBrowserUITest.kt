@@ -30,27 +30,39 @@ import kotlin.time.Duration.Companion.seconds
 
 @Tag("ui")
 @ExtendWith(UseLatestDownloadedIdeBuild::class)
-class GBrowserRobotTest {
+class GBrowserUITest {
 
   companion object {
-    val LOG = logger<GBrowserRobotTest>()
+    val LOG = logger<GBrowserUITest>()
   }
 
   private lateinit var run: BackgroundRun
   private lateinit var tempDir: Path
+  private lateinit var projectName: String
 
   @BeforeEach
-  fun setupTest() { // Create a parent directory for our project with a fixed name
-    val baseDir = Files.createTempDirectory("gbrowser-parent") // Create a specific project directory with a valid name
-    tempDir = baseDir.resolve("GBrowserTestProject")
+  fun setupTest() {
+    // Generate a unique project name with timestamp to avoid conflicts
+    projectName = "GBrowserTest_${System.currentTimeMillis()}"
+
+    // Create a parent directory for our project
+    val baseDir = Files.createTempDirectory("gbrowser-parent")
+    tempDir = baseDir.resolve(projectName)
     Files.createDirectories(tempDir)
-    run = Setup.setupTestContext("GBrowserRobotTest").runIdeWithDriver()
+
+    run = Setup.setupTestContext("GBrowserUITest").runIdeWithDriver()
   }
 
   @AfterEach
   fun closeIde() {
-    run.closeIdeAndWait()
-    tempDir.toFile().deleteRecursively()
+    try {
+      run.closeIdeAndWait()
+    } finally {
+      // Ensure cleanup happens even if the test fails
+      if (::tempDir.isInitialized && Files.exists(tempDir)) {
+        tempDir.toFile().deleteRecursively()
+      }
+    }
   }
 
   @Test
@@ -67,7 +79,7 @@ class GBrowserRobotTest {
 
             sampleCodeLabel.enabled()
 
-            setProjectName("GBrowserTestProject")
+            setProjectName(projectName)
 
             createButton.click()
           }

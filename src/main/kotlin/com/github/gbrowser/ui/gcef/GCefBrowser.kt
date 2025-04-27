@@ -73,7 +73,7 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
           BOOKMARK_ADD, GBrowserBundle.message(
             "action.GBrowserBookmarkAddAction.text"
           )
-        ) //model.addItem(26502, GBrowserBundle.message("action.GBrowserBookmarkAddAction.text")) //super.onBeforeContextMenu(browser, frame, params, model)
+        )
       }
 
       override fun onContextMenuCommand(browser: CefBrowser, frame: CefFrame, params: CefContextMenuParams, commandId: Int, eventFlags: Int): Boolean {
@@ -96,17 +96,10 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
         }
       }
 
-      //private fun openDevtools() {
-      //  val selectedBrowser = GBrowserToolWindowUtil.getSelectedBrowserPanel(project) ?: return
-      //  val browser = selectedBrowser.getDevToolsBrowser()
-      //  application.invokeLater {
-      //    GBrowserToolWindowDevToolsFactory.Companion.createTab(project, browser, selectedBrowser.getCurrentTitle())
-      //  }
-      //}
     }
   }
 
-  fun setVisibility(isVisible: Boolean) { // Ensure both the main component and UI component are visible
+  fun setVisibility(isVisible: Boolean) {
     component.isVisible = isVisible
 
     // Also ensure the browser UI component is visible

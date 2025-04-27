@@ -22,8 +22,7 @@ object GBrowserIcons {
 
   @JvmField
   val BOOKMARK_MANAGER = IconLoader.getIcon("/com/github/gbrowser/bookmark_group.svg", javaClass)
-
-
+  
   @JvmField
   val BROOM = IconLoader.getIcon("/com/github/gbrowser/broom.svg", javaClass)
 

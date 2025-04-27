@@ -113,7 +113,6 @@
     </group>
 
 
-    <!--        toolwindow-->
     <action id="GBrowserToggleToolbarAction" class="com.github.gbrowser.actions.toolwindow.GBrowserToggleToolbarAction"
             icon="com.github.gbrowser.GBrowserIcons.TOGGLE_VISIBILITY">
       <keyboard-shortcut keymap="$default" first-keystroke="alt T"/>

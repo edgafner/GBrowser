@@ -63,13 +63,12 @@ object GBrowserUtil {
 
     if (editor.editorKind != EditorKind.MAIN_EDITOR) return null
 
-    //anActionEvent.getData(PlatformDataKeys.VIRTUAL_FILE) ?: return ""
-
     val selected = editor.selectionModel.selectedText ?: return null
 
     if (selected.isBlank()) return null
 
-    if (isValidBrowserURL(selected)) return selected.trim()
+    val trimmed = selected.trim()
+    if (isValidBrowserURL(trimmed)) return trimmed
 
     return null
   }
