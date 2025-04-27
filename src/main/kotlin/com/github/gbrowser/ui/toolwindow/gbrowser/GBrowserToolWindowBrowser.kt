@@ -23,7 +23,7 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
                                                                       GBrowserCefDevToolsListener {
   private val settings: GBrowserService = toolWindow.project.service<GBrowserService>()
   private var currentUrl: String = settings.defaultUrl
-  private var gBrowserToolBar: GBrowserToolWindowActionBar = GBrowserToolWindowActionBar(toolWindow.project,this)
+  private var gBrowserToolBar: GBrowserToolWindowActionBar = GBrowserToolWindowActionBar(toolWindow.project, this)
   private var currentTitle: String = ""
   private var zoomLevel: Double = 0.0
   private var gbrowser: GCefBrowser = GCefBrowser(toolWindow.project, currentUrl, null, null)
@@ -60,7 +60,6 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
 
   fun getBrowser(): GCefBrowser = gbrowser
 
-  fun getDevToolsBrowser(): GCefBrowser = devTools
 
   override fun dispose() {
     gbrowser.dispose()

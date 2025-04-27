@@ -125,9 +125,7 @@ class GBrowserRobotTest {
 
     selectPopupMenuItem("Find...")
     selectPopupMenuItem("Add to Bo")
-    selectPopupMenuItem("Open Dev")
-    wait(1.seconds)
-    showGBrowserToolWindow()
+
 
     selectPopupMenuItem("Zoom Out")
     selectPopupMenuItem("Zoom In")

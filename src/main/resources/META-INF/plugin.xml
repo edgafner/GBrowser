@@ -112,10 +112,6 @@
            icon="com.github.gbrowser.GBrowserIcons.BOOKMARK_MANAGER">
     </group>
 
-    <!--        devtools-->
-    <action id="GBrowserDevToolsAction" class="com.github.gbrowser.actions.devtools.GBrowserDevToolsAction">
-      <keyboard-shortcut keymap="$default" first-keystroke="control I"/>
-    </action>
 
     <!--        toolwindow-->
     <action id="GBrowserToggleToolbarAction" class="com.github.gbrowser.actions.toolwindow.GBrowserToggleToolbarAction"

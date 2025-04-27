@@ -24,17 +24,14 @@ import java.util.*
 
 
 @Suppress("MemberVisibilityCanBePrivate")
-class GCefBrowser(val project: Project,
-                  url: String?,
-                  client: JBCefClient? = null,
-                  browser: CefBrowser? = null,
-                  val id: String = UUID.randomUUID().toString()) : JBCefBrowser(createBuilder().apply {
-  setOffScreenRendering(false)
-  setEnableOpenDevToolsMenuItem(true)
-  setCefBrowser(browser)
-  setClient(client)
-  setUrl(url)
-}) {
+class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = null, browser: CefBrowser? = null, val id: String = UUID.randomUUID().toString()) :
+  JBCefBrowser(createBuilder().apply {
+    setOffScreenRendering(false)
+    setEnableOpenDevToolsMenuItem(true)
+    setCefBrowser(browser)
+    setClient(client)
+    setUrl(url)
+  }) {
 
   private val favIconLoader: CachingWebPageTitleLoader = service()
 
@@ -79,11 +76,7 @@ class GCefBrowser(val project: Project,
         ) //model.addItem(26502, GBrowserBundle.message("action.GBrowserBookmarkAddAction.text")) //super.onBeforeContextMenu(browser, frame, params, model)
       }
 
-      override fun onContextMenuCommand(browser: CefBrowser,
-                                        frame: CefFrame,
-                                        params: CefContextMenuParams,
-                                        commandId: Int,
-                                        eventFlags: Int): Boolean {
+      override fun onContextMenuCommand(browser: CefBrowser, frame: CefFrame, params: CefContextMenuParams, commandId: Int, eventFlags: Int): Boolean {
         if (commandId == BOOKMARK_ADD) {
           addToBookmarks(browser)
           return true
@@ -113,8 +106,7 @@ class GCefBrowser(val project: Project,
     }
   }
 
-  fun setVisibility(isVisible: Boolean) {
-    // Ensure both the main component and UI component are visible
+  fun setVisibility(isVisible: Boolean) { // Ensure both the main component and UI component are visible
     component.isVisible = isVisible
 
     // Also ensure the browser UI component is visible
@@ -145,22 +137,8 @@ class GCefBrowser(val project: Project,
     manager.deleteCookies(null, null)
   }
 
-  fun addTitleChangeListener(delegate: GBrowserCefBrowserTitleDelegate) {
-    titleChangeDelegate = delegate
-  }
-
-  fun removeTitleChangeListener() {
-    titleChangeDelegate = null
-  }
-
   fun notifyTitleChanged(title: String?) {
     titleChangeDelegate?.onChangeTitle(title)
-  }
-
-  fun addDevToolsListener(delegate: GBrowserCefDevToolsListener) {
-    if (devToolsDelegates.none { it == delegate }) {
-      devToolsDelegates.add(delegate)
-    }
   }
 
   fun removeDevToolsListener() {
