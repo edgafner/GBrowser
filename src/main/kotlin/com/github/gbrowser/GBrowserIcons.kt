@@ -39,5 +39,8 @@ object GBrowserIcons {
   @JvmField
   val REFRESH = IconLoader.getIcon("/com/github/gbrowser/refresh.svg", javaClass)
 
+  @JvmField
+  val TOGGLE_VISIBILITY = IconLoader.getIcon("/com/github/gbrowser/toggleVisibility.svg", javaClass)
+
 
 }
