@@ -51,7 +51,7 @@ dependencies {
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2") { isTransitive = false }
   implementation("com.fasterxml.jackson.core:jackson-databind:2.17.2") { isTransitive = false }
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.17.2") { isTransitive = false }
-  compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+  compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
   implementation("com.azure:azure-ai-inference:1.0.0-beta.4")
 
   testRuntimeOnly("junit:junit:4.13.2")

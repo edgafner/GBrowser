@@ -10,6 +10,15 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.DumbAware
 
+
+/**
+ * An action that provides a shortcut to open the browser bookmark manager.
+ *
+ * This action is enabled only when there is an active project and the browser service has bookmarks available.
+ * It triggers the display of browser-related project settings with a focus on the bookmark manager.
+ *
+ * Inherits from `AnAction` and is marked as `DumbAware` to be available during the IDE's indexing process.
+ */
 class GBrowserBookmarkManagerAction : AnAction(), DumbAware {
 
   override fun update(e: AnActionEvent) {

@@ -14,7 +14,15 @@ import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 
-
+/**
+ * Represents a dialog implementation for performing text search in a browser component.
+ * Extends [DialogWrapper] to provide custom UI and behavior for search functionality.
+ *
+ * @property jbCefBrowser the [GCefBrowser] instance associated with the dialog, used for browser operations.
+ *
+ * This dialog is non-modal and designed to work seamlessly within the context of the given project.
+ * It includes a custom search panel for handling text input, navigation, and controls relevant to text search operations.
+ */
 class GBrowserFindDialog(project: Project, private val jbCefBrowser: GCefBrowser) : DialogWrapper(project, false, true) {
 
   private val myFindComponent: SearchPanel

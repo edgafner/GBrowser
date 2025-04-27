@@ -12,7 +12,14 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.DumbAware
 import javax.swing.Icon
 
-
+/**
+ * Represents an action to add or remove a bookmark for the current URL in a custom browser tool window.
+ *
+ * This action dynamically updates its presentation (icon and text) based on whether the current URL
+ * has already been bookmarked or not.
+ * It interacts with the custom `GBrowserService` to manage
+ * bookmarks and updates the state accordingly.
+ */
 class GBrowserBookmarkAddAction : AnAction(), DumbAware {
   private val iconAdd: Icon = GBrowserIcons.BOOKMARK_REMOVE
   private val iconExist: Icon = GBrowserIcons.BOOKMARK_ADD

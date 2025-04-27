@@ -6,6 +6,9 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAware
 
+/**
+ * An action that zooms in on the content of the selected browser panel.
+ */
 class GBrowserZoomOutAction : AnAction(), DumbAware {
 
   override fun update(e: AnActionEvent) {
