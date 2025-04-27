@@ -6,10 +6,12 @@ import com.intellij.ide.starter.di.di
 import com.intellij.ide.starter.ide.IDETestContext
 import com.intellij.ide.starter.ide.IdeProductProvider
 import com.intellij.ide.starter.models.TestCase
+import com.intellij.ide.starter.path.GlobalPaths
 import com.intellij.ide.starter.plugins.PluginConfigurator
 import com.intellij.ide.starter.project.NoProject
 import com.intellij.ide.starter.runner.Starter
 import org.kodein.di.DI
+import org.kodein.di.bindSingleton
 import java.nio.file.Paths
 
 
@@ -20,6 +22,8 @@ class Setup {
     init {
       di = DI.Companion {
         extend(di)
+        bindSingleton<GlobalPaths>(overrides = true) { GBrowserGlobalPaths() }
+
       }
     }
 
@@ -29,10 +33,9 @@ class Setup {
     fun setupTestContext(hyphenateWithClass: String): IDETestContext {
 
       val testCase = TestCase(
-        IdeProductProvider.IC.copy(buildNumber = "251.23774.318", buildType = BuildType.RC.type), NoProject
+        IdeProductProvider.IC.copy(buildNumber = "251.25410.28", buildType = BuildType.EAP.type), NoProject
       )
       return Starter.newContext(testName = hyphenateWithClass, testCase = testCase).apply {
-        setLicense(System.getenv("LICENSE_KEY"))
         val pluginPath = System.getProperty("path.to.build.plugin")
         PluginConfigurator(this).installPluginFromPath(Paths.get(pluginPath))
         withBuildTool<GradleBuildTool>()

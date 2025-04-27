@@ -3,11 +3,12 @@ package com.github.gbrowser.settings.project
 
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.options.SearchableConfigurable
+import com.intellij.openapi.project.Project
 import javax.swing.JComponent
 
-class GBrowserProjectSettingsConfigurable : SearchableConfigurable {
+class GBrowserProjectSettingsConfigurable(val project: Project) : SearchableConfigurable {
 
-  private val projectSettingsComponent = GBrowserProjectSettingsComponent()
+  private val projectSettingsComponent = GBrowserProjectSettingsComponent(project)
 
   override fun createComponent(): JComponent {
     return projectSettingsComponent.settingsComponent

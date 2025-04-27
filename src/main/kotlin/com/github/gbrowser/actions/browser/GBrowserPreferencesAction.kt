@@ -25,11 +25,12 @@ class GBrowserPreferencesAction : AnAction(), DumbAware {
   }
 
   override fun actionPerformed(e: AnActionEvent) {
+    val project = e.project ?: return
     ApplicationManager.getApplication().invokeLater {
       val settingsInstance = ShowSettingsUtil.getInstance()
-      val configurable = GBrowserProjectSettingsConfigurable()
+      val configurable = GBrowserProjectSettingsConfigurable(project)
       configurable.openCollapseBookMarks()
-      settingsInstance.editConfigurable(e.project, configurable.id, configurable as Configurable, true)
+      settingsInstance.editConfigurable(project, configurable.id, configurable as Configurable, true)
     }
   }
 }

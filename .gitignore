@@ -13,3 +13,4 @@ build
 /.run/
 /.intellijPlatform/
 /.kotlin/
+/out/

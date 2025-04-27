@@ -2,6 +2,8 @@ package com.github.gbrowser.settings.bookmarks
 
 import com.github.gbrowser.services.GBrowserService
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.components.service
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.ui.SideBorder
@@ -13,8 +15,8 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.ListTableModel
 import com.intellij.util.ui.UIUtil
 
-class GBrowserBookmarksTableComponent : Disposable {
-  private val settings = GBrowserService.instance()
+class GBrowserBookmarksTableComponent(val project: Project) : Disposable {
+  private val settings = project.service<GBrowserService>()
   private lateinit var tableView: TableView<GBrowserBookmark>
   private lateinit var tableModel: ListTableModel<GBrowserBookmark>
   private lateinit var scrollPanel: JBScrollPane

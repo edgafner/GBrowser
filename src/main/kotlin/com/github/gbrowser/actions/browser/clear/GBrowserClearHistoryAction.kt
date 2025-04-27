@@ -4,19 +4,20 @@ import com.github.gbrowser.services.GBrowserService
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.DumbAware
 
 class GBrowserClearHistoryAction : AnAction(), DumbAware {
 
-  private val settings: GBrowserService = GBrowserService.instance()
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
   override fun update(e: AnActionEvent) {
-    e.presentation.isEnabled = settings.history.isNotEmpty()
+
+    e.presentation.isEnabled = e.project?.service<GBrowserService>()?.history?.isNotEmpty() ?: false
   }
 
   override fun actionPerformed(e: AnActionEvent) {
-    settings.removeHistory()
+    e.project?.service<GBrowserService>()?.removeHistory()
   }
 }

@@ -15,6 +15,7 @@ import com.intellij.openapi.actionSystem.ActionToolbar
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.toolbarLayout.ToolbarLayoutStrategy
 import com.intellij.openapi.components.service
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.JBPopupMenu
 import com.intellij.util.ui.InlineIconButton
 import com.intellij.util.ui.JBUI
@@ -29,8 +30,8 @@ import javax.swing.JPanel
 import javax.swing.SwingUtilities
 
 @Suppress("UnstableApiUsage")
-class GBrowserToolWindowActionBar(private val delegate: GBrowserToolWindowActionBarDelegate) : ComponentAdapter(), Disposable {
-  private val settings = GBrowserService.instance()
+class GBrowserToolWindowActionBar(val project: Project, private val delegate: GBrowserToolWindowActionBarDelegate) : ComponentAdapter(), Disposable {
+  private val settings = project.service<GBrowserService>()
   private val favIconLoader: CachingFavIconLoader = service()
   private val rightActionGroup = DefaultActionGroup()
   private val leftActionGroup = DefaultActionGroup()
@@ -54,7 +55,7 @@ class GBrowserToolWindowActionBar(private val delegate: GBrowserToolWindowAction
       leftToolActionBarComponent = createToolBarAction(leftActionGroup)
       add(leftToolActionBarComponent.component, CC().wrap().dockWest())
 
-      search = GBrowserSearchTextField(delegate)
+      search = GBrowserSearchTextField(project, delegate)
       add(search, CC().growX().minWidth("0"))
 
       rightToolActionBarComponent = createToolBarAction(rightActionGroup)

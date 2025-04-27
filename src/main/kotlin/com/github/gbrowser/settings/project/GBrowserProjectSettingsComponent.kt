@@ -9,6 +9,8 @@ import com.intellij.icons.AllIcons
 import com.intellij.ide.BrowserUtil
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.components.service
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.SimpleToolWindowPanel
 import com.intellij.openapi.ui.ValidationInfo
@@ -18,12 +20,12 @@ import com.intellij.util.ui.JBFont
 import com.intellij.util.ui.UIUtil
 import javax.swing.JTextField
 
-class GBrowserProjectSettingsComponent : SimpleToolWindowPanel(true, true), Disposable {
-  private val settings = GBrowserService.instance()
+class GBrowserProjectSettingsComponent(val project: Project) : SimpleToolWindowPanel(true, true), Disposable {
+  private val settings = project.service<GBrowserService>()
   val settingsComponent: DialogPanel by lazy { createComponent() }
   val textField: JTextField by lazy { JTextField() }
-  private val bookmarks: GBrowserBookmarksTableComponent by lazy { GBrowserBookmarksTableComponent() }
-  private val responseHeaders: GBrowserRequestHeaderTableComponent by lazy { GBrowserRequestHeaderTableComponent() }
+  private val bookmarks: GBrowserBookmarksTableComponent by lazy { GBrowserBookmarksTableComponent(project) }
+  private val responseHeaders: GBrowserRequestHeaderTableComponent by lazy { GBrowserRequestHeaderTableComponent(project) }
 
 
   private fun createComponent(): DialogPanel = panel {
@@ -170,8 +172,10 @@ class GBrowserProjectSettingsComponent : SimpleToolWindowPanel(true, true), Disp
     collapsibleGroup("HTTP Response Headers", true) {
       row {
         cell(responseHeaders.createScrollPane()).label("Headers", LabelPosition.TOP).comment(
-          "Manage your response headers. The overwrite column is used to overwrite the header if it already exists in the request.").align(
-          Align.FILL)
+          "Manage your response headers. The overwrite column is used to overwrite the header if it already exists in the request."
+        ).align(
+          Align.FILL
+        )
       }.resizableRow()
     }.apply {
 

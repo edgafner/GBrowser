@@ -48,13 +48,14 @@ jobs:
           distribution: 'jetbrains'
           java-version: 21
           java-package: 'jdk+jcef'
+          check-latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Setup Gradle
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-        
+        uses: gradle/actions/setup-gradle@v4.2.2
+
 
       # Set environment variables
       - name: Export Properties
@@ -87,7 +88,7 @@ jobs:
 
           echo "filename=${FILENAME:0:-4}" >> $GITHUB_OUTPUT
 
-      # Store already-built plugin as an artifact for downloading
+      # Store the already-built plugin as an artifact for downloading
       - name: Upload artifact
         uses: actions/upload-artifact@v4.6.2
         with:
@@ -188,13 +189,11 @@ jobs:
 
       # Setup Gradle
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          add-job-summary-as-pr-comment: 'on-failure'
+        uses: gradle/actions/setup-gradle@v4.2.2
 
       # Run Qodana inspections
       - name: Qodana - Code Inspection
-        uses: JetBrains/qodana-action@v2024.3.4
+        uses: JetBrains/qodana-action@v2025.1.0
         with:
           cache-default-branch-only: true
         env:
@@ -231,8 +230,7 @@ jobs:
 
       # Setup Gradle
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-        
+        uses: gradle/actions/setup-gradle@v4.2.2
 
       # Cache Plugin Verifier IDEs
       - name: Setup Plugin Verifier IDEs Cache
@@ -270,7 +268,7 @@ jobs:
           token: '${{ secrets.GITHUB_TOKEN }}'
 
       - name: Download artifact
-        uses: actions/download-artifact@v4.2.1
+        uses: actions/download-artifact@v4.3.0
         id: download
         with:
           name: tests-report

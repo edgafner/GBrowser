@@ -1,21 +1,18 @@
 package com.github.gbrowser.ui.gcef
 
 import com.github.gbrowser.i18n.GBrowserBundle
-import com.github.gbrowser.services.providers.CachingWebPageTitleLoader
 import com.github.gbrowser.services.GBrowserService
+import com.github.gbrowser.services.providers.CachingWebPageTitleLoader
 import com.github.gbrowser.settings.bookmarks.GBrowserBookmark
 import com.github.gbrowser.ui.gcef.impl.GBrowserCefDisplayChangeHandler
 import com.github.gbrowser.ui.gcef.impl.GBrowserCefLifeSpanDelegate
 import com.github.gbrowser.ui.gcef.impl.GBrowserCefRequestHandler
-import com.github.gbrowser.ui.toolwindow.dev_tools.GBrowserToolWindowDevToolsFactory
 import com.github.gbrowser.ui.toolwindow.gbrowser.GBrowserToolWindowActionBarDelegate
-import com.github.gbrowser.util.GBrowserToolWindowUtil
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.jcef.JBCefBrowser
 import com.intellij.ui.jcef.JBCefClient
-import com.intellij.util.application
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
 import org.cef.callback.CefContextMenuParams
@@ -75,8 +72,11 @@ class GCefBrowser(val project: Project,
         }
 
         model.addItem(MenuId.MENU_ID_USER_LAST, "Open DevTools")
-        model.addItem(BOOKMARK_ADD, GBrowserBundle.message(
-          "action.GBrowserBookmarkAddAction.text")) //model.addItem(26502, GBrowserBundle.message("action.GBrowserBookmarkAddAction.text")) //super.onBeforeContextMenu(browser, frame, params, model)
+        model.addItem(
+          BOOKMARK_ADD, GBrowserBundle.message(
+            "action.GBrowserBookmarkAddAction.text"
+          )
+        ) //model.addItem(26502, GBrowserBundle.message("action.GBrowserBookmarkAddAction.text")) //super.onBeforeContextMenu(browser, frame, params, model)
       }
 
       override fun onContextMenuCommand(browser: CefBrowser,
@@ -99,39 +99,39 @@ class GCefBrowser(val project: Project,
 
       private fun addToBookmarks(browser: CefBrowser) {
         favIconLoader.getTitleOfWebPage(browser.url).thenAccept {
-          GBrowserService.instance().addBookmarks(GBrowserBookmark(browser.url, it))
+          project.service<GBrowserService>().addBookmarks(GBrowserBookmark(browser.url, it))
         }
       }
 
-      private fun openDevtools() {
-        val selectedBrowser = GBrowserToolWindowUtil.getSelectedBrowserPanel(project) ?: return
-        val browser = selectedBrowser.getDevToolsBrowser()
-        application.invokeLater {
-          GBrowserToolWindowDevToolsFactory.Companion.createTab(project, browser, selectedBrowser.getCurrentTitle())
-        }
-      }
+      //private fun openDevtools() {
+      //  val selectedBrowser = GBrowserToolWindowUtil.getSelectedBrowserPanel(project) ?: return
+      //  val browser = selectedBrowser.getDevToolsBrowser()
+      //  application.invokeLater {
+      //    GBrowserToolWindowDevToolsFactory.Companion.createTab(project, browser, selectedBrowser.getCurrentTitle())
+      //  }
+      //}
     }
   }
 
   fun setVisibility(isVisible: Boolean) {
     // Ensure both the main component and UI component are visible
     component.isVisible = isVisible
-    
+
     // Also ensure the browser UI component is visible
     // This addresses specific unpinned mode rendering issues
     cefBrowser.uiComponent?.isVisible = isVisible
-    
+
     // Force a repaint if becoming visible
     if (isVisible) {
       component.invalidate()
       component.validate()
       component.repaint()
-      
+
       // Also repaint the UI component
       cefBrowser.uiComponent?.invalidate()
       cefBrowser.uiComponent?.validate()
       cefBrowser.uiComponent?.repaint()
-      
+
       // Ensure parent containers are refreshed too
       val parent = component.parent
       parent?.invalidate()
@@ -182,7 +182,7 @@ class GCefBrowser(val project: Project,
   }
 
   fun addLifeSpanHandler(toolWindow: ToolWindow) {
-    cefBrowser.client?.addLifeSpanHandler(GBrowserCefLifeSpanDelegate(toolWindow))
+    cefBrowser.client?.addLifeSpanHandler(GBrowserCefLifeSpanDelegate(project, toolWindow))
   }
 
   fun removeDisplayHandler() {

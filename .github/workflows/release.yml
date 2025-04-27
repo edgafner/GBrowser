@@ -36,9 +36,8 @@ jobs:
 
       # Setup Gradle
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+        uses: gradle/actions/setup-gradle@v4.2.2
+
 
       # Set environment variables
       - name: Export Properties

@@ -9,6 +9,7 @@ import com.github.gbrowser.ui.toolwindow.gbrowser.getHBookmarkItemsWidthValue
 import com.github.gbrowser.ui.toolwindow.gbrowser.getHistoryItemsWidthValue
 import com.github.gbrowser.ui.toolwindow.gbrowser.getSuggestionItems
 import com.intellij.openapi.components.service
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.PopupChooserBuilder
 import com.intellij.ui.SearchTextField
@@ -17,10 +18,9 @@ import java.awt.event.KeyEvent
 import javax.swing.ListSelectionModel
 
 
-class GBrowserSearchTextField(private val delegate: GBrowserToolWindowActionBarDelegate) :
-  SearchTextField(false, true, "Search or type a URL") {
+class GBrowserSearchTextField(project: Project, private val delegate: GBrowserToolWindowActionBarDelegate) : SearchTextField(false, true, "Search or type a URL") {
 
-  private val settings = GBrowserService.instance()
+  private val settings = project.service<GBrowserService>()
   private val favIconLoader: CachingFavIconLoader = service()
   private var popupList: JBList<GBrowserSearchPopUpItem>? = null
   private var popup: JBPopup? = null
@@ -147,10 +147,14 @@ class GBrowserSearchTextField(private val delegate: GBrowserToolWindowActionBarD
       text = selectedUrl
       delegate.onSearchEnter(selectedUrl)
       hidePopup()
+      // Force blur the text field to move focus away from it
+      transferFocusBackward()
     } else if (text.trim().isNotEmpty()) { // If no item is selected, but there's a text in the search field
-      addCurrentTextToHistory()
+      // We don't need to add to history here as it's handled in GBrowserToolWindowBrowser.setHistoryItem()
       delegate.onSearchEnter(text.trim())
       hidePopup()
+      // Force blur the text field to move focus away from it
+      transferFocusBackward()
     } else {
       hidePopup()
     }
@@ -175,8 +179,10 @@ class GBrowserSearchTextField(private val delegate: GBrowserToolWindowActionBarD
       popupList = JBList(filteredItems.take(10))  // Update 'popupList' with filtered items
       popupList?.let { list ->
         val popupBuilder = PopupChooserBuilder(list).setRenderer(GBrowserSearchPopCellRenderer(isSearchHighlightEnabled)).setCloseOnEnter(
-          true).setAutoSelectIfEmpty(false).setRequestFocus(false).setSelectionMode(
-          ListSelectionModel.SINGLE_SELECTION).setCancelKeyEnabled(true)
+          true
+        ).setAutoSelectIfEmpty(false).setRequestFocus(false).setSelectionMode(
+          ListSelectionModel.SINGLE_SELECTION
+        ).setCancelKeyEnabled(true)
 
         popup = popupBuilder.createPopup().apply {
           showUnderneathOf(this@GBrowserSearchTextField)

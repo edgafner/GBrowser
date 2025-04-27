@@ -4,17 +4,17 @@ import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 
+
 fun properties(key: String) = providers.gradleProperty(key)
-fun environment(key: String) = providers.environmentVariable(key)
 
 plugins {
   alias(libs.plugins.kotlin) //`jvm-test-suite`
   alias(libs.plugins.intelliJPlatform)
   alias(libs.plugins.changelog)
   alias(libs.plugins.qodana)
-  alias(libs.plugins.kover)
   kotlin("plugin.serialization") version "2.1.20"
-  jacoco
+  alias(libs.plugins.kover)
+
 }
 
 group = properties("pluginGroup").get()
@@ -28,6 +28,7 @@ repositories {
     defaultRepositories()
   }
 }
+
 
 
 dependencies {
@@ -45,17 +46,20 @@ dependencies {
     testFramework(TestFrameworkType.JUnit5)
   }
 
-  implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.18.2") { isTransitive = false }
-  implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.2") { isTransitive = false }
-  implementation("com.squareup.okhttp3:okhttp:4.12.0")
-  compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 
+  implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2") { isTransitive = false }
+  implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2") { isTransitive = false }
+  implementation("com.fasterxml.jackson.core:jackson-databind:2.17.2") { isTransitive = false }
+  implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.17.2") { isTransitive = false }
+  compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+  implementation("com.azure:azure-ai-inference:1.0.0-beta.4")
+
+  testRuntimeOnly("junit:junit:4.13.2")
   testImplementation(libs.bundles.kTest)
   testImplementation("org.opentest4j:opentest4j:1.3.0")
-  testRuntimeOnly("junit:junit:4.13.2")
   testImplementation("org.kodein.di:kodein-di-jvm:7.25.0")
 
-  testImplementation("org.junit.jupiter:junit-jupiter-params:5.12.1")
+
 }
 
 kotlin {
@@ -68,12 +72,12 @@ kotlin {
     jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
     languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_1)
     freeCompilerArgs.add("-Xjvm-default=all")
-
   }
 }
 
 
 intellijPlatform {
+  buildSearchableOptions.set(false)
   pluginConfiguration {
     version = providers.gradleProperty("pluginVersion")
     description = providers.fileContents(layout.projectDirectory.file("README.md")).asText.map {
@@ -104,8 +108,6 @@ intellijPlatform {
 
     }
   }
-
-
 
   pluginVerification {
     ides {
@@ -153,7 +155,6 @@ tasks {
     gradleVersion = properties("gradleVersion").get()
   }
 
-
   runIde {
     jvmArgs = listOf("-Xmx4G")
     systemProperties(
@@ -171,18 +172,6 @@ tasks {
   }
 
 
-  publishPlugin {
-    dependsOn("patchChangelog")
-    token = environment(
-      "PUBLISH_TOKEN"
-    ) // The pluginVersion is based on the SemVer (https://semver.org) and supports pre-release labels, like 2.1.7-alpha.3
-    // Specify pre-release label to publish the plugin in a custom Release Channel automatically. Read more:
-    // https://plugins.jetbrains.com/docs/intellij/deployment.html#specifying-a-release-channel
-    channels = properties("pluginVersion").map {
-      listOf(it.substringAfter('-', "").substringBefore('.').ifEmpty { "default" })
-    }
-  }
-
   test {
     useJUnitPlatform {
       excludeTags("ui")
@@ -191,17 +180,17 @@ tasks {
     systemProperty("idea.home.path", prepareTestSandbox.get().getDestinationDir().parentFile.absolutePath)
     systemProperty("idea.force.use.core.classloader", "true")
 
+
     jvmArgs = listOf(
-      "-Didea.trust.all.projects=true",
-      "--add-opens=java.base/java.lang=ALL-UNNAMED",
-      "--add-opens=java.desktop/javax.swing=ALL-UNNAMED"
+      "-Didea.trust.all.projects=true", "--add-opens=java.base/java.lang=ALL-UNNAMED", "--add-opens=java.desktop/javax.swing=ALL-UNNAMED"
     )
 
     dependsOn("buildPlugin")
   }
 
+  // Create a separate UI test task
   register<Test>("uiTest") {
-    description = "Run only the UI tests that start the IDE"
+    description = "Run UI tests using the IDE starter framework"
     group = "verification"
 
     testClassesDirs = sourceSets["test"].output.classesDirs
@@ -214,9 +203,9 @@ tasks {
 
     systemProperty("path.to.build.plugin", buildPlugin.get().archiveFile.get().asFile.absolutePath)
     systemProperty("idea.home.path", prepareTestSandbox.get().getDestinationDir().parentFile.absolutePath)
-    systemProperty(
-      "allure.results.directory", project.layout.buildDirectory.get().asFile.absolutePath + "/allure-results"
-    )
+    systemProperty("allure.results.directory", project.layout.buildDirectory.get().asFile.absolutePath + "/allure-results")
+
+
 
     jvmArgumentProviders += CommandLineArgumentProvider {
       listOf(

@@ -5,6 +5,7 @@ import com.github.gbrowser.util.GBrowserToolWindowUtil
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.DumbAware
 
 
@@ -19,8 +20,9 @@ class GBrowserHomeAction : AnAction(), DumbAware {
 
 
   override fun actionPerformed(e: AnActionEvent) {
+    val project = e.project ?: return
     val panel = GBrowserToolWindowUtil.getSelectedBrowserPanel(e) ?: return
 
-    panel.loadUrl(GBrowserService.instance().defaultUrl)
+    panel.loadUrl(project.service<GBrowserService>().defaultUrl)
   }
 }
