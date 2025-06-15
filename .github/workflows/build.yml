@@ -20,13 +20,12 @@ on:
   # Trigger the workflow on any pull request
   pull_request:
 
-
 jobs:
-
   # Prepare environment and build the plugin
   build:
     name: Build
-    runs-on: ubuntu-azd
+    runs-on:
+      - ubuntu-azd
     outputs:
       version: ${{ steps.properties.outputs.version }}
       changelog: ${{ steps.properties.outputs.changelog }}
@@ -95,12 +94,12 @@ jobs:
           name: ${{ steps.artifact.outputs.filename }}
           path: ./build/distributions/content/*/*
 
-
   # Run tests and upload a code coverage report
   test:
     name: Test
     needs: [ build ]
-    runs-on: ubuntu-azd
+    runs-on:
+      - ubuntu-azd
     steps:
 
       # Check out the current repository
@@ -156,7 +155,8 @@ jobs:
   inspectCode:
     name: Inspect code
     needs: [ build ]
-    runs-on: ubuntu-azd
+    runs-on:
+      - ubuntu-azd
     permissions:
       contents: write
       checks: write
@@ -204,7 +204,8 @@ jobs:
   verify:
     name: Verify plugin
     needs: [ build ]
-    runs-on: ubuntu-azd
+    runs-on:
+      - ubuntu-azd
     steps:
 
       # Free GitHub Actions Environment Disk Space
@@ -255,7 +256,8 @@ jobs:
   test-report:
     name: Test Report
     needs: [ build,test ]
-    runs-on: ubuntu-azd
+    runs-on:
+      - ubuntu-azd
     permissions:
       contents: write
       checks: write
@@ -289,7 +291,8 @@ jobs:
     name: Release draft
     if: github.event_name != 'pull_request'
     needs: [ build, test, test-report, inspectCode, verify ]
-    runs-on: ubuntu-azd
+    runs-on:
+      - ubuntu-azd
     permissions:
       contents: write
     steps:
