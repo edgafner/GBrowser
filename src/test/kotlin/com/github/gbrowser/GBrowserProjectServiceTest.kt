@@ -3,13 +3,7 @@ package com.github.gbrowser
 import com.github.gbrowser.services.GBrowserProjectService
 import com.github.gbrowser.ui.toolwindow.gbrowser.GBrowserTab
 import com.intellij.configurationStore.serialize
-import com.intellij.openapi.components.service
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.util.JDOMUtil
-import com.intellij.testFramework.junit5.RunInEdt
-import com.intellij.testFramework.junit5.TestApplication
-import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -18,22 +12,20 @@ import java.util.*
 /**
  * Tests for GBrowserProjectService
  */
-@TestApplication
-@RunInEdt(writeIntent = true)
 class GBrowserProjectServiceTest {
 
   private lateinit var service: GBrowserProjectService
-  private lateinit var project: Project
 
   @BeforeEach
   fun setup() {
-    project = ProjectManager.getInstance().defaultProject
-    service = project.service<GBrowserProjectService>()
+    // Create a simple instance without platform initialization
+    service = GBrowserProjectService()
     service.loadState(GBrowserProjectService.ProjectSettingsState())
   }
 
+
   @Test
-  fun `test tabs state serialization`() = runTest {
+  fun `test tabs state serialization`() {
     val tab = GBrowserTab("https://example.com", "Example", Date())
     service.tabs = mutableSetOf(tab)
     val state = service.getState()
@@ -47,7 +39,7 @@ class GBrowserProjectServiceTest {
   }
 
   @Test
-  fun `test addTab method`() = runTest {
+  fun `test addTab method`() {
     service.tabs = mutableSetOf()
     val tab = GBrowserTab("https://example.com", "Example", Date())
 
@@ -58,7 +50,7 @@ class GBrowserProjectServiceTest {
   }
 
   @Test
-  fun `test addTab method with duplicate URL`() = runTest {
+  fun `test addTab method with duplicate URL`() {
     service.tabs = mutableSetOf()
     val date1 = Date()
     val date2 = Date(date1.time + 1000) // 1 second later
@@ -82,7 +74,7 @@ class GBrowserProjectServiceTest {
   }
 
   @Test
-  fun `test addTabs method`() = runTest {
+  fun `test addTabs method`() {
     service.tabs = mutableSetOf()
     val tab1 = GBrowserTab("https://example1.com", "Example 1", Date())
     val tab2 = GBrowserTab("https://example2.com", "Example 2", Date())
@@ -95,7 +87,7 @@ class GBrowserProjectServiceTest {
   }
 
   @Test
-  fun `test addTabs method with duplicate URLs`() = runTest {
+  fun `test addTabs method with duplicate URLs`() {
     service.tabs = mutableSetOf()
     val tab1 = GBrowserTab("https://example1.com", "Example 1", Date())
     val tab2 = GBrowserTab("https://example1.com", "Example 2", Date())
@@ -113,7 +105,7 @@ class GBrowserProjectServiceTest {
   }
 
   @Test
-  fun `test removeTab method`() = runTest {
+  fun `test removeTab method`() {
     val tab = GBrowserTab("https://example.com", "Example", Date())
     service.tabs = mutableSetOf(tab)
 
@@ -123,7 +115,7 @@ class GBrowserProjectServiceTest {
   }
 
   @Test
-  fun `test removeTab method with non-existing tab`() = runTest {
+  fun `test removeTab method with non-existing tab`() {
     val tab1 = GBrowserTab("https://example1.com", "Example 1", Date())
     val tab2 = GBrowserTab("https://example2.com", "Example 2", Date())
 

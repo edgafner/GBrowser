@@ -1,4 +1,4 @@
-package com.github.gbrowser.ui.utils
+package ui.utils
 
 import com.intellij.driver.sdk.ui.keyboard.WithKeyboard
 import com.intellij.openapi.util.SystemInfoRt
