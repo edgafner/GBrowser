@@ -4,7 +4,7 @@ on:
 
 jobs:
   cleanup:
-    runs-on: ubuntu-azd
+    runs-on: ubuntu-20.04-16
     steps:
       - name: Check out code
         uses: actions/checkout@v4

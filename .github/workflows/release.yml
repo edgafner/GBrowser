@@ -12,7 +12,7 @@ jobs:
   # Prepare and publish the plugin to JetBrains Marketplace repository
   release:
     name: Publish Plugin
-    runs-on: ubuntu-azd
+    runs-on: ubuntu-20.04-16
     permissions:
       contents: write
       pull-requests: write

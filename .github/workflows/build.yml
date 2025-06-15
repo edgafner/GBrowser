@@ -25,7 +25,7 @@ jobs:
   build:
     name: Build
     runs-on:
-      - ubuntu-azd
+      - ubuntu-20.04-16
     outputs:
       version: ${{ steps.properties.outputs.version }}
       changelog: ${{ steps.properties.outputs.changelog }}
@@ -99,7 +99,7 @@ jobs:
     name: Test
     needs: [ build ]
     runs-on:
-      - ubuntu-azd
+      - ubuntu-20.04-16
     steps:
 
       # Check out the current repository
@@ -156,7 +156,7 @@ jobs:
     name: Inspect code
     needs: [ build ]
     runs-on:
-      - ubuntu-azd
+      - ubuntu-20.04-16
     permissions:
       contents: write
       checks: write
@@ -205,7 +205,7 @@ jobs:
     name: Verify plugin
     needs: [ build ]
     runs-on:
-      - ubuntu-azd
+      - ubuntu-20.04-16
     steps:
 
       # Free GitHub Actions Environment Disk Space
@@ -257,7 +257,7 @@ jobs:
     name: Test Report
     needs: [ build,test ]
     runs-on:
-      - ubuntu-azd
+      - ubuntu-20.04-16
     permissions:
       contents: write
       checks: write
@@ -292,7 +292,7 @@ jobs:
     if: github.event_name != 'pull_request'
     needs: [ build, test, test-report, inspectCode, verify ]
     runs-on:
-      - ubuntu-azd
+      - ubuntu-20.04-16
     permissions:
       contents: write
     steps:
