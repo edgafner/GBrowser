@@ -20,9 +20,7 @@ on:
   # Trigger the workflow on any pull request
   pull_request:
 
-
 jobs:
-
   # Prepare environment and build the plugin
   build:
     name: Build
@@ -95,7 +93,6 @@ jobs:
           name: ${{ steps.artifact.outputs.filename }}
           path: ./build/distributions/content/*/*
 
-
   # Run tests and upload a code coverage report
   test:
     name: Test
@@ -145,7 +142,7 @@ jobs:
 
       # Upload the Kover report to CodeCov
       - name: Upload Code Coverage Report
-        uses: codecov/codecov-action@v5.4.2
+        uses: codecov/codecov-action@v5.4.3
         with:
           files: ${{ github.workspace }}/build/reports/kover/report.xml
           flags: unittests
@@ -193,7 +190,7 @@ jobs:
 
       # Run Qodana inspections
       - name: Qodana - Code Inspection
-        uses: JetBrains/qodana-action@v2025.1.0
+        uses: JetBrains/qodana-action@v2025.1.1
         with:
           cache-default-branch-only: true
         env:

@@ -1,4 +1,4 @@
-package com.github.gbrowser.ui
+package ui
 
 import com.intellij.ide.starter.buildTool.GradleBuildTool
 import com.intellij.ide.starter.community.model.BuildType
@@ -33,7 +33,7 @@ class Setup {
     fun setupTestContext(hyphenateWithClass: String): IDETestContext {
 
       val testCase = TestCase(
-        IdeProductProvider.IC.copy(buildNumber = "251.25410.28", buildType = BuildType.EAP.type), NoProject
+        IdeProductProvider.IC.copy(buildNumber = "252.19874.12", buildType = BuildType.EAP.type), NoProject
       )
       return Starter.newContext(testName = hyphenateWithClass, testCase = testCase).apply {
         val pluginPath = System.getProperty("path.to.build.plugin")

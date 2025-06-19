@@ -1,19 +1,21 @@
 package com.github.gbrowser.ui
 
-import com.github.gbrowser.ui.fixuters.GBrowserToolWindowPanel
-import com.github.gbrowser.ui.fixuters.gBrowserToolWindow
-import com.github.gbrowser.ui.fixuters.showGBrowserToolWindow
-import com.github.gbrowser.ui.fixuters.waitForIndicatorsIgnore
+import com.github.gbrowser.ui.fixtures.GBrowserToolWindowPanel
+import com.github.gbrowser.ui.fixtures.gBrowserToolWindow
+import com.github.gbrowser.ui.fixtures.showGBrowserToolWindow
+import com.github.gbrowser.ui.fixtures.waitForIndicatorsIgnore
 import com.github.gbrowser.ui.utils.buttonByIcon
 import com.github.gbrowser.ui.utils.cleanEnterTextEnter
 import com.github.gbrowser.ui.utils.selectAll
-import com.intellij.driver.sdk.ui.*
+import com.intellij.driver.sdk.ui.Finder
 import com.intellij.driver.sdk.ui.components.UiComponent.Companion.waitFound
-import com.intellij.driver.sdk.ui.components.UiComponent.Companion.waitVisible
 import com.intellij.driver.sdk.ui.components.common.dialogs.newProjectDialog
 import com.intellij.driver.sdk.ui.components.common.ideFrame
 import com.intellij.driver.sdk.ui.components.common.welcomeScreen
 import com.intellij.driver.sdk.ui.components.elements.*
+import com.intellij.driver.sdk.ui.enabled
+import com.intellij.driver.sdk.ui.shouldBe
+import com.intellij.driver.sdk.ui.ui
 import com.intellij.driver.sdk.wait
 import com.intellij.ide.starter.driver.engine.BackgroundRun
 import com.intellij.ide.starter.driver.engine.runIdeWithDriver
@@ -94,7 +96,7 @@ class GBrowserUITest {
 
         gBrowserToolWindow {
 
-          actionButtonByXpath("//div[contains(@accessiblename, 'Add Tab')]").waitVisible(5.seconds).click()
+          actionButtonByXpath("//div[contains(@accessiblename, 'Add Tab')]").waitFound(5.seconds).click()
 
           basicTab()
 
@@ -119,12 +121,12 @@ class GBrowserUITest {
 
       wait(2.seconds)
 
-      actionButtonByXpath("//div[contains(@accessiblename, 'Bookmark')]").waitVisible(5.seconds).click()
+      actionButtonByXpath("//div[contains(@accessiblename, 'Bookmark')]").waitFound(5.seconds).click()
 
-      actionButtonByXpath("//div[@accessiblename='Reload Page']").waitVisible(5.seconds).click()
+      actionButtonByXpath("//div[@accessiblename='Reload Page']").waitFound(5.seconds).click()
 
 
-      actionButtonByXpath("//div[@accessiblename='Backward']").waitVisible(5.seconds).click()
+      actionButtonByXpath("//div[@accessiblename='Backward']").waitFound(5.seconds).click()
     }
   }
 
@@ -151,7 +153,7 @@ class GBrowserUITest {
     gBrowserPanel {
       button {
         byTooltip("https://github.com/")
-      }.shouldBe { visible() }.click()
+      }.waitFound(2.seconds).click()
 
       rightClick()
       driver.ui.ideFrame {
