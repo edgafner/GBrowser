@@ -1,5 +1,6 @@
-package com.github.gbrowser.ui.toolwindow.gbrowser
+package ui.toolwindow.gbrowser
 
+import com.github.gbrowser.ui.toolwindow.gbrowser.GBrowserTab
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.util.*
@@ -55,6 +56,6 @@ class GBrowserTabTest {
 
   @Test
   fun `test serialVersionUID constant`() { // Just verify that the constant exists and has the expected value
-    Assertions.assertEquals(4423235970041806118L, GBrowserTab.serialVersionUID)
+    Assertions.assertEquals(4423235970041806118L, GBrowserTab.Companion.serialVersionUID)
   }
 }

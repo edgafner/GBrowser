@@ -1,4 +1,4 @@
-package com.github.gbrowser.ui.fixuters
+package ui.fixuters
 
 import com.intellij.driver.client.Remote
 import com.intellij.driver.model.OnDispatcher

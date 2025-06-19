@@ -1,12 +1,11 @@
 [versions]
 changelog = "2.2.1"
-intelliJPlatform = "2.5.0"
-kotlin = "2.1.20"
+intelliJPlatform = "2.6.0"
+kotlin = "2.1.21"
 kover = "0.9.1"
-qodana = "2025.1.0"
-mockkTest = "1.14.0"
+qodana = "2025.1.1"
+mockkTest = "1.14.2"
 kotlinTest = "1.10.2"
-
 
 
 [plugins]
@@ -16,10 +15,15 @@ kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 qodana = { id = "org.jetbrains.qodana", version.ref = "qodana" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 
+
 [libraries]
 korutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinTest" }
+
+
+#Test
 korutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinTest" }
 mockk-test = { group = "io.mockk", name = "mockk", version.ref = "mockkTest" }
+
 
 [bundles]
 kTest = ["korutines-core", "korutines-test", "mockk-test"]

@@ -9,7 +9,7 @@ on:
 
 jobs:
 
-  # Prepare and publish the plugin to JetBrains Marketplace repository
+  # Prepare and publish the plugin JetBrains Marketplace repository
   release:
     name: Publish Plugin
     runs-on: ubuntu-latest

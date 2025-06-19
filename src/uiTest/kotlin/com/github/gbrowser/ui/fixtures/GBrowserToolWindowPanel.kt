@@ -1,4 +1,4 @@
-package com.github.gbrowser.ui.fixuters
+package com.github.gbrowser.ui.fixtures
 
 import com.github.gbrowser.ui.utils.stripeButtonT
 import com.intellij.driver.sdk.ui.Finder
@@ -26,4 +26,3 @@ class GBrowserToolWindowPanel(data: ComponentData) : UiComponent(data) {
 }
 
 class GBrowserPanel(data: ComponentData) : UiComponent(data)
-

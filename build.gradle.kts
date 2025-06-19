@@ -12,10 +12,12 @@ plugins {
   alias(libs.plugins.intelliJPlatform)
   alias(libs.plugins.changelog)
   alias(libs.plugins.qodana)
-  kotlin("plugin.serialization") version "2.1.20"
+  kotlin("plugin.serialization") version "2.1.21"
   alias(libs.plugins.kover)
-
+  idea
 }
+
+
 
 group = properties("pluginGroup").get()
 version = properties("pluginVersion").get()
@@ -24,42 +26,76 @@ version = properties("pluginVersion").get()
 repositories {
   mavenCentral()
   maven("https://oss.sonatype.org/content/repositories/snapshots/")
+  maven("https://cache-redirector.jetbrains.com/intellij-dependencies")
+  maven("https://cache-redirector.jetbrains.com/packages.jetbrains.team/maven/p/ij/intellij-ide-starter")
   intellijPlatform {
     defaultRepositories()
   }
 }
 
 
+sourceSets.create("uiTest", Action<SourceSet> {
+  compileClasspath += sourceSets["main"].output + sourceSets["test"].output
+  runtimeClasspath += sourceSets["main"].output + sourceSets["test"].output
+})
 
-dependencies {
+
+// Configure IntelliJ IDEA to recognize uiTest as test sources
+idea {
+  module {
+    testSources.from(sourceSets["uiTest"].kotlin.srcDirs)
+    testResources.from(sourceSets["uiTest"].resources.srcDirs)
+  }
+}
+
+val uiTestImplementation: Configuration by configurations.getting {
+  extendsFrom(configurations.testImplementation.get())
+}
+
+
+val uiTestRuntimeOnly: Configuration by configurations.getting {
+  extendsFrom(configurations.testRuntimeOnly.get())
+}
+
+dependencies { // IntelliJ Platform dependencies
   intellijPlatform {
-    create(
-      providers.gradleProperty("platformType"), providers.gradleProperty("platformVersion"), useInstaller = false
-    )
+    create(providers.gradleProperty("platformType"), providers.gradleProperty("platformVersion"), useInstaller = false)
     bundledPlugins(providers.gradleProperty("platformBundledPlugins").map { it.split(',') })
     jetbrainsRuntime()
     pluginVerifier()
-
     zipSigner()
-    testFramework(TestFrameworkType.Platform)
+
+    // Test framework dependencies for regular tests
     testFramework(TestFrameworkType.Starter)
+    testFramework(TestFrameworkType.Platform)
     testFramework(TestFrameworkType.JUnit5)
+
+    // Test framework dependencies for UI tests - only Starter needed
+    testFramework(TestFrameworkType.Starter, configurationName = "uiTestImplementation")
   }
 
-
-  implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2") { isTransitive = false }
-  implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2") { isTransitive = false }
-  implementation("com.fasterxml.jackson.core:jackson-databind:2.17.2") { isTransitive = false }
-  implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.17.2") { isTransitive = false }
-  compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
-  implementation("com.azure:azure-ai-inference:1.0.0-beta.4")
+  // Implementation dependencies
+  implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.19.0") { isTransitive = false }
+  implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.19.1") { isTransitive = false }
+  implementation("com.fasterxml.jackson.core:jackson-databind:2.19.0") { isTransitive = false }
+  implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.19.1") { isTransitive = false }
+  compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
+  implementation("com.azure:azure-ai-inference:1.0.0-beta.5")
 
   testRuntimeOnly("junit:junit:4.13.2")
   testImplementation(libs.bundles.kTest)
   testImplementation("org.opentest4j:opentest4j:1.3.0")
-  testImplementation("org.kodein.di:kodein-di-jvm:7.25.0")
+  testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
+  testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
 
+  // UI Test dependencies
+  uiTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
+  uiTestImplementation("org.kodein.di:kodein-di-jvm:7.26.1")
+  uiTestImplementation(libs.bundles.kTest)
 
+  // Add JUnit 5 dependencies explicitly
+  uiTestImplementation("org.junit.jupiter:junit-jupiter:5.13.1")
+  uiTestRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.1")
 }
 
 kotlin {
@@ -67,11 +103,15 @@ kotlin {
     languageVersion = JavaLanguageVersion.of(21)
     vendor = JvmVendorSpec.JETBRAINS
   }
+
   compilerOptions {
-    apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_1)
+    apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0)
     jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
-    languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_1)
-    freeCompilerArgs.add("-Xjvm-default=all")
+    languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0)
+    freeCompilerArgs.addAll(
+      "-Xjvm-default=all",
+      "-opt-in=kotlinx.serialization.ExperimentalSerializationApi"
+    )
   }
 }
 
@@ -104,8 +144,6 @@ intellijPlatform {
 
     ideaVersion {
       sinceBuild = providers.gradleProperty("pluginSinceBuild")
-      untilBuild = providers.gradleProperty("pluginUntilBuild")
-
     }
   }
 
@@ -177,6 +215,16 @@ tasks {
       excludeTags("ui")
     }
 
+    // Enable process-level parallelism (safer than method-level parallelism)
+    maxParallelForks = minOf(Runtime.getRuntime().availableProcessors() / 2, 3)
+
+    // Keep JUnit execution sequential within each process for stability
+    systemProperty("junit.jupiter.execution.parallel.enabled", "false")
+
+    // Increase memory for parallel execution
+    minHeapSize = "512m"
+    maxHeapSize = "2g"
+
     systemProperty("idea.home.path", prepareTestSandbox.get().getDestinationDir().parentFile.absolutePath)
     systemProperty("idea.force.use.core.classloader", "true")
 
@@ -188,24 +236,30 @@ tasks {
     dependsOn("buildPlugin")
   }
 
-  // Create a separate UI test task
   register<Test>("uiTest") {
-    description = "Run UI tests using the IDE starter framework"
+    description = "Runs only the UI tests that start the IDE"
     group = "verification"
 
-    testClassesDirs = sourceSets["test"].output.classesDirs
-    classpath = sourceSets["test"].runtimeClasspath
+    testClassesDirs = sourceSets["uiTest"].output.classesDirs
+    classpath = sourceSets["uiTest"].runtimeClasspath
 
-    // JUnit 5 filter: only include tests tagged as "ui"
     useJUnitPlatform {
       includeTags("ui")
     }
+
+    // UI tests should run sequentially (not in parallel) to avoid conflicts
+    maxParallelForks = 1
+
+    // Increase memory for UI tests
+    minHeapSize = "1g"
+    maxHeapSize = "4g"
 
     systemProperty("path.to.build.plugin", buildPlugin.get().archiveFile.get().asFile.absolutePath)
     systemProperty("idea.home.path", prepareTestSandbox.get().getDestinationDir().parentFile.absolutePath)
     systemProperty("allure.results.directory", project.layout.buildDirectory.get().asFile.absolutePath + "/allure-results")
 
-
+    // Disable IntelliJ test listener that conflicts with standard JUnit
+    systemProperty("idea.test.cyclic.buffer.size", "0")
 
     jvmArgumentProviders += CommandLineArgumentProvider {
       listOf(
@@ -222,11 +276,10 @@ tasks {
         "-Djb.privacy.policy.text=<!--999.999-->",
         "-DjbScreenMenuBar.enabled=false",
         "-Djunit.jupiter.extensions.autodetection.enabled=true",
-        "-Dshared.indexes.download.auto.consent=true"
+        "-Dshared.indexes.download.auto.consent=true",
       )
-    } // If you want this to run after building your plugin:
-    dependsOn("buildPlugin")
+    }
+
+    dependsOn(prepareSandbox, buildPlugin)
   }
 }
-
-
