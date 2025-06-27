@@ -95,7 +95,7 @@ dependencies { // IntelliJ Platform dependencies
 
   // Add JUnit 5 dependencies explicitly
   uiTestImplementation("org.junit.jupiter:junit-jupiter:5.13.1")
-  uiTestRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.1")
+  uiTestRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.2")
 }
 
 kotlin {
