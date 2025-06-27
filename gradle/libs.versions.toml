@@ -1,7 +1,7 @@
 [versions]
 changelog = "2.2.1"
 intelliJPlatform = "2.6.0"
-kotlin = "2.1.21"
+kotlin = "2.2.0"
 kover = "0.9.1"
 qodana = "2025.1.1"
 mockkTest = "1.14.2"
