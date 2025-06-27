@@ -12,7 +12,7 @@ plugins {
   alias(libs.plugins.intelliJPlatform)
   alias(libs.plugins.changelog)
   alias(libs.plugins.qodana)
-  kotlin("plugin.serialization") version "2.1.21"
+  kotlin("plugin.serialization") version "2.2.0"
   alias(libs.plugins.kover)
   idea
 }
