@@ -95,7 +95,7 @@ dependencies { // IntelliJ Platform dependencies
 
   // Add JUnit 5 dependencies explicitly
 
-  uiTestImplementation("org.junit.jupiter:junit-jupiter:5.13.2")
+  uiTestImplementation("org.junit.jupiter:junit-jupiter:5.13.3")
   uiTestRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.2")
 }
 
