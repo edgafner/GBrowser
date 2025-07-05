@@ -95,6 +95,7 @@ dependencies { // IntelliJ Platform dependencies
   // UI Test dependencies
   uiTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
   uiTestImplementation("org.kodein.di:kodein-di-jvm:7.26.1")
+  uiTestImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
   uiTestImplementation(libs.bundles.kTest)
 
   // Add JUnit 5 dependencies explicitly
