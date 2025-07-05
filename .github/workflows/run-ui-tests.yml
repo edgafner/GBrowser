@@ -44,12 +44,22 @@ jobs:
           distribution: 'jetbrains'
           java-version: 21
           java-package: 'jdk+jcef'
+          check-latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Setup Gradle
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.14.3"
+          cache-read-only: false
+          gradle-home-cache-includes: |
+            caches
+            notifications
+            jdks
+          gradle-home-cache-excludes: |
+            caches/build-cache-*
 
 
           # Run tests
