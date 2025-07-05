@@ -80,15 +80,17 @@ dependencies { // IntelliJ Platform dependencies
   implementation("com.fasterxml.jackson.core:jackson-databind:2.19.1") { isTransitive = false }
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.19.1") { isTransitive = false }
   compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
-  implementation("com.azure:azure-ai-inference:1.0.0-beta.5"){
-    exclude("com.azure","azure-core")
-  }
+
 
   testRuntimeOnly("junit:junit:4.13.2")
   testImplementation(libs.bundles.kTest)
   testImplementation("org.opentest4j:opentest4j:1.3.0")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
+
+  // Add JUnit 5 dependencies for tests
+  testImplementation("org.junit.jupiter:junit-jupiter:5.13.1")
+  testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.1")
 
   // UI Test dependencies
   uiTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
