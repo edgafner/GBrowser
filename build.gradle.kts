@@ -12,7 +12,7 @@ plugins {
   alias(libs.plugins.intelliJPlatform)
   alias(libs.plugins.changelog)
   alias(libs.plugins.qodana)
-  kotlin("plugin.serialization") version "2.1.21"
+  kotlin("plugin.serialization") version "2.2.0"
   alias(libs.plugins.kover)
   idea
 }
@@ -80,7 +80,7 @@ dependencies { // IntelliJ Platform dependencies
   implementation("com.fasterxml.jackson.core:jackson-databind:2.19.1") { isTransitive = false }
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.19.1") { isTransitive = false }
   compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
-  implementation("com.azure:azure-ai-inference:1.0.0-beta.5")
+
 
   testRuntimeOnly("junit:junit:4.13.2")
   testImplementation(libs.bundles.kTest)
@@ -88,13 +88,16 @@ dependencies { // IntelliJ Platform dependencies
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
 
+  // Add JUnit 5 dependencies for tests
+  testImplementation("org.junit.jupiter:junit-jupiter:5.13.1")
+  testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.1")
+
   // UI Test dependencies
   uiTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
   uiTestImplementation("org.kodein.di:kodein-di-jvm:7.26.1")
   uiTestImplementation(libs.bundles.kTest)
 
   // Add JUnit 5 dependencies explicitly
-
   uiTestImplementation("org.junit.jupiter:junit-jupiter:5.13.3")
   uiTestRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.2")
 }
