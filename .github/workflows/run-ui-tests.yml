@@ -18,8 +18,12 @@ on:
 jobs:
 
   testUI:
+    permissions:
+      contents: write
+      checks: write
+      pull-requests: write
     runs-on: ${{ matrix.os }}
-    name: Test UI on ${{ matrix.os }}
+    name: Test GBrowser UI on ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
@@ -40,38 +44,41 @@ jobs:
           distribution: 'jetbrains'
           java-version: 21
           java-package: 'jdk+jcef'
+          check-latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Setup Gradle
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.14.3"
+          cache-read-only: false
+          gradle-home-cache-includes: |
+            caches
+            notifications
+            jdks
+          gradle-home-cache-excludes: |
+            caches/build-cache-*
 
 
           # Run tests
       - name: Tests
         run: ./gradlew uiTest
 
-      - uses: GuillaumeFalourd/wait-sleep-action@v1
-        with:
-          time: '10'
-
-      - name: Copy logs
-        if: ${{ failure() }}
-        run: mv build/idea-sandbox/system/log/ build/reports
-
-        # Collect Tests Result of failed tests
+      # Collect Tests Result
       - name: Collect Tests Result
-        if: ${{ always() }}
+        if: failure()
         uses: actions/upload-artifact@v4.6.2
         with:
           name: tests-result-${{ matrix.os }}
-          path: ${{ github.workspace }}/build/reports
+          path: |
+            ${{ github.workspace }}/build/reports
+            ${{ github.workspace }}/build/test-results
+            ${{ github.workspace }}/build/out/ide-tests/tests/**/UITest/log/screenshots/
+            ${{ github.workspace }}/build/out/ide-tests/tests/**/UITest/log/idea.log
+            ${{ github.workspace }}/build/out/ide-tests/tests/**/UITest/log/ui-hierarchy/ui.html
+        continue-on-error: true
 
-      - name: Upload Code Coverage Report
-        uses: codecov/codecov-action@v5.4.3
-        with:
-          files: ${{ github.workspace }}/build/reports/jacoco/runIdeUiCodeCoverageReport/runIdeUiCodeCoverageReport.xml
-          flags: ui-${{ matrix.os }}
-          token: ${{ secrets.CODECOV_TOKEN }}
+  
 
