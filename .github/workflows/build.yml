@@ -272,7 +272,7 @@ jobs:
           path: ~/
 
       - name: Generate Test Report
-        uses: dorny/test-reporter@v2.1.0
+        uses: dorny/test-reporter@v2.1.1
         if: success() || failure()
         with:
           name: Test Report Dashboard
