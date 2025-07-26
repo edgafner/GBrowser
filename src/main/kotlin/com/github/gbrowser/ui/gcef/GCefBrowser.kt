@@ -1,5 +1,6 @@
 package com.github.gbrowser.ui.gcef
 
+import com.github.gbrowser.actions.DeviceEmulationConstants
 import com.github.gbrowser.actions.GBrowserMobileToggleAction
 import com.github.gbrowser.i18n.GBrowserBundle
 import com.github.gbrowser.services.GBrowserService
@@ -223,7 +224,7 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
     }
 
     // Reapply theme after resize to ensure it's properly rendered
-    javax.swing.Timer(100) {
+    javax.swing.Timer(DeviceEmulationConstants.THEME_UPDATE_DELAY_MS) {
       GBrowserThemeUtil.applyTheme(cefBrowser, project)
     }.apply {
       isRepeats = false
@@ -266,7 +267,7 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
 
   fun refreshTheme() {
     // Add a small delay to ensure the page is ready
-    javax.swing.Timer(100) {
+    javax.swing.Timer(DeviceEmulationConstants.THEME_UPDATE_DELAY_MS) {
       GBrowserThemeUtil.applyTheme(cefBrowser, project)
     }.apply {
       isRepeats = false
