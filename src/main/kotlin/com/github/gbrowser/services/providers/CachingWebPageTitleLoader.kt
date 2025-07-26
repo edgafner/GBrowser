@@ -3,26 +3,59 @@ package com.github.gbrowser.services.providers
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.Service
+import com.intellij.openapi.diagnostic.logger
+import kotlinx.coroutines.*
 import org.jsoup.Jsoup
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
 @Service(Service.Level.APP)
-class CachingWebPageTitleLoader : Disposable {
+class CachingWebPageTitleLoader(
+  private val scope: CoroutineScope
+) : Disposable {
 
-  private val titleCache = Caffeine.newBuilder().expireAfterWrite(5, TimeUnit.MINUTES) // Adjust the time value as needed
-    .build<String, CompletableFuture<String>>()
-
-  fun getTitleOfWebPage(url: String): CompletableFuture<String> {
-    return titleCache.get(url) { loadTitleAsync(url) }
+  companion object {
+    private val LOG = logger<CachingWebPageTitleLoader>()
   }
 
-  private fun loadTitleAsync(url: String): CompletableFuture<String> {
-    return CompletableFuture.supplyAsync {
+  private val titleCache = Caffeine.newBuilder()
+    .expireAfterWrite(5, TimeUnit.MINUTES)
+    .build<String, CompletableFuture<String>>()
+
+  /**
+   * Gets the title of a web page asynchronously.
+   * @return CompletableFuture for backward compatibility
+   */
+  fun getTitleOfWebPage(url: String): CompletableFuture<String> {
+    return titleCache.get(url) { createCompletableFuture(url) }
+  }
+
+  private fun createCompletableFuture(url: String): CompletableFuture<String> {
+    val future = CompletableFuture<String>()
+    val deferred = loadTitleAsync(url)
+
+    @Suppress("DuplicatedCode")
+    scope.launch {
+      try {
+        future.complete(deferred.await())
+      } catch (e: CancellationException) {
+        future.cancel(true)
+        throw e
+      } catch (e: Exception) {
+        future.completeExceptionally(e)
+      }
+    }
+
+    return future
+  }
+
+  private fun loadTitleAsync(url: String): Deferred<String> {
+    return scope.async(Dispatchers.IO) {
       try {
         val document = Jsoup.connect(url).get()
-        document.title()
+        document.title().ifEmpty { "Unknown" }
       } catch (e: Exception) {
+        LOG.info("Failed to load title of web page: $url", e)
         "Unknown"
       }
     }
@@ -30,5 +63,6 @@ class CachingWebPageTitleLoader : Disposable {
 
   override fun dispose() {
     titleCache.cleanUp()
+    scope.cancel("Service disposed")
   }
 }

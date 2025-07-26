@@ -17,6 +17,8 @@ import com.intellij.openapi.wm.ToolWindow
 import com.intellij.util.application
 import com.intellij.util.messages.MessageBus
 import com.intellij.util.messages.MessageBusConnection
+import java.awt.event.ComponentAdapter
+import java.awt.event.ComponentEvent
 import javax.swing.SwingUtilities
 
 class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleToolWindowPanel(true, true), Disposable, GBrowserToolWindowActionBarDelegate,
@@ -37,6 +39,7 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
     toolbar = gBrowserToolBar.mainToolBarComponent
     gBrowserToolBar.search.text = currentTitle
     setupBrowser()
+    setupResizeListener()
   }
 
   private fun setupBrowser() {
@@ -44,6 +47,40 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
     gbrowser.addLifeSpanHandler(toolWindow)
     gbrowser.addRequestHandler(GBrowserCefRequestHandler(toolWindow.project, null))
     setContent(gbrowser.component)
+  }
+
+  private fun setupResizeListener() {
+    // Add component listener to handle resize events
+    addComponentListener(object : ComponentAdapter() {
+      override fun componentResized(e: ComponentEvent?) {
+        // Force browser component to update its size
+        SwingUtilities.invokeLater {
+          gbrowser.forceResize()
+          // Also revalidate the entire panel
+          revalidate()
+          repaint()
+        }
+      }
+
+      override fun componentShown(e: ComponentEvent?) {
+        // Ensure browser is properly sized when shown
+        SwingUtilities.invokeLater {
+          gbrowser.forceResize()
+          gbrowser.setVisibility(true)
+        }
+      }
+    })
+
+    // Also listen to tool window state changes
+    toolWindow.addContentManagerListener(object : com.intellij.ui.content.ContentManagerListener {
+      override fun contentAdded(event: com.intellij.ui.content.ContentManagerEvent) {
+        if (event.content.component == this@GBrowserToolWindowBrowser) {
+          SwingUtilities.invokeLater {
+            gbrowser.forceResize()
+          }
+        }
+      }
+    })
   }
 
   fun getCurrentUrl(): String = currentUrl
@@ -59,6 +96,8 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
   }
 
   fun getBrowser(): GCefBrowser = gbrowser
+
+  fun getDevToolsBrowser(): GCefBrowser = devTools
 
 
   override fun dispose() {

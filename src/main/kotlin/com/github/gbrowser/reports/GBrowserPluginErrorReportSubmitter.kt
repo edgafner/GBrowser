@@ -29,7 +29,7 @@ internal class GBrowserPluginErrorReportSubmitter : ErrorReportSubmitter() {
                       consumer: Consumer<in SubmittedReportInfo?>): Boolean {
     val event = events.first()
     val throwableText = event.throwableText
-    val throwableTextTitle = throwableText.substring(0, throwableText.length.coerceAtMost(100))
+    val throwableTextTitle = throwableText.take(throwableText.length.coerceAtMost(100))
     val reportStringBuilder = buildReportUrl(event, throwableTextTitle, additionalInfo)
 
     BrowserUtil.browse(reportStringBuilder.toString())
@@ -39,18 +39,29 @@ internal class GBrowserPluginErrorReportSubmitter : ErrorReportSubmitter() {
 
   private fun buildReportUrl(event: IdeaLoggingEvent, throwableTextTitle: String, additionalInfo: String?): StringBuilder {
     return StringBuilder(reportURL).apply {
-      appendEncoded(StringUtil.splitByLines(event.throwableText)[0])
       appendOptionalThrowableTitle(event, throwableTextTitle)
-      appendEncoded("\n\n### Description\n")
-      appendEncoded(StringUtil.defaultIfEmpty(additionalInfo, ""))
-      appendEncoded("\n\n### Steps to Reproduce\nPlease provide code sample if applicable")
-      appendEncoded("\n\n### Message\n")
-      appendEncoded(StringUtil.defaultIfEmpty(event.message, ""))
-      appendEncoded("\n\n### Runtime Information\n")
+      append("&body=")
+      appendEncoded("**Describe the bug**\n")
+      appendEncoded(StringUtil.defaultIfEmpty(additionalInfo, "Auto-generated error report"))
+      appendEncoded("\n\n**To Reproduce**\n")
+      appendEncoded("Steps to reproduce the behavior:\n1. Go to '...'\n2. Click on '....'\n3. Scroll down to '....'\n4. See error")
+      appendEncoded("\n\n**Expected behavior**\n")
+      appendEncoded("A clear and concise description of what you expected to happen.")
+      appendEncoded("\n\n**Screenshots**\n")
+      appendEncoded("If applicable, add screenshots to help explain your problem.")
+      appendEncoded("\n\n**Desktop (please complete the following information):**\n")
       appendRuntimeInformation()
-      appendEncoded("\n\n### Stacktrace\n```\n")
-      appendEncoded(event.throwableText.takeLast(1600))
+      appendEncoded("\n\n**Browser [e.g. chrome, safari]**\n")
+      appendEncoded("- Browser: [e.g. Chrome, Safari, Firefox]\n")
+      appendEncoded("- Version: [e.g. 22]")
+      appendEncoded("\n\n**Additional context**\n")
+      appendEncoded("Add any other context about the problem here.")
+      appendEncoded("\n\n**Error Details**\n")
       appendEncoded("```\n")
+      appendEncoded(event.throwableText.take(1600))
+      appendEncoded("\n```")
+      appendEncoded("\n\n**Error Message**\n")
+      appendEncoded(StringUtil.defaultIfEmpty(event.message, "No message available"))
     }
   }
 
@@ -59,20 +70,23 @@ internal class GBrowserPluginErrorReportSubmitter : ErrorReportSubmitter() {
   }
 
   private fun StringBuilder.appendOptionalThrowableTitle(event: IdeaLoggingEvent, throwableTextTitle: String) {
-    Optional.ofNullable(event.throwable)
+    val title = Optional.ofNullable(event.throwable)
       .map(Throwable::message)
-      .orElseGet { StringUtil.splitByLines(throwableTextTitle)[0] }
-      .let { title ->
-        appendEncoded("&title=[BUG]: $title")
+      .filter { !it.isNullOrBlank() }
+      .orElseGet {
+        val lines = StringUtil.splitByLines(throwableTextTitle)
+        if (lines.isNotEmpty()) lines[0] else "Plugin Error"
       }
+    append("&title=")
+    appendEncoded("[BUG]: $title")
   }
 
   private fun StringBuilder.appendRuntimeInformation() {
     val descriptor = PluginManagerCore.getPlugin(pluginDescriptor.pluginId)!!
-    appendEncoded("Plugin version: ${descriptor.version}\n")
-    appendEncoded("IDE: ${ApplicationInfo.getInstance().fullApplicationName} " +
-                  "(${ApplicationInfo.getInstance().build.asString()})\n")
-    appendEncoded("OS: ${SystemInfo.getOsNameAndVersion()}")
+    appendEncoded("- **OS:** ${SystemInfo.getOsNameAndVersion()}\n")
+    appendEncoded("- **Plugin Version:** ${descriptor.version}\n")
+    appendEncoded("- **IDE:** ${ApplicationInfo.getInstance().fullApplicationName}\n")
+    appendEncoded("- **IDE Version:** ${ApplicationInfo.getInstance().build.asString()}")
   }
 
 

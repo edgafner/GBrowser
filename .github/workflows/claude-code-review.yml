@@ -12,11 +12,33 @@ on:
 
 jobs:
   claude-review:
-    # Optional: Filter by PR author
+    # Skip for Dependabot PRs and external contributors
+    if: |
+      github.event.pull_request.user.login != 'dependabot[bot]' &&
+      github.event.pull_request.user.login != 'dependabot-preview[bot]' &&
+      github.event.pull_request.author_association != 'NONE' &&
+      github.event.pull_request.author_association != 'FIRST_TIME_CONTRIBUTOR'
+    
+    # Alternative conditions you can use:
+    # 
+    # Option 1: Only run for organization members
     # if: |
-    #   github.event.pull_request.user.login == 'external-contributor' ||
-    #   github.event.pull_request.user.login == 'new-developer' ||
-    #   github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR'
+    #   github.event.pull_request.author_association == 'MEMBER' ||
+    #   github.event.pull_request.author_association == 'OWNER' ||
+    #   github.event.pull_request.author_association == 'COLLABORATOR'
+    #
+    # Option 2: Run for everyone except bots
+    # if: |
+    #   !endsWith(github.event.pull_request.user.login, '[bot]')
+    #
+    # Option 3: Allowlist specific users
+    # if: |
+    #   contains(fromJSON('["user1", "user2", "user3"]'), github.event.pull_request.user.login)
+    #
+    # Option 4: Skip based on PR labels
+    # if: |
+    #   !contains(github.event.pull_request.labels.*.name, 'skip-review') &&
+    #   !contains(github.event.pull_request.labels.*.name, 'dependencies')
     
     runs-on: ubuntu-latest
     permissions:
@@ -29,7 +51,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0  # Fetch all history to ensure we get all commits
+          ref: ${{ github.event.pull_request.head.sha }}  # Explicitly checkout the latest PR commit
 
       - name: Run Claude Code Review
         id: claude-review
@@ -42,17 +65,32 @@ jobs:
           
           # Direct prompt for automated review (no @claude mention needed)
           direct_prompt: |
-            Please review this pull request and provide feedback on:
-            - Code quality and best practices
-            - Potential bugs or issues
-            - Performance considerations
-            - Security concerns
-            - Test coverage
+            Please review this pull request (#${{ github.event.pull_request.number }}) titled "${{ github.event.pull_request.title }}".
             
-            Be constructive and helpful in your feedback.
+            The PR has ${{ github.event.pull_request.changed_files }} changed files with +${{ github.event.pull_request.additions }} additions and -${{ github.event.pull_request.deletions }} deletions.
+            
+            IMPORTANT: If you have previously reviewed this PR:
+            1. First, check which of your previous suggestions have been addressed
+            2. Acknowledge improvements that were made based on your feedback
+            3. Identify any remaining issues that still need attention
+            4. Review any new changes introduced since your last review
+            
+            Focus your review on:
+            - The specific changes made in this PR (use git diff to see actual changes)
+            - Whether previous feedback has been addressed
+            - Code quality and adherence to best practices
+            - Potential bugs or edge cases
+            - Performance implications of the changes
+            - Security considerations
+            - Whether the changes align with the PR's stated purpose
+            - Test coverage for the new/modified code
+            
+            Be specific, constructive, and reference actual code changes in your feedback.
+            Mention specific files and line numbers when providing feedback.
 
-          # Optional: Use sticky comments to make Claude reuse the same comment on subsequent pushes to the same PR
-          # use_sticky_comment: true
+          # Optional: Use sticky comments to make Claude reuse the same comment on later pushes to the same PR
+          use_sticky_comment: true
+          
           
           # Optional: Customize review based on file types
           # direct_prompt: |
