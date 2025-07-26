@@ -5,11 +5,14 @@ import com.github.gbrowser.i18n.GBrowserBundle
 import com.github.gbrowser.services.GBrowserService
 import com.github.gbrowser.settings.bookmarks.GBrowserBookmarksTableComponent
 import com.github.gbrowser.settings.request_header.GBrowserRequestHeaderTableComponent
+import com.github.gbrowser.settings.theme.GBrowserTheme
+import com.github.gbrowser.util.GBrowserToolWindowUtil
 import com.intellij.icons.AllIcons
 import com.intellij.ide.BrowserUtil
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.SimpleToolWindowPanel
@@ -80,22 +83,22 @@ class GBrowserProjectSettingsComponent(val project: Project) : SimpleToolWindowP
         twoColumnsRow({
                         checkBox("Enable suggestion search").bindSelected(settings::isSuggestionSearchEnabled) { value ->
                           settings.isSuggestionSearchEnabled = value
-                        }.comment("Suggestion search based on google engine")
+                        }.comment("Suggestion search based on Google engine")
                       }, {
                         checkBox("Life Span in new tab").bindSelected(settings::navigateInNewTab) { value ->
                           settings.navigateInNewTab = value
-                        }.comment("When disabled span links will popup in a dialog")
+                        }.comment("When disabled span links will pop up in a dialog")
                       })
       }
       group("Browser History", false) {
         row {
-          val historyCheckBox = checkBox("History enable").bindSelected(settings::isHistoryEnabled) { value ->
+          val historyCheckBox = checkBox("History enables").bindSelected(settings::isHistoryEnabled) { value ->
             settings.isHistoryEnabled = value
           }.gap(RightGap.SMALL)
           spinner(0..60, 1).bindIntValue(settings::historyItemsToKeep) { value ->
             settings.historyItemsToKeep = value
           }.enabledIf(historyCheckBox.selected).gap(RightGap.SMALL)
-          comment("Amount of history items to persist").enabledIf(historyCheckBox.selected)
+          comment("Number of history items to persist").enabledIf(historyCheckBox.selected)
         }
 
       }
@@ -103,6 +106,25 @@ class GBrowserProjectSettingsComponent(val project: Project) : SimpleToolWindowP
   }
 
   private fun Panel.browserOptions() {
+    group("Appearance", true) {
+      buttonsGroup {
+        row("Theme:") {
+          GBrowserTheme.entries.forEach { theme ->
+            radioButton(theme.displayName, theme).applyToComponent {
+              addActionListener {
+                if (isSelected) {
+                  // Apply theme immediately when selected
+                  com.intellij.openapi.application.ApplicationManager.getApplication().invokeLater {
+                    refreshAllBrowserThemes()
+                  }
+                }
+              }
+            }
+          }
+        }
+      }.bind(settings::theme)
+    }
+    
     group("Developer Options", true) {
       row {
         val debugPortEnable = checkBox("Debug port").bindSelected(settings::isDebugEnabled) { value ->
@@ -115,7 +137,12 @@ class GBrowserProjectSettingsComponent(val project: Project) : SimpleToolWindowP
         comment("Required an IDE restart").enabledIf(debugPortEnable.selected)
       }
       row {
-        comment("Port which can be used for debugging javaScript in JCEF components")
+        comment("Port, which can be used for debugging JavaScript in JCEF components")
+      }
+      row {
+        checkBox("Open DevTools in dialog").bindSelected(settings::isDevToolsInDialog) { value ->
+          settings.isDevToolsInDialog = value
+        }.comment("When unchecked, DevTools will open in a tool window")
       }
     }
 
@@ -172,7 +199,7 @@ class GBrowserProjectSettingsComponent(val project: Project) : SimpleToolWindowP
     collapsibleGroup("HTTP Response Headers", true) {
       row {
         cell(responseHeaders.createScrollPane()).label("Headers", LabelPosition.TOP).comment(
-          "Manage your response headers. The overwrite column is used to overwrite the header if it already exists in the request."
+          "Manage your response headers. The overwritten column is used to overwrite the header if it already exists in the request."
         ).align(
           Align.FILL
         )
@@ -193,6 +220,8 @@ class GBrowserProjectSettingsComponent(val project: Project) : SimpleToolWindowP
     bookmarks.apply()
     responseHeaders.apply()
 
+    // Refresh all browser themes after settings are applied
+    refreshAllBrowserThemes()
   }
 
   fun reset() {
@@ -206,6 +235,22 @@ class GBrowserProjectSettingsComponent(val project: Project) : SimpleToolWindowP
     bookmarks.dispose()
     responseHeaders.dispose()
 
+  }
+
+  private fun refreshAllBrowserThemes() {
+    val browsers = GBrowserToolWindowUtil.getAllBrowsers(project)
+    thisLogger().info("GBrowser: Refreshing theme for ${browsers.size} browsers")
+
+    if (browsers.isEmpty()) {
+      thisLogger().warn("GBrowser: No browsers found to refresh theme")
+    }
+
+    browsers.forEach { browser ->
+      thisLogger().info("GBrowser: Refreshing theme for browser ${browser.id}")
+      browser.refreshTheme()
+      // Reload the page to ensure theme changes are applied
+      browser.cefBrowser.reload()
+    }
   }
 
   companion object {

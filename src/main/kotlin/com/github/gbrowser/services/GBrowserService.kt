@@ -3,6 +3,7 @@ package com.github.gbrowser.services
 import com.github.gbrowser.settings.bookmarks.GBrowserBookmark
 import com.github.gbrowser.settings.dao.GBrowserHistory
 import com.github.gbrowser.settings.request_header.GBrowserRequestHeader
+import com.github.gbrowser.settings.theme.GBrowserTheme
 import com.github.gbrowser.util.GBrowserUtil
 import com.intellij.openapi.components.*
 import com.intellij.openapi.diagnostic.logger
@@ -37,6 +38,8 @@ class GBrowserService : SerializablePersistentStateComponent<GBrowserService.Set
                            var debugPort: Int = if (GBrowserUtil.getJCEFDebugPort() == -1) 9222 else GBrowserUtil.getJCEFDebugPort(),
                            var isProtocolHidden: Boolean = true,
                            var isDragAndDropEnabled: Boolean = true,
+                           var isDevToolsInDialog: Boolean = false,
+                           var theme: String = GBrowserTheme.FOLLOW_IDE.name,
                            var historyItemsToKeep: Int = 20,
                            var requestHeaders: MutableSet<GBrowserRequestHeader> = mutableSetOf(
                              GBrowserRequestHeader(
@@ -168,6 +171,22 @@ class GBrowserService : SerializablePersistentStateComponent<GBrowserService.Set
     set(value) {
       updateStateAndEmit {
         it.copy(isDragAndDropEnabled = value)
+      }
+    }
+
+  var isDevToolsInDialog: Boolean
+    get() = state.isDevToolsInDialog
+    set(value) {
+      updateStateAndEmit {
+        it.copy(isDevToolsInDialog = value)
+      }
+    }
+
+  var theme: GBrowserTheme
+    get() = GBrowserTheme.fromString(state.theme)
+    set(value) {
+      updateStateAndEmit {
+        it.copy(theme = value.name)
       }
     }
 

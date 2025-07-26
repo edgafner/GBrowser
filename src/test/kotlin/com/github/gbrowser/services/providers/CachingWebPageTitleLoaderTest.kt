@@ -1,11 +1,9 @@
 package com.github.gbrowser.services.providers
 
 import io.mockk.unmockkAll
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.*
+import java.util.concurrent.ForkJoinPool
+import java.util.concurrent.TimeUnit
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 class CachingWebPageTitleLoaderTest {
@@ -19,6 +17,9 @@ class CachingWebPageTitleLoaderTest {
     
     @AfterEach
     fun tearDown() {
+      titleLoader.dispose()
+      // Wait for any async operations to complete
+      ForkJoinPool.commonPool().awaitQuiescence(5, TimeUnit.SECONDS)
         unmockkAll()
     }
 

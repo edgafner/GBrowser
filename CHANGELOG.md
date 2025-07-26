@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+### Added
+
+- 🚀 Support for the latest 2025.2
+- 🚀 Emulation device support. You can now emulate different devices in the browser
+- 🚀 Support theme switching. You can now switch between different themes in the browser
+
+### Fixed
+
+- 🪲 Fixed an issue with the tool window not opening correctly [Issue #224](https://github.com/edgafner/dorkag/issues/224)
+-
+
 ## [2025.2.2] - 2025-06-19
 
 ### Added

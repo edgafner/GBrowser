@@ -60,6 +60,8 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
 
   fun getBrowser(): GCefBrowser = gbrowser
 
+  fun getDevToolsBrowser(): GCefBrowser = devTools
+
 
   override fun dispose() {
     gbrowser.dispose()

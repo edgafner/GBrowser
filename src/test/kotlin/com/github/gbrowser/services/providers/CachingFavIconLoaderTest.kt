@@ -2,6 +2,8 @@ package com.github.gbrowser.services.providers
 
 import io.mockk.unmockkAll
 import org.junit.jupiter.api.*
+import java.util.concurrent.ForkJoinPool
+import java.util.concurrent.TimeUnit
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 class CachingFavIconLoaderTest {
@@ -15,6 +17,9 @@ class CachingFavIconLoaderTest {
 
     @AfterEach
     fun tearDown() {
+      favIconLoader.dispose()
+      // Wait for any async operations to complete
+      ForkJoinPool.commonPool().awaitQuiescence(5, TimeUnit.SECONDS)
         unmockkAll()
     }
 
