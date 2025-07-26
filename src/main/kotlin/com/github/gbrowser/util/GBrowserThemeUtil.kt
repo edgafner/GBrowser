@@ -12,6 +12,13 @@ object GBrowserThemeUtil {
 
   private val logger = thisLogger()
 
+  // Cache for compiled JavaScript to avoid repeated string concatenation
+  private var cachedDarkModeScript: String? = null
+  private var cachedLightModeScript: String? = null
+
+  // Constant for JavaScript execution line
+  private const val INLINE_SCRIPT_LINE = 0
+
   fun isDarkTheme(project: Project): Boolean {
     val settings = project.service<GBrowserService>()
     return when (settings.theme) {
@@ -21,15 +28,33 @@ object GBrowserThemeUtil {
     }
   }
 
+  private fun getDarkModeScript(): String {
+    if (cachedDarkModeScript == null) {
+      cachedDarkModeScript = buildDarkModeScript()
+    }
+    return cachedDarkModeScript!!
+  }
+
+  private fun getLightModeScript(): String {
+    if (cachedLightModeScript == null) {
+      cachedLightModeScript = buildLightModeScript()
+    }
+    return cachedLightModeScript!!
+  }
+
   fun applyTheme(browser: CefBrowser, project: Project) {
     val isDark = isDarkTheme(project)
-
-    // Log for debugging
     logger.debug("GBrowserThemeUtil: Applying theme - isDark=$isDark")
 
-    if (isDark) {
-      // Enable dark mode using prefer-color-scheme
-      val darkModeScript = """
+    try {
+      val script = if (isDark) getDarkModeScript() else getLightModeScript()
+      browser.executeJavaScript(script, browser.url, INLINE_SCRIPT_LINE)
+    } catch (e: Exception) {
+      logger.error("GBrowserThemeUtil: Failed to apply theme", e)
+    }
+  }
+
+  private fun buildDarkModeScript(): String = """
                 (function() {
                     console.log('[GBrowser] Applying dark theme');
                     
@@ -122,10 +147,7 @@ object GBrowserThemeUtil {
                 })();
             """.trimIndent()
 
-      browser.executeJavaScript(darkModeScript, browser.url, 0)
-    } else {
-      // Light mode - restore normal behavior
-      val lightModeScript = """
+  private fun buildLightModeScript(): String = """
                 (function() {
                     console.log('[GBrowser] Applying light theme');
                     
@@ -167,9 +189,4 @@ object GBrowserThemeUtil {
                     console.log('[GBrowser] Light theme applied successfully');
                 })();
             """.trimIndent()
-
-      browser.executeJavaScript(lightModeScript, browser.url, 0)
-    }
-  }
-
 }

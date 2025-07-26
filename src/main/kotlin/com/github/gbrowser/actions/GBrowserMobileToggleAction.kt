@@ -31,6 +31,7 @@ class GBrowserMobileToggleAction : ToggleAction(
   companion object {
     private val LOG = thisLogger()
     private val deviceEmulationState = mutableMapOf<String, DeviceEmulationState>()
+    private val stateLock = Any() // Lock for synchronizing state access
 
     // Chrome DevTools colors - matching the actual Chrome DevTools colors
     private val CHROME_DEVTOOLS_DARK_BG = JBColor(Color(0x202124), Color(0x202124)) // Chrome's actual dark background (lighter gray)
@@ -48,11 +49,15 @@ class GBrowserMobileToggleAction : ToggleAction(
      * Should be called when a browser is closed or disposed.
      */
     fun cleanupBrowserState(browserId: String) {
-      deviceEmulationState.remove(browserId)?.let { state ->
-        LOG.debug("GBrowserMobileToggleAction: Cleaned up device emulation state for browser $browserId")
-        // Clean up any UI components
-        state.deviceToolbar = null
-        state.browserWrapper = null
+      synchronized(stateLock) {
+        deviceEmulationState.remove(browserId)?.let { state ->
+          LOG.debug("GBrowserMobileToggleAction: Cleaned up device emulation state for browser $browserId")
+          // Clean up any UI components
+          state.browserWrapper?.removeAll()
+          state.deviceToolbar?.removeAll()
+          state.deviceToolbar = null
+          state.browserWrapper = null
+        }
       }
     }
   }
@@ -82,7 +87,9 @@ class GBrowserMobileToggleAction : ToggleAction(
       return false
     }
 
-    val isActive = deviceEmulationState[browser.id]?.isActive ?: false
+    val isActive = synchronized(stateLock) {
+      deviceEmulationState[browser.id]?.isActive ?: false
+    }
     LOG.debug("GBrowserMobileToggleAction: isSelected - browser ${browser.id}, active: $isActive")
     return isActive
   }
@@ -149,23 +156,29 @@ class GBrowserMobileToggleAction : ToggleAction(
     e.presentation.icon = com.github.gbrowser.GBrowserIcons.TOGGLE_DEVICES
 
     if (browser != null) {
-      val state = deviceEmulationState[browser.id]
-      val text = if (state?.isActive == true && state.currentDevice != null) {
-        GBrowserBundle.message("action.device.emulation.active", state.currentDevice)
+      val (isActive, currentDevice) = synchronized(stateLock) {
+        val state = deviceEmulationState[browser.id]
+        (state?.isActive == true) to state?.currentDevice
+      }
+      val text = if (isActive && currentDevice != null) {
+        GBrowserBundle.message("action.device.emulation.active", currentDevice)
       } else {
         GBrowserBundle.message("emulate.mobile.description")
       }
       e.presentation.text = text
-      LOG.debug("GBrowserMobileToggleAction: update - text: $text, state active: ${state?.isActive}, device: ${state?.currentDevice}")
+      LOG.debug("GBrowserMobileToggleAction: update - text: $text, state active: $isActive, device: $currentDevice")
     }
   }
 
   private fun enableDeviceEmulation(browserPanel: SimpleToolWindowPanel, browser: GCefBrowser) {
-    val state = deviceEmulationState.getOrPut(browser.id) { DeviceEmulationState() }
-    if (state.isActive) return
+    val state = synchronized(stateLock) {
+      val s = deviceEmulationState.getOrPut(browser.id) { DeviceEmulationState() }
+      if (s.isActive) return
+      s.isActive = true
+      s
+    }
 
     LOG.info("GBrowserMobileToggleAction: Enabling device emulation for browser ${browser.id}")
-    state.isActive = true
 
     // Create device toolbar
     state.deviceToolbar = createDeviceToolbar(browser)
@@ -201,25 +214,45 @@ class GBrowserMobileToggleAction : ToggleAction(
     browserPanel.revalidate()
     browserPanel.repaint()
 
-    // Schedule device frame update after layout is complete
-    SwingUtilities.invokeLater {
-      LOG.info("GBrowserMobileToggleAction: Updating device frame after layout")
-      updateDeviceFrame(browser, state)
+    // Ensure device frame update happens after layout is complete
+    // Use invokeAndWait to avoid race conditions
+    if (!SwingUtilities.isEventDispatchThread()) {
+      SwingUtilities.invokeAndWait {
+        LOG.info("GBrowserMobileToggleAction: Updating device frame after layout")
+        updateDeviceFrame(browser, state)
+      }
+    } else {
+      // If already on EDT, schedule for next cycle to ensure layout is complete
+      SwingUtilities.invokeLater {
+        LOG.info("GBrowserMobileToggleAction: Updating device frame after layout")
+        updateDeviceFrame(browser, state)
+      }
     }
   }
 
   private fun disableDeviceEmulation(browserPanel: SimpleToolWindowPanel, browser: GCefBrowser) {
-    val state = deviceEmulationState[browser.id] ?: return
-    if (!state.isActive) return
+    val state = synchronized(stateLock) {
+      val s = deviceEmulationState[browser.id] ?: return
+      if (!s.isActive) return
+      s.isActive = false
+      s
+    }
 
     LOG.info("GBrowserMobileToggleAction: Disabling device emulation for browser ${browser.id}")
-    state.isActive = false
-    state.currentDevice = null
-    state.isRotated = false
 
-    // Reset the default responsive dimensions
-    state.currentWidth = 400
-    state.currentHeight = 626
+    // Clean up UI components properly before nulling references
+    synchronized(stateLock) {
+      // Remove browser from wrapper to prevent memory leaks
+      state.browserWrapper?.removeAll()
+      state.deviceToolbar?.removeAll()
+
+      state.currentDevice = null
+      state.deviceToolbar = null
+      state.browserWrapper = null
+      state.isRotated = false
+      state.currentWidth = DEFAULT_RESPONSIVE_WIDTH
+      state.currentHeight = DEFAULT_RESPONSIVE_HEIGHT
+    }
 
     // Reset browser emulation
     GBrowserDeviceEmulationUtil.resetDeviceEmulation(browser.cefBrowser)
@@ -227,22 +260,23 @@ class GBrowserMobileToggleAction : ToggleAction(
     // Reset zoom level to 100%
     browser.cefBrowser.zoomLevel = 0.0
 
+    // Remove browser component from wrapper first to avoid duplicate parent issues
+    state.browserWrapper?.remove(browser.component)
+    
     // Restore original browser component
     browserPanel.setContent(browser.component)
 
     browserPanel.revalidate()
     browserPanel.repaint()
 
-    // Clean up state
-    state.deviceToolbar = null
-    state.browserWrapper = null
-
     // Force a reload to ensure all changes are applied
     browser.cefBrowser.reload()
   }
 
   private fun createDeviceToolbar(browser: GCefBrowser): JPanel {
-    val state = deviceEmulationState[browser.id] ?: throw IllegalStateException("Device emulation state not found for browser ${browser.id}")
+    val state = synchronized(stateLock) {
+      deviceEmulationState[browser.id] ?: throw IllegalStateException("Device emulation state not found for browser ${browser.id}")
+    }
 
     val deviceComboBox = ComboBox<String>().apply {
       // Add "Responsive" as default
