@@ -218,16 +218,21 @@ class GBrowserMobileToggleAction : ToggleAction(
     // Use invokeAndWait to avoid race conditions
     if (!SwingUtilities.isEventDispatchThread()) {
       SwingUtilities.invokeAndWait {
-        LOG.info("GBrowserMobileToggleAction: Updating device frame after layout")
-        updateDeviceFrame(browser, state)
+        commonUpdate(browser, state)
       }
     } else {
       // If already on EDT, schedule for next cycle to ensure layout is complete
       SwingUtilities.invokeLater {
-        LOG.info("GBrowserMobileToggleAction: Updating device frame after layout")
-        updateDeviceFrame(browser, state)
+        commonUpdate(browser, state)
       }
     }
+
+
+  }
+
+  private fun commonUpdate(browser: GCefBrowser, state: DeviceEmulationState) {
+    LOG.debug("GBrowserMobileToggleAction: Updating device frame after layout")
+    updateDeviceFrame(browser, state)
   }
 
   private fun disableDeviceEmulation(browserPanel: SimpleToolWindowPanel, browser: GCefBrowser) {
@@ -275,7 +280,7 @@ class GBrowserMobileToggleAction : ToggleAction(
 
   private fun createDeviceToolbar(browser: GCefBrowser): JPanel {
     val state = synchronized(stateLock) {
-      deviceEmulationState[browser.id] ?: throw IllegalStateException("Device emulation state not found for browser ${browser.id}")
+      deviceEmulationState[browser.id] ?: throw IllegalStateException("Device emulation state wasn't found for browser ${browser.id}")
     }
 
     val deviceComboBox = ComboBox<String>().apply {
