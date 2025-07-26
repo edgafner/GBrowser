@@ -2,6 +2,7 @@ package com.github.gbrowser.util
 
 import com.github.gbrowser.services.GBrowserService
 import com.github.gbrowser.services.providers.CachingWebPageTitleLoader
+import com.github.gbrowser.ui.gcef.GCefBrowser
 import com.github.gbrowser.ui.toolwindow.gbrowser.GBrowserToolWindowBrowser
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -85,6 +86,18 @@ object GBrowserToolWindowUtil {
   fun getContentManager(project: Project?, id: String): ContentManager? {
     val toolWindowManager = getToolWindowManager(project)
     return toolWindowManager?.getToolWindow(id)?.contentManager
+  }
+
+  fun getAllBrowsers(project: Project): List<GCefBrowser> {
+    val browsers = mutableListOf<GCefBrowser>()
+    val toolWindow = getToolWindow(project, GBrowserUtil.GBROWSER_TOOL_WINDOW_ID)
+    toolWindow?.contentManager?.contents?.forEach { content ->
+      val panel = content.component as? GBrowserToolWindowBrowser
+      panel?.let {
+        browsers.add(it.getBrowser())
+      }
+    }
+    return browsers
   }
 
 

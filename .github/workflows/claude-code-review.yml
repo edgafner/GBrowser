@@ -1,0 +1,116 @@
+name: Claude Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    # Optional: Only run on specific file changes
+    # paths:
+    #   - "src/**/*.ts"
+    #   - "src/**/*.tsx"
+    #   - "src/**/*.js"
+    #   - "src/**/*.jsx"
+
+jobs:
+  claude-review:
+    # Skip for Dependabot PRs and external contributors
+    if: |
+      github.event.pull_request.user.login != 'dependabot[bot]' &&
+      github.event.pull_request.user.login != 'dependabot-preview[bot]' &&
+      github.event.pull_request.author_association != 'NONE' &&
+      github.event.pull_request.author_association != 'FIRST_TIME_CONTRIBUTOR'
+    
+    # Alternative conditions you can use:
+    # 
+    # Option 1: Only run for organization members
+    # if: |
+    #   github.event.pull_request.author_association == 'MEMBER' ||
+    #   github.event.pull_request.author_association == 'OWNER' ||
+    #   github.event.pull_request.author_association == 'COLLABORATOR'
+    #
+    # Option 2: Run for everyone except bots
+    # if: |
+    #   !endsWith(github.event.pull_request.user.login, '[bot]')
+    #
+    # Option 3: Allowlist specific users
+    # if: |
+    #   contains(fromJSON('["user1", "user2", "user3"]'), github.event.pull_request.user.login)
+    #
+    # Option 4: Skip based on PR labels
+    # if: |
+    #   !contains(github.event.pull_request.labels.*.name, 'skip-review') &&
+    #   !contains(github.event.pull_request.labels.*.name, 'dependencies')
+    
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+      issues: read
+      id-token: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history to ensure we get all commits
+          ref: ${{ github.event.pull_request.head.sha }}  # Explicitly checkout the latest PR commit
+
+      - name: Run Claude Code Review
+        id: claude-review
+        uses: anthropics/claude-code-action@beta
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+
+          # Optional: Specify model (defaults to Claude Sonnet 4, uncomment for Claude Opus 4)
+          # model: "claude-opus-4-20250514"
+          
+          # Direct prompt for automated review (no @claude mention needed)
+          direct_prompt: |
+            Please review this pull request (#${{ github.event.pull_request.number }}) titled "${{ github.event.pull_request.title }}".
+            
+            The PR has ${{ github.event.pull_request.changed_files }} changed files with +${{ github.event.pull_request.additions }} additions and -${{ github.event.pull_request.deletions }} deletions.
+            
+            IMPORTANT: If you have previously reviewed this PR:
+            1. First, check which of your previous suggestions have been addressed
+            2. Acknowledge improvements that were made based on your feedback
+            3. Identify any remaining issues that still need attention
+            4. Review any new changes introduced since your last review
+            
+            Focus your review on:
+            - The specific changes made in this PR (use git diff to see actual changes)
+            - Whether previous feedback has been addressed
+            - Code quality and adherence to best practices
+            - Potential bugs or edge cases
+            - Performance implications of the changes
+            - Security considerations
+            - Whether the changes align with the PR's stated purpose
+            - Test coverage for the new/modified code
+            
+            Be specific, constructive, and reference actual code changes in your feedback.
+            Mention specific files and line numbers when providing feedback.
+
+          # Optional: Use sticky comments to make Claude reuse the same comment on later pushes to the same PR
+          use_sticky_comment: true
+          
+          
+          # Optional: Customize review based on file types
+          # direct_prompt: |
+          #   Review this PR focusing on:
+          #   - For TypeScript files: Type safety and proper interface usage
+          #   - For API endpoints: Security, input validation, and error handling
+          #   - For React components: Performance, accessibility, and best practices
+          #   - For tests: Coverage, edge cases, and test quality
+          
+          # Optional: Different prompts for different authors
+          # direct_prompt: |
+          #   ${{ github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR' && 
+          #   'Welcome! Please review this PR from a first-time contributor. Be encouraging and provide detailed explanations for any suggestions.' ||
+          #   'Please provide a thorough code review focusing on our coding standards and best practices.' }}
+          
+          # Optional: Add specific tools for running tests or linting
+          # allowed_tools: "Bash(npm run test),Bash(npm run lint),Bash(npm run typecheck)"
+          
+          # Optional: Skip review for certain conditions
+          # if: |
+          #   !contains(github.event.pull_request.title, '[skip-review]') &&
+          #   !contains(github.event.pull_request.title, '[WIP]')
+

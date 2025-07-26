@@ -2,7 +2,17 @@
   "permissions": {
     "allow": [
       "Bash(./gradlew:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(git grep:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(gh issue list:*)",
+      "Bash(rm:*)",
+      "WebFetch(domain:platform.jetbrains.com)",
+      "Bash(cat:*)",
+      "Bash(mkdir:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh api:*)"
     ],
     "deny": []
   },

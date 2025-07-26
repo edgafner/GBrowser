@@ -75,10 +75,10 @@ dependencies { // IntelliJ Platform dependencies
   }
 
   // Implementation dependencies
-  implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.19.1") { isTransitive = false }
-  implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.19.1") { isTransitive = false }
-  implementation("com.fasterxml.jackson.core:jackson-databind:2.19.1") { isTransitive = false }
-  implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.19.1") { isTransitive = false }
+  implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.19.2") { isTransitive = false }
+  implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.19.2") { isTransitive = false }
+  implementation("com.fasterxml.jackson.core:jackson-databind:2.19.2") { isTransitive = false }
+  implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.19.2") { isTransitive = false }
   compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 
 
@@ -89,8 +89,8 @@ dependencies { // IntelliJ Platform dependencies
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
 
   // Add JUnit 5 dependencies for tests
-  testImplementation("org.junit.jupiter:junit-jupiter:5.13.1")
-  testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.1")
+  testImplementation("org.junit.jupiter:junit-jupiter:5.13.4")
+  testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.4")
 
   // UI Test dependencies
   uiTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
@@ -99,8 +99,8 @@ dependencies { // IntelliJ Platform dependencies
   uiTestImplementation(libs.bundles.kTest)
 
   // Add JUnit 5 dependencies explicitly
-  uiTestImplementation("org.junit.jupiter:junit-jupiter:5.13.1")
-  uiTestRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.1")
+  uiTestImplementation("org.junit.jupiter:junit-jupiter:5.13.4")
+  uiTestRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.4")
 }
 
 kotlin {
@@ -208,6 +208,7 @@ tasks {
       "idea.trust.all.projects" to true,
       "jb.consents.confirmation.enabled" to false
     )
+
   }
 
   publishPlugin {

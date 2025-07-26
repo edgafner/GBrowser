@@ -1,5 +1,6 @@
 package com.github.gbrowser.ui.gcef
 
+import com.github.gbrowser.actions.GBrowserMobileToggleAction
 import com.github.gbrowser.i18n.GBrowserBundle
 import com.github.gbrowser.services.GBrowserService
 import com.github.gbrowser.services.providers.CachingWebPageTitleLoader
@@ -7,25 +8,33 @@ import com.github.gbrowser.settings.bookmarks.GBrowserBookmark
 import com.github.gbrowser.ui.gcef.impl.GBrowserCefDisplayChangeHandler
 import com.github.gbrowser.ui.gcef.impl.GBrowserCefLifeSpanDelegate
 import com.github.gbrowser.ui.gcef.impl.GBrowserCefRequestHandler
+import com.github.gbrowser.ui.toolwindow.dev_tools.GBrowserToolWindowDevToolsFactory
 import com.github.gbrowser.ui.toolwindow.gbrowser.GBrowserToolWindowActionBarDelegate
+import com.github.gbrowser.util.GBrowserThemeUtil
+import com.github.gbrowser.util.GBrowserToolWindowUtil
 import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.jcef.JBCefBrowser
+import com.intellij.ui.jcef.JBCefBrowserBuilder
 import com.intellij.ui.jcef.JBCefClient
+import com.intellij.util.application
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
 import org.cef.callback.CefContextMenuParams
 import org.cef.callback.CefMenuModel
 import org.cef.callback.CefMenuModel.MenuId
 import org.cef.handler.CefLoadHandler
+import org.cef.handler.CefLoadHandlerAdapter
 import org.cef.network.CefCookieManager
+import org.cef.network.CefRequest
 import java.util.*
 
 
 @Suppress("MemberVisibilityCanBePrivate")
 class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = null, browser: CefBrowser? = null, val id: String = UUID.randomUUID().toString()) :
-  JBCefBrowser(createBuilder().apply {
+  JBCefBrowser(createBuilderForProject().apply {
     setOffScreenRendering(false)
     setEnableOpenDevToolsMenuItem(true)
     setCefBrowser(browser)
@@ -33,10 +42,23 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
     setUrl(url)
   }) {
 
+  companion object {
+    private fun createBuilderForProject(): JBCefBrowserBuilder {
+      val builder = createBuilder()
+
+      // Note: CEF command line arguments for dark mode need to be set globally
+      // before CEF is initialized. Since JCEF is already initialized by IntelliJ,
+      // we use JavaScript injection instead. In a standalone application, you would use:
+      // --force-dark-mode --enable-features=WebUIDarkMode
+
+      return builder
+    }
+  }
+
   private val favIconLoader: CachingWebPageTitleLoader = service()
 
 
-  val devTools: CefBrowser
+  val devTools: CefBrowser?
     get() {
       return cefBrowser.devTools
     }
@@ -55,6 +77,32 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
       if (errorCode == CefLoadHandler.ErrorCode.ERR_ABORTED) null
       else GBrowserErrorPage.create(errorCode, errorText, failedUrl)
     }
+
+    // Add load handler to apply theme
+    jbCefClient.addLoadHandler(object : CefLoadHandlerAdapter() {
+      override fun onLoadEnd(browser: CefBrowser, frame: CefFrame, httpStatusCode: Int) {
+        if (frame.isMain && httpStatusCode < 400) {
+          // Apply theme after page loads successfully
+          // Add a small delay to ensure the DOM is ready
+          javax.swing.Timer(50) {
+            GBrowserThemeUtil.applyTheme(browser, project)
+          }.apply {
+            isRepeats = false
+            start()
+          }
+        }
+      }
+
+      override fun onLoadStart(browser: CefBrowser, frame: CefFrame, transitionType: CefRequest.TransitionType) {
+        if (frame.isMain) {
+          // Apply theme at the start of loading to minimize flashing
+          GBrowserThemeUtil.applyTheme(browser, project)
+        }
+      }
+    }, cefBrowser)
+
+    // Register this browser with the lifecycle manager
+    GCefBrowserLifecycleManager.getInstance().registerBrowser(this)
   }
 
 
@@ -84,9 +132,7 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
         if (commandId == MenuId.MENU_ID_USER_LAST) {
           openDevtools()
           return true
-
-        } //  addToBookmarksAndToolBar(browser)
-        //  return true
+        }
         return super.onContextMenuCommand(browser, frame, params, commandId, eventFlags)
       }
 
@@ -96,6 +142,42 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
         }
       }
 
+      private fun openDevtools() {
+        thisLogger().debug("GCefBrowser.openDevtools() called from context menu")
+
+        val settings = project.service<GBrowserService>()
+        val openInDialog = settings.isDevToolsInDialog
+        thisLogger().debug("isDevToolsInDialog setting: $openInDialog")
+
+        if (openInDialog) {
+          // Open in dialog using JCEF's built-in DevTools dialog
+          thisLogger().debug("Opening DevTools in dialog")
+          // Use JCEF to open DevTools in a new window/dialog
+          val devToolsBrowser = cefBrowser.devTools
+          val frame = javax.swing.JFrame("DevTools - ${cefBrowser.url}")
+          frame.defaultCloseOperation = javax.swing.WindowConstants.DISPOSE_ON_CLOSE
+          frame.add(devToolsBrowser.uiComponent)
+          frame.setSize(1024, 768)
+          frame.setLocationRelativeTo(null)
+          frame.isVisible = true
+        } else {
+          // Open in the tool window
+          val selectedBrowser = GBrowserToolWindowUtil.getSelectedBrowserPanel(project)
+          if (selectedBrowser == null) {
+            thisLogger().debug("No selected browser panel found")
+            return
+          }
+
+          thisLogger().debug("Getting DevTools browser instance")
+          val browser = selectedBrowser.getDevToolsBrowser()
+          thisLogger().debug("Got DevTools browser: $browser")
+
+          application.invokeLater {
+            thisLogger().debug("Opening DevTools in the tool window")
+            GBrowserToolWindowDevToolsFactory.Companion.createTab(project, browser, selectedBrowser.getCurrentTitle())
+          }
+        }
+      }
     }
   }
 
@@ -125,13 +207,49 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
     }
   }
 
+  fun forceResize() {
+    // Force the browser to recalculate its size
+    component.apply {
+      invalidate()
+      revalidate()
+      repaint()
+    }
+
+    // Also update the CEF browser UI component
+    cefBrowser.uiComponent?.apply {
+      invalidate()
+      revalidate()
+      repaint()
+    }
+
+    // Reapply theme after resize to ensure it's properly rendered
+    javax.swing.Timer(100) {
+      GBrowserThemeUtil.applyTheme(cefBrowser, project)
+    }.apply {
+      isRepeats = false
+      start()
+    }
+  }
+
   fun deleteCookies() {
     val manager = CefCookieManager.getGlobalManager()
     manager.deleteCookies(null, null)
   }
 
+  fun addTitleChangeListener(delegate: GBrowserCefBrowserTitleDelegate) {
+    titleChangeDelegate = delegate
+  }
+
+  fun removeTitleChangeListener() {
+    titleChangeDelegate = null
+  }
+
   fun notifyTitleChanged(title: String?) {
     titleChangeDelegate?.onChangeTitle(title)
+  }
+
+  fun addDevToolsListener(listener: GBrowserCefDevToolsListener) {
+    devToolsDelegates.add(listener)
   }
 
   fun removeDevToolsListener() {
@@ -139,13 +257,21 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
   }
 
   fun disposeDevTools() {
-    devTools.close(true)
+    devTools?.close(true)
     devToolsDelegates.forEach {
       it.onDisposeDevtools()
-
     }
     removeDevToolsListener()
+  }
 
+  fun refreshTheme() {
+    // Add a small delay to ensure the page is ready
+    javax.swing.Timer(100) {
+      GBrowserThemeUtil.applyTheme(cefBrowser, project)
+    }.apply {
+      isRepeats = false
+      start()
+    }
   }
 
   fun addDisplayHandler(delegate: GBrowserToolWindowActionBarDelegate) {
@@ -181,6 +307,14 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
     }
     removeDevToolsListener()
     removeLifeSpanHandler()
+
+    // Clean up device emulation state
+    GBrowserMobileToggleAction.cleanupBrowserState(id)
+
+    // Ensure browser is properly closed
+    if (!cefBrowser.isClosing) {
+      cefBrowser.close(true)
+    }
 
     super.dispose()
   }

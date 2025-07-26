@@ -16,6 +16,7 @@ object GBrowserActionId {
   private const val GBROWSER_CLEAN_COOKIES_ID: @NonNls String = "GBrowserCookieDeleteAllAction"
   private const val GBROWSER_CLEAR_HISTORY_ID: @NonNls String = "GBrowserClearHistoryAction"
   private const val GBROWSER_CLOSE_TAB_ID: @NonNls String = "GBrowserCloseTabAction"
+  private const val GBROWSER_DEVTOOLS_ID: @NonNls String = "GBrowserDevToolsAction"
   private const val GBROWSER_DUPLICATE_TAB_ID: @NonNls String = "GBrowserTabDuplicateAction"
   private const val GBROWSER_FIND_ID: @NonNls String = "GBrowserFindAction"
   private const val GBROWSER_FORWARD_ID: @NonNls String = "GBrowserForwardAction"
@@ -28,6 +29,7 @@ object GBrowserActionId {
   private const val GBROWSER_ZOOM_IN_ID: @NonNls String = "GBrowserZoomInAction"
   private const val GBROWSER_ZOOM_OUT_ID: @NonNls String = "GBrowserZoomOutAction"
   private const val GBROWSER_ZOOM_RESET_ID: @NonNls String = "GBrowserZoomResetAction"
+  private const val GBROWSER_MOBILE_TOGGLE_ID: @NonNls String = "GBrowserMobileToggleAction"
 
 
   fun toAction(id: String): AnAction = ActionManager.getInstance().getAction(id)
@@ -68,7 +70,7 @@ object GBrowserActionId {
   }
 
   private val BROWSER: List<AnAction> =
-    listOf(GBROWSER_HOME_ID, GBROWSER_FIND_ID, GBROWSER_OPEN_IN_ID, GBROWSER_REFRESH_ID, GBROWSER_STOP_LOAD_ID).map {
+    listOf(GBROWSER_HOME_ID, GBROWSER_FIND_ID, GBROWSER_DEVTOOLS_ID, GBROWSER_MOBILE_TOGGLE_ID, GBROWSER_OPEN_IN_ID, GBROWSER_REFRESH_ID, GBROWSER_STOP_LOAD_ID).map {
       ActionManager.getInstance().getAction(it)
     }
 

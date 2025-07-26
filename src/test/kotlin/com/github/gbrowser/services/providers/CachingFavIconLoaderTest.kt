@@ -1,5 +1,6 @@
 package com.github.gbrowser.services.providers
 
+import com.intellij.ide.starter.coroutine.testSuiteSupervisorScope
 import io.mockk.unmockkAll
 import org.junit.jupiter.api.*
 
@@ -10,12 +11,13 @@ class CachingFavIconLoaderTest {
 
     @BeforeEach
     fun setup() {
-        favIconLoader = CachingFavIconLoader()
+      favIconLoader = CachingFavIconLoader(testSuiteSupervisorScope)
     }
 
     @AfterEach
     fun tearDown() {
-        unmockkAll()
+      favIconLoader.dispose()
+      unmockkAll()
     }
 
     @Test

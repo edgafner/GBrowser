@@ -35,5 +35,12 @@ object GBrowserIcons {
   @JvmField
   val TOGGLE_VISIBILITY = IconLoader.getIcon("/com/github/gbrowser/toggleVisibility.svg", javaClass)
 
+  @JvmField
+  val TOGGLE_DEVICES = IconLoader.getIcon("/com/github/gbrowser/responsive.svg", javaClass)
 
+  @JvmField
+  val DEV_TOOLS = IconLoader.getIcon("/com/github/gbrowser/dev_tools.svg", javaClass)
+
+  @JvmField
+  val DEV_TOOLS_ACTIVE = IconLoader.getIcon("/com/github/gbrowser/dev_tools_active.svg", javaClass)
 }
