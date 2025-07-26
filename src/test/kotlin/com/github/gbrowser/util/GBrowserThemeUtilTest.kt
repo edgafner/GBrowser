@@ -129,4 +129,96 @@ class GBrowserThemeUtilTest {
     // Note: This might be flaky in CI, so we just verify caching works
     assertSame(script1, script2)
   }
+
+  @Test
+  fun `test dark mode script contains CSS filter for inversion`() {
+    val getDarkModeScriptMethod = GBrowserThemeUtil::class.java.getDeclaredMethod("getDarkModeScript")
+    getDarkModeScriptMethod.isAccessible = true
+
+    val script = getDarkModeScriptMethod.invoke(GBrowserThemeUtil) as String
+
+    // Verify script contains CSS for dark mode
+    assertTrue(script.contains("gbrowser-dark-mode-support"))
+    assertTrue(script.contains("color-scheme: dark"))
+    
+    // Verify images/videos filter handling if present
+    if (script.contains("filter:")) {
+      assertTrue(script.contains("img, video, iframe, canvas, embed, object"))
+    }
+  }
+
+  @Test
+  fun `test dark mode script sets proper background colors`() {
+    val getDarkModeScriptMethod = GBrowserThemeUtil::class.java.getDeclaredMethod("getDarkModeScript")
+    getDarkModeScriptMethod.isAccessible = true
+
+    val script = getDarkModeScriptMethod.invoke(GBrowserThemeUtil) as String
+
+    // Verify dark background colors
+    assertTrue(script.contains("background-color: #121212 !important"))
+    
+    // Verify text color for readability
+    assertTrue(script.contains("color: #e0e0e0 !important"))
+    
+    // Verify scrollbar styling
+    assertTrue(script.contains("::-webkit-scrollbar"))
+    assertTrue(script.contains("background-color: #2d2d2d"))
+  }
+
+  @Test
+  fun `test light mode script removes dark mode styles`() {
+    val getLightModeScriptMethod = GBrowserThemeUtil::class.java.getDeclaredMethod("getLightModeScript")
+    getLightModeScriptMethod.isAccessible = true
+
+    val script = getLightModeScriptMethod.invoke(GBrowserThemeUtil) as String
+
+    // Verify it removes dark mode CSS
+    assertTrue(script.contains("document.getElementById('gbrowser-dark-mode-support')"))
+    assertTrue(script.contains(".remove()"))
+    
+    // Verify it adds light mode CSS
+    assertTrue(script.contains("gbrowser-light-mode-support"))
+  }
+
+  @Test
+  fun `test light mode script sets proper light colors`() {
+    val getLightModeScriptMethod = GBrowserThemeUtil::class.java.getDeclaredMethod("getLightModeScript")
+    getLightModeScriptMethod.isAccessible = true
+
+    val script = getLightModeScriptMethod.invoke(GBrowserThemeUtil) as String
+
+    // Verify light background colors
+    assertTrue(script.contains("background-color: #ffffff !important"))
+    
+    // Verify text color
+    assertTrue(script.contains("color: #000000 !important"))
+    
+    // Verify color scheme
+    assertTrue(script.contains("color-scheme: light"))
+  }
+
+  @Test
+  fun `test dark mode script checks device emulation flag`() {
+    val getDarkModeScriptMethod = GBrowserThemeUtil::class.java.getDeclaredMethod("getDarkModeScript")
+    getDarkModeScriptMethod.isAccessible = true
+
+    val script = getDarkModeScriptMethod.invoke(GBrowserThemeUtil) as String
+
+    // Verify it checks for device emulation
+    assertTrue(script.contains("window.__gbrowserDarkModeApplied === 'device-emulation'"))
+    assertTrue(script.contains("Device emulation active, skipping dark theme"))
+  }
+
+  @Test
+  fun `test theme scripts handle matchMedia properly`() {
+    val getDarkModeScriptMethod = GBrowserThemeUtil::class.java.getDeclaredMethod("getDarkModeScript")
+    getDarkModeScriptMethod.isAccessible = true
+
+    val script = getDarkModeScriptMethod.invoke(GBrowserThemeUtil) as String
+
+    // Verify matchMedia override for dark mode
+    assertTrue(script.contains("window.matchMedia"))
+    assertTrue(script.contains("prefers-color-scheme: dark"))
+    assertTrue(script.contains("window.__originalMatchMedia"))
+  }
 }

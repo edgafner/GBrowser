@@ -146,4 +146,108 @@ class GBrowserDeviceEmulationUtilTest {
       }
     }
   }
+
+  @Test
+  fun `test special device profiles have correct properties`() {
+    // Test Surface devices
+    val surfacePro = GBrowserDeviceEmulationUtil.DEVICE_PROFILES["Surface Pro 7"]
+    assertNotNull(surfacePro)
+    assertEquals("Surface Pro 7", surfacePro!!.name)
+    assertTrue(surfacePro.isMobile, "Surface Pro should be marked as mobile for touch support")
+    assertTrue(surfacePro.hasTouch, "Surface Pro should have touch enabled")
+    assertTrue(surfacePro.userAgent.contains("Windows NT"), "Surface Pro should have Windows user agent")
+    assertFalse(surfacePro.userAgent.contains("Mobile"), "Surface Pro should not have Mobile in user agent")
+
+    val surfaceDuo = GBrowserDeviceEmulationUtil.DEVICE_PROFILES["Surface Duo"]
+    assertNotNull(surfaceDuo)
+    assertTrue(surfaceDuo!!.userAgent.contains("Android"), "Surface Duo should have Android user agent")
+    assertTrue(surfaceDuo.userAgent.contains("Mobile"), "Surface Duo should have Mobile in user agent")
+  }
+
+  @Test
+  fun `test Nest Hub devices have special user agents`() {
+    val nestHub = GBrowserDeviceEmulationUtil.DEVICE_PROFILES["Nest Hub"]
+    assertNotNull(nestHub)
+    assertEquals("Nest Hub", nestHub!!.name)
+    assertTrue(nestHub.isMobile, "Nest Hub should be marked as mobile")
+    assertTrue(nestHub.hasTouch, "Nest Hub should have touch enabled")
+    assertTrue(nestHub.userAgent.contains("CrKey"), "Nest Hub should have CrKey identifier")
+    assertTrue(nestHub.userAgent.contains("X11; Linux armv7l"), "Nest Hub should have Linux ARM user agent")
+
+    val nestHubMax = GBrowserDeviceEmulationUtil.DEVICE_PROFILES["Nest Hub Max"]
+    assertNotNull(nestHubMax)
+    assertTrue(nestHubMax!!.userAgent.contains("CrKey"), "Nest Hub Max should have CrKey identifier")
+    assertTrue(nestHubMax.userAgent.contains("X11; Linux aarch64"), "Nest Hub Max should have Linux ARM64 user agent")
+  }
+
+  @Test
+  fun `test foldable devices have appropriate settings`() {
+    val zenbookFold = GBrowserDeviceEmulationUtil.DEVICE_PROFILES["Asus Zenbook Fold"]
+    assertNotNull(zenbookFold)
+    assertEquals("Asus Zenbook Fold", zenbookFold!!.name)
+    assertTrue(zenbookFold.isMobile, "Zenbook Fold should be marked as mobile for touch support")
+    assertTrue(zenbookFold.hasTouch, "Zenbook Fold should have touch enabled")
+    assertTrue(zenbookFold.userAgent.contains("Windows NT"), "Zenbook Fold should have Windows user agent")
+
+    val galaxyFold = GBrowserDeviceEmulationUtil.DEVICE_PROFILES["Galaxy Z Fold 5"]
+    assertNotNull(galaxyFold)
+    assertTrue(galaxyFold!!.userAgent.contains("Android"), "Galaxy Fold should have Android user agent")
+    assertTrue(galaxyFold.userAgent.contains("Mobile"), "Galaxy Fold should have Mobile in user agent")
+  }
+
+  @Test
+  fun `test escapeJavaScriptString handles empty and null-like inputs`() {
+    val escapeMethod = GBrowserDeviceEmulationUtil::class.java
+      .getDeclaredMethod("escapeJavaScriptString", String::class.java)
+    escapeMethod.isAccessible = true
+
+    // Test empty string
+    assertEquals("", escapeMethod.invoke(GBrowserDeviceEmulationUtil, ""))
+
+    // Test strings that could be confused with null
+    assertEquals("null", escapeMethod.invoke(GBrowserDeviceEmulationUtil, "null"))
+    assertEquals("undefined", escapeMethod.invoke(GBrowserDeviceEmulationUtil, "undefined"))
+  }
+
+  @Test
+  fun `test escapeJavaScriptString handles complex nested quotes`() {
+    val escapeMethod = GBrowserDeviceEmulationUtil::class.java
+      .getDeclaredMethod("escapeJavaScriptString", String::class.java)
+    escapeMethod.isAccessible = true
+
+    // Test complex nested quotes
+    val complexInput = """He said, "She's saying 'Hello' to everyone."""
+    val escaped = escapeMethod.invoke(GBrowserDeviceEmulationUtil, complexInput) as String
+    
+    // Should escape both single and double quotes
+    assertTrue(escaped.contains("\\\""))
+    assertTrue(escaped.contains("\\'"))
+    
+    // The escaped string should have properly escaped all quotes
+    // Verify that the specific escape patterns are present
+    assertTrue(escaped.contains("\\\"She\\'s"), "Should contain escaped double quote before She's")
+    assertTrue(escaped.contains("\\'Hello\\'"), "Should contain escaped single quotes around Hello")
+    
+    // The escaped string should look like this
+    assertEquals("""He said, \"She\'s saying \'Hello\' to everyone.""", escaped)
+  }
+
+  @Test
+  fun `test device profiles cover various screen sizes`() {
+    val profiles = GBrowserDeviceEmulationUtil.DEVICE_PROFILES.values
+    
+    // Test we have small phones
+    assertTrue(profiles.any { it.width < 400 }, "Should have small phone devices")
+    
+    // Test we have tablets
+    assertTrue(profiles.any { it.width >= 768 && it.width < 1024 }, "Should have tablet devices")
+    
+    // Test we have large tablets/hybrids
+    assertTrue(profiles.any { it.width >= 1024 }, "Should have large tablet/hybrid devices")
+    
+    // Test various pixel densities
+    assertTrue(profiles.any { it.deviceScaleFactor == 2.0 }, "Should have 2x DPR devices")
+    assertTrue(profiles.any { it.deviceScaleFactor == 3.0 }, "Should have 3x DPR devices")
+    assertTrue(profiles.any { it.deviceScaleFactor > 3.0 }, "Should have high DPR devices")
+  }
 }
