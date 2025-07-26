@@ -1,5 +1,6 @@
 package com.github.gbrowser.services
 
+import com.github.gbrowser.actions.DeviceEmulationConstants
 import com.github.gbrowser.settings.bookmarks.GBrowserBookmark
 import com.github.gbrowser.settings.dao.GBrowserHistory
 import com.github.gbrowser.settings.request_header.GBrowserRequestHeader
@@ -43,7 +44,7 @@ class GBrowserService : SerializablePersistentStateComponent<GBrowserService.Set
                            var historyItemsToKeep: Int = 20,
                            var requestHeaders: MutableSet<GBrowserRequestHeader> = mutableSetOf(
                              GBrowserRequestHeader(
-                               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36 /CefSharp Browser 90.0",
+                               DeviceEmulationConstants.USER_AGENT_DEFAULT_BROWSER,
                                "User-Agent",
                                true
                              )

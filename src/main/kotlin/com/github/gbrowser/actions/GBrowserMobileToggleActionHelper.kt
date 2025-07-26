@@ -16,10 +16,6 @@ import javax.swing.SwingUtilities
 object GBrowserMobileToggleActionHelper {
   private val LOG = thisLogger()
 
-  // Chrome DevTools colors - matching the actual Chrome DevTools colors
-  private val CHROME_DEVTOOLS_DARK_BG = JBColor(Color(0x202124), Color(0x202124)) // Chrome's actual dark background (lighter gray)
-  private val CHROME_DEVTOOLS_LIGHT_BG = JBColor(Color(0xF3F3F3), Color(0xF3F3F3)) // Chrome's actual light background
-
   fun enableDeviceEmulation(
     browserPanel: SimpleToolWindowPanel,
     browser: GCefBrowser,
@@ -36,11 +32,11 @@ object GBrowserMobileToggleActionHelper {
     state.browserWrapper = JBPanel<JBPanel<*>>(GridBagLayout()).apply {
       // Use Chrome DevTools colors based on theme
       background = if (isDarkTheme) {
-        CHROME_DEVTOOLS_DARK_BG
+        JBColor(Color(DeviceEmulationConstants.CHROME_DEVTOOLS_DARK_BG), Color(DeviceEmulationConstants.CHROME_DEVTOOLS_DARK_BG))
       } else {
-        CHROME_DEVTOOLS_LIGHT_BG
+        JBColor(Color(DeviceEmulationConstants.CHROME_DEVTOOLS_LIGHT_BG), Color(DeviceEmulationConstants.CHROME_DEVTOOLS_LIGHT_BG))
       }
-      border = JBUI.Borders.empty(20)
+      border = JBUI.Borders.empty(DeviceEmulationConstants.DEVICE_FRAME_PADDING_HALF)
     }
 
     // Create a container panel
@@ -62,16 +58,10 @@ object GBrowserMobileToggleActionHelper {
     browserPanel.repaint()
 
     // Ensure device frame update happens after layout is complete
-    // Use invokeAndWait to avoid race conditions
-    if (!SwingUtilities.isEventDispatchThread()) {
-      SwingUtilities.invokeAndWait {
-        commonUpdate(browser, state)
-      }
-    } else {
-      // If already on EDT, schedule for next cycle to ensure layout is complete
-      SwingUtilities.invokeLater {
-        commonUpdate(browser, state)
-      }
+    // Always use invokeLater to avoid potential deadlocks and ensure consistent behavior
+    // This guarantees the update runs after the current EDT event completes
+    SwingUtilities.invokeLater {
+      commonUpdate(browser, state)
     }
   }
 

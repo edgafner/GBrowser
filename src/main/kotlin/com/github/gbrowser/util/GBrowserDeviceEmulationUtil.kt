@@ -1,5 +1,6 @@
 package com.github.gbrowser.util
 
+import com.github.gbrowser.actions.DeviceEmulationConstants
 import com.intellij.openapi.diagnostic.thisLogger
 import org.cef.browser.CefBrowser
 
@@ -41,119 +42,119 @@ object GBrowserDeviceEmulationUtil {
       width = 375,
       height = 667,
       deviceScaleFactor = 2.0,
-      userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1"
+      userAgent = DeviceEmulationConstants.USER_AGENT_IPHONE_SE
     ),
     "iPhone XR" to DeviceProfile(
       name = "iPhone XR",
       width = 414,
       height = 896,
       deviceScaleFactor = 2.0,
-      userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1"
+      userAgent = DeviceEmulationConstants.USER_AGENT_IPHONE_XR
     ),
     "iPhone 12 Pro" to DeviceProfile(
       name = "iPhone 12 Pro",
       width = 390,
       height = 844,
       deviceScaleFactor = 3.0,
-      userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1"
+      userAgent = DeviceEmulationConstants.USER_AGENT_IPHONE_12_PRO
     ),
     "iPhone 14 Pro Max" to DeviceProfile(
       name = "iPhone 14 Pro Max",
       width = 430,
       height = 932,
       deviceScaleFactor = 3.0,
-      userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1"
+      userAgent = DeviceEmulationConstants.USER_AGENT_IPHONE_XR
     ),
     "Pixel 7" to DeviceProfile(
       name = "Pixel 7",
       width = 412,
       height = 915,
       deviceScaleFactor = 2.625,
-      userAgent = "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36"
+      userAgent = DeviceEmulationConstants.USER_AGENT_PIXEL_7
     ),
     "Samsung Galaxy S8+" to DeviceProfile(
       name = "Samsung Galaxy S8+",
       width = 360,
       height = 740,
       deviceScaleFactor = 4.0,
-      userAgent = "Mozilla/5.0 (Linux; Android 8.0.0; SM-G955U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36"
+      userAgent = DeviceEmulationConstants.USER_AGENT_SAMSUNG_S8_PLUS
     ),
     "Samsung Galaxy S20 Ultra" to DeviceProfile(
       name = "Samsung Galaxy S20 Ultra",
       width = 412,
       height = 915,
       deviceScaleFactor = 3.5,
-      userAgent = "Mozilla/5.0 (Linux; Android 10; SM-G988B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36"
+      userAgent = DeviceEmulationConstants.USER_AGENT_SAMSUNG_S20_ULTRA
     ),
     "iPad Mini" to DeviceProfile(
       name = "iPad Mini",
       width = 768,
       height = 1024,
       deviceScaleFactor = 2.0,
-      userAgent = "Mozilla/5.0 (iPad; CPU OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1"
+      userAgent = DeviceEmulationConstants.USER_AGENT_IPAD_MINI
     ),
     "iPad Air" to DeviceProfile(
       name = "iPad Air",
       width = 820,
       height = 1180,
       deviceScaleFactor = 2.0,
-      userAgent = "Mozilla/5.0 (iPad; CPU OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1"
+      userAgent = DeviceEmulationConstants.USER_AGENT_IPAD_MINI
     ),
     "iPad Pro" to DeviceProfile(
       name = "iPad Pro",
       width = 1024,
       height = 1366,
       deviceScaleFactor = 2.0,
-      userAgent = "Mozilla/5.0 (iPad; CPU OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1"
+      userAgent = DeviceEmulationConstants.USER_AGENT_IPAD_MINI
     ),
     "Surface Pro 7" to DeviceProfile(
       name = "Surface Pro 7",
       width = 912,
       height = 1368,
       deviceScaleFactor = 2.0,
-      userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 Edg/116.0.0.0"
+      userAgent = DeviceEmulationConstants.USER_AGENT_SURFACE_PRO_7
     ),
     "Surface Duo" to DeviceProfile(
       name = "Surface Duo",
       width = 540,
       height = 720,
       deviceScaleFactor = 2.5,
-      userAgent = "Mozilla/5.0 (Linux; Android 11; Surface Duo) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36"
+      userAgent = DeviceEmulationConstants.USER_AGENT_SURFACE_DUO
     ),
     "Galaxy Z Fold 5" to DeviceProfile(
       name = "Galaxy Z Fold 5",
       width = 344,
       height = 882,
       deviceScaleFactor = 3.0,
-      userAgent = "Mozilla/5.0 (Linux; Android 13; SM-F946B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36"
+      userAgent = DeviceEmulationConstants.USER_AGENT_GALAXY_Z_FOLD_5
     ),
     "Asus Zenbook Fold" to DeviceProfile(
       name = "Asus Zenbook Fold",
       width = 853,
       height = 1280,
       deviceScaleFactor = 2.0,
-      userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
+      userAgent = DeviceEmulationConstants.USER_AGENT_ASUS_ZENBOOK_FOLD
     ),
     "Samsung Galaxy A51/71" to DeviceProfile(
       name = "Samsung Galaxy A51/71",
       width = 412,
       height = 914,
       deviceScaleFactor = 2.625,
-      userAgent = "Mozilla/5.0 (Linux; Android 11; SM-A515F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36"
+      userAgent = DeviceEmulationConstants.USER_AGENT_SAMSUNG_A51_71
     ),
     "Nest Hub" to DeviceProfile(
       name = "Nest Hub",
       width = 1024,
       height = 600,
       deviceScaleFactor = 2.0,
-      userAgent = "Mozilla/5.0 (X11; Linux armv7l) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 CrKey/1.56.500000"
+      userAgent = DeviceEmulationConstants.USER_AGENT_NEST_HUB
     ),
     "Nest Hub Max" to DeviceProfile(
       name = "Nest Hub Max",
       width = 1280,
       height = 800,
       deviceScaleFactor = 2.0,
-      userAgent = "Mozilla/5.0 (X11; Linux aarch64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 CrKey/1.56.500000"
+      userAgent = DeviceEmulationConstants.USER_AGENT_NEST_HUB_MAX
     )
   )
 

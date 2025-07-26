@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ToggleAction
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.DumbAware
+import java.util.*
 
 class GBrowserMobileToggleAction : ToggleAction(
   GBrowserBundle.message("action.GBrowserMobileToggleAction.text"),
@@ -14,10 +15,18 @@ class GBrowserMobileToggleAction : ToggleAction(
   com.github.gbrowser.GBrowserIcons.TOGGLE_DEVICES
 ), DumbAware {
 
+  /**
+   * Companion object for GBrowserMobileToggleAction.
+   * @Suppress("CompanionObjectInExtension") is used because we need static state management
+   * for device emulation across multiple browser instances.
+   */
   @Suppress("CompanionObjectInExtension")
   companion object {
     private val LOG = thisLogger()
-    private val deviceEmulationState = mutableMapOf<String, DeviceEmulationState>()
+
+    // Use WeakHashMap to prevent memory leaks - entries are automatically removed
+    // when the browser ID (key) is no longer strongly referenced elsewhere
+    private val deviceEmulationState = Collections.synchronizedMap(WeakHashMap<String, DeviceEmulationState>())
     private val stateLock = Any() // Lock for synchronizing state access
     
 

@@ -25,40 +25,44 @@ object GBrowserMobileToggleActionUI {
     val zoomComboBox = createZoomComboBox(browser)
     val rotateButton = createRotateButton(browser, state, widthSpinner, heightSpinner)
 
-    return JBPanel<JBPanel<*>>(FlowLayout(FlowLayout.LEFT, 5, 2)).apply {
+    return JBPanel<JBPanel<*>>(FlowLayout(FlowLayout.LEFT, DeviceEmulationConstants.TOOLBAR_HORIZONTAL_GAP, DeviceEmulationConstants.TOOLBAR_VERTICAL_GAP)).apply {
       // Match Chrome DevTools toolbar styling
       val isDarkTheme = GBrowserThemeUtil.isDarkTheme(browser.project)
       background = if (isDarkTheme) {
-        JBColor(Color(0x2B2D30), Color(0x2B2D30)) // Chrome DevTools toolbar dark background
+        JBColor(Color(DeviceEmulationConstants.CHROME_DEVTOOLS_TOOLBAR_DARK_BG), Color(DeviceEmulationConstants.CHROME_DEVTOOLS_TOOLBAR_DARK_BG))
       } else {
-        JBColor(Color(0xF3F3F3), Color(0xF3F3F3)) // Chrome DevTools toolbar light background  
+        JBColor(Color(DeviceEmulationConstants.CHROME_DEVTOOLS_TOOLBAR_LIGHT_BG), Color(DeviceEmulationConstants.CHROME_DEVTOOLS_TOOLBAR_LIGHT_BG))
       }
       border = JBUI.Borders.compound(
         JBUI.Borders.customLine(
-          if (isDarkTheme) JBColor(Color(0x393B3F), Color(0x393B3F)) else JBColor(Color(0xD0D0D0), Color(0xD0D0D0)),
+          if (isDarkTheme) JBColor(Color(DeviceEmulationConstants.CHROME_DEVTOOLS_DARK_BORDER), Color(DeviceEmulationConstants.CHROME_DEVTOOLS_DARK_BORDER)) else JBColor(
+            Color(
+              DeviceEmulationConstants.CHROME_DEVTOOLS_LIGHT_BORDER
+            ), Color(DeviceEmulationConstants.CHROME_DEVTOOLS_LIGHT_BORDER)
+          ),
           0, 0, 1, 0
         ),
-        JBUI.Borders.empty(5, 10)
+        JBUI.Borders.empty(DeviceEmulationConstants.TOOLBAR_PADDING, DeviceEmulationConstants.TOOLBAR_HORIZONTAL_PADDING)
       )
 
       // Device selector
       add(deviceComboBox)
 
       // Size controls
-      add(Box.createHorizontalStrut(10))
+      add(Box.createHorizontalStrut(DeviceEmulationConstants.HORIZONTAL_STRUT_SIZE))
       add(widthSpinner)
       add(JBLabel("×").apply {
-        border = JBUI.Borders.empty(0, 3)
+        border = JBUI.Borders.empty(0, DeviceEmulationConstants.LABEL_HORIZONTAL_PADDING)
       })
       add(heightSpinner)
 
       // Zoom controls
-      add(Box.createHorizontalStrut(10))
+      add(Box.createHorizontalStrut(DeviceEmulationConstants.HORIZONTAL_STRUT_SIZE))
       add(zoomComboBox)
       add(JBLabel("%"))
 
       // Action buttons
-      add(Box.createHorizontalStrut(10))
+      add(Box.createHorizontalStrut(DeviceEmulationConstants.HORIZONTAL_STRUT_SIZE))
       add(rotateButton)
     }
   }
@@ -95,9 +99,16 @@ object GBrowserMobileToggleActionUI {
   }
 
   private fun createWidthSpinner(state: DeviceEmulationState, browser: GCefBrowser): JSpinner {
-    return JSpinner(SpinnerNumberModel(state.currentWidth, 50, 9999, 1)).apply {
-      name = "device-width-spinner"
-      preferredSize = Dimension(80, preferredSize.height)
+    return JSpinner(
+      SpinnerNumberModel(
+        state.currentWidth,
+        DeviceEmulationConstants.MIN_DEVICE_DIMENSION,
+        DeviceEmulationConstants.MAX_DEVICE_DIMENSION,
+        DeviceEmulationConstants.DIMENSION_STEP
+      )
+    ).apply {
+      name = DeviceEmulationConstants.DEVICE_WIDTH_SPINNER_NAME
+      preferredSize = Dimension(DeviceEmulationConstants.SPINNER_WIDTH, preferredSize.height)
       addChangeListener {
         val newWidth = value as Int
         if (state.currentWidth != newWidth) {
@@ -110,9 +121,16 @@ object GBrowserMobileToggleActionUI {
   }
 
   private fun createHeightSpinner(state: DeviceEmulationState, browser: GCefBrowser): JSpinner {
-    return JSpinner(SpinnerNumberModel(state.currentHeight, 50, 9999, 1)).apply {
-      name = "device-height-spinner"
-      preferredSize = Dimension(80, preferredSize.height)
+    return JSpinner(
+      SpinnerNumberModel(
+        state.currentHeight,
+        DeviceEmulationConstants.MIN_DEVICE_DIMENSION,
+        DeviceEmulationConstants.MAX_DEVICE_DIMENSION,
+        DeviceEmulationConstants.DIMENSION_STEP
+      )
+    ).apply {
+      name = DeviceEmulationConstants.DEVICE_HEIGHT_SPINNER_NAME
+      preferredSize = Dimension(DeviceEmulationConstants.SPINNER_WIDTH, preferredSize.height)
       addChangeListener {
         val newHeight = value as Int
         if (state.currentHeight != newHeight) {
@@ -126,14 +144,14 @@ object GBrowserMobileToggleActionUI {
 
   private fun createZoomComboBox(browser: GCefBrowser): ComboBox<String> {
     return ComboBox(arrayOf("50%", "75%", "100%", "125%", "150%")).apply {
-      selectedItem = "100%"
+      selectedItem = DeviceEmulationConstants.DEFAULT_ZOOM_PERCENTAGE
       isEditable = true
-      preferredSize = Dimension(80, preferredSize.height)
+      preferredSize = Dimension(DeviceEmulationConstants.SPINNER_WIDTH, preferredSize.height)
       addActionListener {
         val zoomText = selectedItem as? String ?: return@addActionListener
         val zoomValue = zoomText.removeSuffix("%").toDoubleOrNull() ?: return@addActionListener
         val zoom = zoomValue / 100.0
-        val zoomLevel = ln(zoom) / ln(1.2)
+        val zoomLevel = ln(zoom) / ln(DeviceEmulationConstants.ZOOM_FACTOR)
         LOG.debug("GBrowserMobileToggleAction: Zoom changed to $zoomText, zoom level: $zoomLevel")
         browser.cefBrowser.zoomLevel = zoomLevel
       }
@@ -148,7 +166,7 @@ object GBrowserMobileToggleActionUI {
   ): JButton {
     return JButton(AllIcons.Actions.SyncPanels).apply {
       toolTipText = "Rotate"
-      preferredSize = Dimension(30, 26)
+      preferredSize = Dimension(DeviceEmulationConstants.ROTATE_BUTTON_WIDTH, DeviceEmulationConstants.ROTATE_BUTTON_HEIGHT)
       addActionListener {
         state.isRotated = !state.isRotated
         // Swap width and height
@@ -196,7 +214,7 @@ object GBrowserMobileToggleActionUI {
       deviceScaleFactor = 1.0,
       userAgent = browser.cefBrowser.url?.let {
         // Use a mobile user agent for responsive mode
-        "Mozilla/5.0 (Linux; Android 11) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36"
+        DeviceEmulationConstants.MOBILE_USER_AGENT_ANDROID
       } ?: "",
       isMobile = true,
       hasTouch = true
@@ -241,14 +259,14 @@ object GBrowserMobileToggleActionUI {
     val wrapperHeight = wrapper.height
 
     // If wrapper dimensions are not yet set, use the device dimensions as-is
-    if (wrapperWidth <= 40 || wrapperHeight <= 40) {
+    if (wrapperWidth <= DeviceEmulationConstants.DEVICE_FRAME_PADDING || wrapperHeight <= DeviceEmulationConstants.DEVICE_FRAME_PADDING) {
       LOG.info("GBrowserMobileToggleAction: Wrapper dimensions not ready ($wrapperWidth x $wrapperHeight), using device dimensions as-is")
       updateDeviceFrameWithDimensions(browser, state, state.currentWidth, state.currentHeight, 1.0)
       return
     }
 
-    val availableWidth = wrapperWidth - 40 // 20px padding on each side
-    val availableHeight = wrapperHeight - 40 // 20px padding on top/bottom
+    val availableWidth = wrapperWidth - DeviceEmulationConstants.DEVICE_FRAME_PADDING
+    val availableHeight = wrapperHeight - DeviceEmulationConstants.DEVICE_FRAME_PADDING
 
     // Calculate scale if the device is too large
     var deviceWidth = state.currentWidth
@@ -261,7 +279,7 @@ object GBrowserMobileToggleActionUI {
       scale = minOf(scaleX, scaleY, 1.0) // Never scale up, only down
 
       // Apply scale with some margin
-      scale *= 0.9 // 90% to ensure some padding
+      scale *= DeviceEmulationConstants.SCALE_PADDING_FACTOR
       deviceWidth = (state.currentWidth * scale).toInt()
       deviceHeight = (state.currentHeight * scale).toInt()
     }
@@ -275,11 +293,11 @@ object GBrowserMobileToggleActionUI {
     state.deviceToolbar?.components?.forEach { component ->
       if (component is JSpinner) {
         when (component.name) {
-          "device-width-spinner" -> {
+          DeviceEmulationConstants.DEVICE_WIDTH_SPINNER_NAME -> {
             LOG.debug("GBrowserMobileToggleAction: Setting width spinner to ${state.currentWidth}")
             component.value = state.currentWidth
           }
-          "device-height-spinner" -> {
+          DeviceEmulationConstants.DEVICE_HEIGHT_SPINNER_NAME -> {
             LOG.debug("GBrowserMobileToggleAction: Setting height spinner to ${state.currentHeight}")
             component.value = state.currentHeight
           }
@@ -298,7 +316,7 @@ object GBrowserMobileToggleActionUI {
       height = state.currentHeight,
       deviceScaleFactor = 1.0,
       userAgent = browser.cefBrowser.url?.let {
-        "Mozilla/5.0 (Linux; Android 11) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36"
+        DeviceEmulationConstants.MOBILE_USER_AGENT_ANDROID
       } ?: ""
     )
 
@@ -323,16 +341,24 @@ object GBrowserMobileToggleActionUI {
       // Match Chrome DevTools styling
       val isDarkTheme = GBrowserThemeUtil.isDarkTheme(project)
       background = if (isDarkTheme) {
-        JBColor(Color(0x292A2D), Color(0x292A2D)) // Slightly lighter than the wrapper for contrast
+        JBColor(Color(DeviceEmulationConstants.CHROME_DEVICE_FRAME_DARK_BG), Color(DeviceEmulationConstants.CHROME_DEVICE_FRAME_DARK_BG))
       } else {
-        JBColor(Color(0xFFFFFF), Color(0xFFFFFF)) // White for light theme
+        JBColor(Color(DeviceEmulationConstants.CHROME_DEVICE_FRAME_LIGHT_BG), Color(DeviceEmulationConstants.CHROME_DEVICE_FRAME_LIGHT_BG))
       }
       border = BorderFactory.createCompoundBorder(
         BorderFactory.createLineBorder(
-          if (isDarkTheme) JBColor(Color(0x3C3F41), Color(0x3C3F41)) else JBColor(Color(0xD0D0D0), Color(0xD0D0D0)),
+          if (isDarkTheme) JBColor(Color(DeviceEmulationConstants.CHROME_DEVICE_FRAME_DARK_BORDER), Color(DeviceEmulationConstants.CHROME_DEVICE_FRAME_DARK_BORDER)) else JBColor(
+            Color(DeviceEmulationConstants.CHROME_DEVICE_FRAME_LIGHT_BORDER),
+            Color(DeviceEmulationConstants.CHROME_DEVICE_FRAME_LIGHT_BORDER)
+          ),
           1
         ),
-        BorderFactory.createEmptyBorder(2, 2, 2, 2) // Small inner padding
+        BorderFactory.createEmptyBorder(
+          DeviceEmulationConstants.DEVICE_FRAME_INNER_PADDING,
+          DeviceEmulationConstants.DEVICE_FRAME_INNER_PADDING,
+          DeviceEmulationConstants.DEVICE_FRAME_INNER_PADDING,
+          DeviceEmulationConstants.DEVICE_FRAME_INNER_PADDING
+        )
       )
 
       // Ensure browser component respects the scaled device frame size
