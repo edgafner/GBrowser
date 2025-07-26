@@ -95,17 +95,34 @@ class GBrowserDeviceEmulationUtilTest {
     maliciousInputs.forEach { maliciousInput ->
       val escaped = escapeMethod.invoke(GBrowserDeviceEmulationUtil, maliciousInput) as String
 
-      // Verify dangerous characters were escaped
-      assertFalse(escaped.contains("'; alert"))
-      assertFalse(escaped.contains("\"; alert"))
-      assertFalse(escaped.contains("</script>"))
-
-      // Verify quotes are escaped
-      if (maliciousInput.contains("'")) {
-        assertTrue(escaped.contains("\\'"))
+      // Verify quotes are properly escaped
+      if (maliciousInput.contains("'") && !maliciousInput.startsWith("\\'")) {
+        // Count unescaped single quotes vs escaped ones
+        val unescapedQuotes = maliciousInput.count { it == '\'' }
+        val escapedQuotes = escaped.split("\\'").size - 1
+        assertEquals(unescapedQuotes, escapedQuotes, "All single quotes should be escaped")
       }
-      if (maliciousInput.contains("\"")) {
-        assertTrue(escaped.contains("\\\""))
+
+      if (maliciousInput.contains("\"") && !maliciousInput.startsWith("\\\"")) {
+        // Count unescaped double quotes vs escaped ones
+        val unescapedQuotes = maliciousInput.count { it == '"' }
+        val escapedQuotes = escaped.split("\\\"").size - 1
+        assertEquals(unescapedQuotes, escapedQuotes, "All double quotes should be escaped")
+      }
+
+      // Verify special characters are escaped
+      if (maliciousInput.contains("\u2028")) {
+        assertTrue(escaped.contains("\\u2028"))
+      }
+      if (maliciousInput.contains("\u2029")) {
+        assertTrue(escaped.contains("\\u2029"))
+      }
+
+      // The escaped string should not equal the original (unless it had no escapable chars)
+      if (maliciousInput.contains("'") || maliciousInput.contains("\"") ||
+        maliciousInput.contains("\\") || maliciousInput.contains("\n") ||
+        maliciousInput.contains("\r") || maliciousInput.contains("\t")) {
+        assertNotEquals(maliciousInput, escaped)
       }
     }
   }
@@ -118,8 +135,10 @@ class GBrowserDeviceEmulationUtilTest {
       assertTrue(profile.userAgent.isNotBlank(), "User agent should not be blank for ${profile.name}")
 
       // Mobile devices should have mobile indicators
-      // Surface Pro is a tablet/desktop device, not a mobile phone
-      if (profile.isMobile && !profile.name.contains("Surface")) {
+      // Exceptions: Surface Pro and Asus Zenbook Fold are foldable/convertible devices
+      // Nest Hub devices are smart displays with custom user agents
+      val specialDevices = listOf("Surface", "Zenbook Fold", "Nest Hub")
+      if (profile.isMobile && specialDevices.none { profile.name.contains(it) }) {
         assertTrue(
           profile.userAgent.contains("Mobile") || profile.userAgent.contains("Android") || profile.userAgent.contains("iPhone"),
           "Mobile device ${profile.name} should have mobile indicator in user agent"

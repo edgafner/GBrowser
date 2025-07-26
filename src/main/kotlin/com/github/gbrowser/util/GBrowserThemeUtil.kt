@@ -124,6 +124,23 @@ object GBrowserThemeUtil {
                                 color-scheme: dark;
                             }
                             
+                            /* Apply dark theme filter to html element */
+                            html {
+                                filter: invert(1) hue-rotate(180deg);
+                                background-color: #121212 !important;
+                            }
+                            
+                            /* Revert filter for images and videos to preserve original colors */
+                            img, video, iframe, canvas, embed, object {
+                                filter: invert(1) hue-rotate(180deg);
+                            }
+                            
+                            /* Basic dark theme colors */
+                            body {
+                                background-color: #121212 !important;
+                                color: #e0e0e0 !important;
+                            }
+                            
                             /* Scrollbar styling */
                             ::-webkit-scrollbar {
                                 background-color: #2d2d2d;
@@ -181,6 +198,29 @@ object GBrowserThemeUtil {
                     if (darkStyle) {
                         darkStyle.remove();
                         console.log('[GBrowser] Removed dark mode CSS');
+                    }
+                    
+                    // Add light mode CSS to ensure proper styling
+                    let lightStyle = document.getElementById('gbrowser-light-mode-support');
+                    if (!lightStyle) {
+                        lightStyle = document.createElement('style');
+                        lightStyle.id = 'gbrowser-light-mode-support';
+                        lightStyle.innerHTML = `
+                            :root {
+                                color-scheme: light;
+                            }
+                            
+                            /* Ensure light theme colors */
+                            html {
+                                background-color: #ffffff !important;
+                            }
+                            
+                            body {
+                                background-color: #ffffff !important;
+                                color: #000000 !important;
+                            }
+                        `;
+                        document.head.appendChild(lightStyle);
                     }
                     
                     // Dispatch event
