@@ -65,7 +65,6 @@ class GCefBrowserLifecycleManager(
     scope.launch {
       try {
         withContext(Dispatchers.EDT) {
-          // Check if project is already disposed
           if (project.isDisposed) {
             LOG.info("Project is already disposed, skipping browser cleanup")
             return@withContext
@@ -91,8 +90,9 @@ class GCefBrowserLifecycleManager(
             toolWindowManager.getToolWindow(GBrowserUtil.DEVTOOLS_TOOL_WINDOW_ID)?.let { _ ->
               // DevTools browsers should be disposed with their parent browsers
             }
-          } catch (e: com.intellij.platform.instanceContainer.internal.ContainerDisposedException) {
+          } catch (e: CancellationException) {
             LOG.info("Container was disposed during cleanup, this is expected during project close")
+            throw e
           } catch (e: Exception) {
             LOG.warn("Non-critical error during browser cleanup", e)
           }

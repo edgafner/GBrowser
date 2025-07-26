@@ -89,9 +89,9 @@ class GBrowserThemeUtilTest {
 
     // Verify script content
     assertTrue(script.contains("Applying dark theme"))
-    assertTrue(script.contains("background-color"))
-    assertTrue(script.contains("color:"))
-    assertTrue(script.contains("filter:"))
+    assertTrue(script.contains("color-scheme: dark"))
+    assertTrue(script.contains("window.matchMedia"))
+    assertTrue(script.contains("prefers-color-scheme: dark"))
   }
 
   @Test
@@ -104,9 +104,8 @@ class GBrowserThemeUtilTest {
 
     // Verify script content
     assertTrue(script.contains("Applying light theme"))
-    assertTrue(script.contains("background-color"))
-    assertTrue(script.contains("color:"))
-    assertTrue(script.contains("!important"))
+    assertTrue(script.contains("color-scheme: light"))
+    assertTrue(script.contains("window.__originalMatchMedia"))
   }
 
   @Test
@@ -131,7 +130,7 @@ class GBrowserThemeUtilTest {
   }
 
   @Test
-  fun `test dark mode script contains CSS filter for inversion`() {
+  fun `test dark mode script contains proper dark mode support`() {
     val getDarkModeScriptMethod = GBrowserThemeUtil::class.java.getDeclaredMethod("getDarkModeScript")
     getDarkModeScriptMethod.isAccessible = true
 
@@ -140,29 +139,30 @@ class GBrowserThemeUtilTest {
     // Verify script contains CSS for dark mode
     assertTrue(script.contains("gbrowser-dark-mode-support"))
     assertTrue(script.contains("color-scheme: dark"))
-    
-    // Verify images/videos filter handling if present
-    if (script.contains("filter:")) {
-      assertTrue(script.contains("img, video, iframe, canvas, embed, object"))
-    }
+
+    // Verify meta tags
+    assertTrue(script.contains("meta[name=\"color-scheme\"]"))
+    assertTrue(script.contains("meta[name=\"theme-color\"]"))
+
+    // Verify it uses Chrome's dark color
+    assertTrue(script.contains("#202124"))
   }
 
   @Test
-  fun `test dark mode script sets proper background colors`() {
+  fun `test dark mode script sets proper meta tags`() {
     val getDarkModeScriptMethod = GBrowserThemeUtil::class.java.getDeclaredMethod("getDarkModeScript")
     getDarkModeScriptMethod.isAccessible = true
 
     val script = getDarkModeScriptMethod.invoke(GBrowserThemeUtil) as String
 
-    // Verify dark background colors
-    assertTrue(script.contains("background-color: #121212 !important"))
-    
-    // Verify text color for readability
-    assertTrue(script.contains("color: #e0e0e0 !important"))
+    // Verify meta color-scheme
+    assertTrue(script.contains("metaColorScheme.content = 'dark'"))
+
+    // Verify theme color matches Chrome dark theme
+    assertTrue(script.contains("metaTheme.content = '#202124'"))
     
     // Verify scrollbar styling
     assertTrue(script.contains("::-webkit-scrollbar"))
-    assertTrue(script.contains("background-color: #2d2d2d"))
   }
 
   @Test
@@ -175,26 +175,26 @@ class GBrowserThemeUtilTest {
     // Verify it removes dark mode CSS
     assertTrue(script.contains("document.getElementById('gbrowser-dark-mode-support')"))
     assertTrue(script.contains(".remove()"))
-    
-    // Verify it adds light mode CSS
-    assertTrue(script.contains("gbrowser-light-mode-support"))
+
+    // Verify it restores matchMedia
+    assertTrue(script.contains("window.matchMedia = window.__originalMatchMedia"))
   }
 
   @Test
-  fun `test light mode script sets proper light colors`() {
+  fun `test light mode script sets proper meta tags`() {
     val getLightModeScriptMethod = GBrowserThemeUtil::class.java.getDeclaredMethod("getLightModeScript")
     getLightModeScriptMethod.isAccessible = true
 
     val script = getLightModeScriptMethod.invoke(GBrowserThemeUtil) as String
 
-    // Verify light background colors
-    assertTrue(script.contains("background-color: #ffffff !important"))
-    
-    // Verify text color
-    assertTrue(script.contains("color: #000000 !important"))
-    
-    // Verify color scheme
-    assertTrue(script.contains("color-scheme: light"))
+    // Verify meta color-scheme
+    assertTrue(script.contains("metaColorScheme.content = 'light'"))
+
+    // Verify theme color
+    assertTrue(script.contains("metaTheme.content = '#ffffff'"))
+
+    // Verify it dispatches events
+    assertTrue(script.contains("colorschemechange"))
   }
 
   @Test

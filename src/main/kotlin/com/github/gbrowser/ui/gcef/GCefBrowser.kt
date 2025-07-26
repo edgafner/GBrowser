@@ -81,9 +81,15 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
     // Add load handler to apply theme
     jbCefClient.addLoadHandler(object : CefLoadHandlerAdapter() {
       override fun onLoadEnd(browser: CefBrowser, frame: CefFrame, httpStatusCode: Int) {
-        if (frame.isMain) {
-          // Apply theme after page loads
-          GBrowserThemeUtil.applyTheme(browser, project)
+        if (frame.isMain && httpStatusCode < 400) {
+          // Apply theme after page loads successfully
+          // Add a small delay to ensure the DOM is ready
+          javax.swing.Timer(50) {
+            GBrowserThemeUtil.applyTheme(browser, project)
+          }.apply {
+            isRepeats = false
+            start()
+          }
         }
       }
 

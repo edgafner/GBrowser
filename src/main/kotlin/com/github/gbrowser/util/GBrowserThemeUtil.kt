@@ -47,6 +47,46 @@ object GBrowserThemeUtil {
     logger.debug("GBrowserThemeUtil: Applying theme - isDark=$isDark")
 
     try {
+      // First, try to use Chrome DevTools Protocol to set dark mode preference
+      // This is the most reliable way to ensure proper dark mode support
+      val devToolsScript = if (isDark) {
+        """
+        (function() {
+          // Use Chrome DevTools Protocol to enable dark mode
+          if (window.chrome && window.chrome.send) {
+            try {
+              // This simulates the Chrome DevTools Protocol command
+              window.chrome.send('setEmulatedMedia', [{
+                media: 'prefers-color-scheme: dark'
+              }]);
+            } catch (e) {
+              console.log('[GBrowser] DevTools Protocol not available');
+            }
+          }
+        })();
+        """
+      } else {
+        """
+        (function() {
+          // Use Chrome DevTools Protocol to disable dark mode
+          if (window.chrome && window.chrome.send) {
+            try {
+              // This simulates the Chrome DevTools Protocol command
+              window.chrome.send('setEmulatedMedia', [{
+                media: 'prefers-color-scheme: light'
+              }]);
+            } catch (e) {
+              console.log('[GBrowser] DevTools Protocol not available');
+            }
+          }
+        })();
+        """
+      }
+
+      // Execute DevTools script first
+      browser.executeJavaScript(devToolsScript.trimIndent(), browser.url, INLINE_SCRIPT_LINE)
+
+      // Then apply our theme script as a fallback
       val script = if (isDark) getDarkModeScript() else getLightModeScript()
       browser.executeJavaScript(script, browser.url, INLINE_SCRIPT_LINE)
     } catch (e: Exception) {
@@ -71,7 +111,7 @@ object GBrowserThemeUtil {
                     }
                     window.__gbrowserDarkModeApplied = true;
                     
-                    // Force dark color scheme
+                    // Force dark color scheme using multiple methods
                     if (window.matchMedia) {
                         // Store original matchMedia
                         if (!window.__originalMatchMedia) {
@@ -112,46 +152,41 @@ object GBrowserThemeUtil {
                         metaTheme.name = 'theme-color';
                         document.head.appendChild(metaTheme);
                     }
-                    metaTheme.content = '#1e1e1e';
+                    metaTheme.content = '#202124';
                     
-                    // Add dark mode CSS
+                    // Add minimal dark mode CSS for sites that don't support it natively
                     let darkStyle = document.getElementById('gbrowser-dark-mode-support');
                     if (!darkStyle) {
                         darkStyle = document.createElement('style');
                         darkStyle.id = 'gbrowser-dark-mode-support';
                         darkStyle.innerHTML = `
-                            :root {
-                                color-scheme: dark;
+                            /* Only apply minimal styles to sites that don't already support dark mode */
+                            @media not all and (prefers-color-scheme: dark) {
+                                :root {
+                                    color-scheme: dark;
+                                }
                             }
                             
-                            /* Apply dark theme filter to html element */
-                            html {
-                                filter: invert(1) hue-rotate(180deg);
-                                background-color: #121212 !important;
-                            }
-                            
-                            /* Revert filter for images and videos to preserve original colors */
-                            img, video, iframe, canvas, embed, object {
-                                filter: invert(1) hue-rotate(180deg);
-                            }
-                            
-                            /* Basic dark theme colors */
-                            body {
-                                background-color: #121212 !important;
-                                color: #e0e0e0 !important;
-                            }
-                            
-                            /* Scrollbar styling */
-                            ::-webkit-scrollbar {
-                                background-color: #2d2d2d;
-                            }
-                            
-                            ::-webkit-scrollbar-thumb {
-                                background-color: #555;
-                            }
-                            
-                            ::-webkit-scrollbar-track {
-                                background-color: #2d2d2d;
+                            /* Chrome-like scrollbar styling for dark mode */
+                            @media (prefers-color-scheme: dark) {
+                                ::-webkit-scrollbar {
+                                    width: 16px;
+                                    height: 16px;
+                                }
+                                
+                                ::-webkit-scrollbar-track {
+                                    background-color: #202124;
+                                }
+                                
+                                ::-webkit-scrollbar-thumb {
+                                    background-color: #35363a;
+                                    border-radius: 8px;
+                                    border: 4px solid #202124;
+                                }
+                                
+                                ::-webkit-scrollbar-thumb:hover {
+                                    background-color: #5f6368;
+                                }
                             }
                         `;
                         document.head.appendChild(darkStyle);
@@ -159,6 +194,11 @@ object GBrowserThemeUtil {
                     
                     // Dispatch event to notify the page about color scheme change
                     window.dispatchEvent(new Event('colorschemechange'));
+                    
+                    // For sites that use JavaScript to detect dark mode
+                    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                        window.matchMedia('(prefers-color-scheme: dark)').dispatchEvent(new Event('change'));
+                    }
                     
                     console.log('[GBrowser] Dark theme applied successfully');
                 })();
@@ -185,7 +225,7 @@ object GBrowserThemeUtil {
                     // Update meta tags
                     const metaColorScheme = document.querySelector('meta[name="color-scheme"]');
                     if (metaColorScheme) {
-                        metaColorScheme.content = 'light dark';
+                        metaColorScheme.content = 'light';
                     }
                     
                     const metaTheme = document.querySelector('meta[name="theme-color"]');
@@ -200,31 +240,13 @@ object GBrowserThemeUtil {
                         console.log('[GBrowser] Removed dark mode CSS');
                     }
                     
-                    // Add light mode CSS to ensure proper styling
-                    let lightStyle = document.getElementById('gbrowser-light-mode-support');
-                    if (!lightStyle) {
-                        lightStyle = document.createElement('style');
-                        lightStyle.id = 'gbrowser-light-mode-support';
-                        lightStyle.innerHTML = `
-                            :root {
-                                color-scheme: light;
-                            }
-                            
-                            /* Ensure light theme colors */
-                            html {
-                                background-color: #ffffff !important;
-                            }
-                            
-                            body {
-                                background-color: #ffffff !important;
-                                color: #000000 !important;
-                            }
-                        `;
-                        document.head.appendChild(lightStyle);
-                    }
-                    
-                    // Dispatch event
+                    // Dispatch events
                     window.dispatchEvent(new Event('colorschemechange'));
+                    
+                    // For sites that use JavaScript to detect light mode
+                    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                        window.matchMedia('(prefers-color-scheme: light)').dispatchEvent(new Event('change'));
+                    }
                     
                     console.log('[GBrowser] Light theme applied successfully');
                 })();
