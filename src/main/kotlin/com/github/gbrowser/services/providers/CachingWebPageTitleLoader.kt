@@ -5,7 +5,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.diagnostic.logger
 import kotlinx.coroutines.*
-import kotlinx.coroutines.future.await
 import org.jsoup.Jsoup
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
@@ -35,24 +34,19 @@ class CachingWebPageTitleLoader(
     val future = CompletableFuture<String>()
     val deferred = loadTitleAsync(url)
 
+    @Suppress("DuplicatedCode")
     scope.launch {
       try {
         future.complete(deferred.await())
       } catch (e: CancellationException) {
         future.cancel(true)
+        throw e
       } catch (e: Exception) {
         future.completeExceptionally(e)
       }
     }
 
     return future
-  }
-
-  /**
-   * Coroutine version for internal use and future migration
-   */
-  suspend fun getTitleOfWebPageSuspend(url: String): String {
-    return titleCache.get(url) { createCompletableFuture(url) }.await()
   }
 
   private fun loadTitleAsync(url: String): Deferred<String> {

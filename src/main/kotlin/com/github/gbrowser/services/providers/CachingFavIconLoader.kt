@@ -10,7 +10,6 @@ import com.intellij.ui.scale.ScaleContext
 import com.intellij.util.ImageLoader
 import com.intellij.util.JBHiDPIScaledImage
 import kotlinx.coroutines.*
-import kotlinx.coroutines.future.await
 import java.net.URI
 import java.net.URL
 import java.util.concurrent.CompletableFuture
@@ -36,7 +35,7 @@ class CachingFavIconLoader(
    * @return CompletableFuture for backward compatibility
    */
   fun loadFavIcon(url: String, size: Int = 64, targetSize: Int = 16): CompletableFuture<Icon?> {
-    // Use just the URL as cache key for backward compatibility with tests
+    // Use just the URL as the cache key for backward compatibility with tests
     // In real usage, different sizes would ideally have different cache entries
     return favIconCache.get(url) { createCompletableFuture(url, size, targetSize) }
   }
@@ -50,19 +49,13 @@ class CachingFavIconLoader(
         future.complete(deferred.await())
       } catch (e: CancellationException) {
         future.cancel(true)
+        throw e
       } catch (e: Exception) {
         future.completeExceptionally(e)
       }
     }
 
     return future
-  }
-
-  /**
-   * Coroutine version for internal use and future migration
-   */
-  suspend fun loadFavIconSuspend(url: String, size: Int = 64, targetSize: Int = 16): Icon? {
-    return favIconCache.get(url) { createCompletableFuture(url, size, targetSize) }.await()
   }
 
   @Suppress("DEPRECATION")
@@ -102,6 +95,7 @@ class CachingFavIconLoader(
     return try {
       URI(url).host?.removePrefix("www.")?.removeSuffix("/") ?: url
     } catch (e: Exception) {
+      LOG.debug("Exception in getting the domain.", e)
       url.removePrefix("www.").removeSuffix("/")
     }
   }
