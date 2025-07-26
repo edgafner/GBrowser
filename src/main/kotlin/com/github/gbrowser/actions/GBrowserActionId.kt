@@ -30,6 +30,7 @@ object GBrowserActionId {
   private const val GBROWSER_ZOOM_OUT_ID: @NonNls String = "GBrowserZoomOutAction"
   private const val GBROWSER_ZOOM_RESET_ID: @NonNls String = "GBrowserZoomResetAction"
   private const val GBROWSER_MOBILE_TOGGLE_ID: @NonNls String = "GBrowserMobileToggleAction"
+  const val GBROWSER_OPEN_CURRENT_FILE_ID: @NonNls String = "GBrowserOpenCurrentFileAction"
 
 
   fun toAction(id: String): AnAction = ActionManager.getInstance().getAction(id)

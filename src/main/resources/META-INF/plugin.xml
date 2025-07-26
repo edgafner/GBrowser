@@ -28,6 +28,8 @@
 
     <notificationGroup id="GBrowser Notifications" displayType="BALLOON" bundle="messages.GBrowserBundle" key="gbrowser.notification.group"/>
 
+    <applicationService serviceImplementation="com.github.gbrowser.ui.gcef.GCefBrowserLifecycleManager"/>
+
   </extensions>
 
   <applicationListeners>
@@ -157,6 +159,14 @@
             icon="com.github.gbrowser.GBrowserIcons.GBROWSER_LOGO">
       <add-to-group group-id="EditorPopupMenu" anchor="after" relative-to-action="EditorPopupMenu1"/>
       <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="ReplaceInPath"/>
+    </action>
+
+    <action class="com.github.gbrowser.actions.editor.GBrowserOpenCurrentFileAction" id="GBrowserOpenCurrentFileAction"
+            icon="com.github.gbrowser.GBrowserIcons.GBROWSER_LOGO">
+      <keyboard-shortcut keymap="$default" first-keystroke="control alt G"/>
+      <add-to-group group-id="EditorPopupMenu" anchor="after" relative-to-action="GBrowserEditorOpenAction"/>
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="GBrowserEditorOpenAction"/>
+      <add-to-group group-id="MainToolBar" anchor="last"/>
     </action>
   </actions>
 

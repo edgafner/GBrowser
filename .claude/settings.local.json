@@ -5,7 +5,10 @@
       "Bash(ls:*)",
       "Bash(find:*)",
       "Bash(git grep:*)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(gh issue list:*)",
+      "Bash(rm:*)",
+      "WebFetch(domain:platform.jetbrains.com)"
     ],
     "deny": []
   },

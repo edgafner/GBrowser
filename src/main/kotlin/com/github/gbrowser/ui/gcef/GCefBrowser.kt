@@ -93,6 +93,9 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
         }
       }
     }, cefBrowser)
+
+    // Register this browser with the lifecycle manager
+    GCefBrowserLifecycleManager.getInstance().registerBrowser(this)
   }
 
 
@@ -275,6 +278,14 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
     }
     removeDevToolsListener()
     removeLifeSpanHandler()
+
+    // Unregister from lifecycle manager
+    GCefBrowserLifecycleManager.getInstance().unregisterBrowser(id)
+
+    // Ensure browser is properly closed
+    if (!cefBrowser.isClosing) {
+      cefBrowser.close(true)
+    }
 
     super.dispose()
   }
