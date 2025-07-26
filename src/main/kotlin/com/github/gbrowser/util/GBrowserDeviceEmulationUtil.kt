@@ -17,6 +17,8 @@ object GBrowserDeviceEmulationUtil {
 
   private val LOG = thisLogger()
 
+  private const val INLINE_SCRIPT_LINE = 0
+
   val DEVICE_PROFILES = mapOf(
     "iPhone SE" to DeviceProfile(
       name = "iPhone SE",
@@ -283,7 +285,7 @@ object GBrowserDeviceEmulationUtil {
             })();
         """.trimIndent()
 
-    browser.executeJavaScript(js, "", 0)
+    browser.executeJavaScript(js, "", INLINE_SCRIPT_LINE)
     LOG.info("GBrowserDeviceEmulationUtil: JavaScript executed for device emulation.\n  Current URL: ${browser.url}")
   }
 
@@ -386,6 +388,6 @@ object GBrowserDeviceEmulationUtil {
             })();
         """.trimIndent()
 
-    browser.executeJavaScript(js, "", 0)
+    browser.executeJavaScript(js, "", INLINE_SCRIPT_LINE)
   }
 }

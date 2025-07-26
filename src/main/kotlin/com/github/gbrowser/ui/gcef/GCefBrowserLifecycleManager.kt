@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Manages the lifecycle of CEF browsers to ensure proper cleanup on project close and IDE exit.
- * This helps prevent the IDE from hanging when exiting after using GBrowser.
+ * This helps prevent the IDE from freezing when exiting after using GBrowser.
  */
 @Service(Service.Level.APP)
 class GCefBrowserLifecycleManager(
@@ -51,9 +51,9 @@ class GCefBrowserLifecycleManager(
     activeBrowsers[browser.id] = browser
 
     // Ensure browser is disposed when its parent is disposed
-    Disposer.register(browser, Disposable {
+    Disposer.register(browser) {
       unregisterBrowser(browser.id)
-    })
+    }
   }
 
   fun unregisterBrowser(browserId: String) {
@@ -75,15 +75,13 @@ class GCefBrowserLifecycleManager(
             contents.forEach { content ->
               val component = content.component
               if (component is GBrowserToolWindowBrowser) {
-                component.getBrowser()?.let { browser ->
-                  disposeBrowserSafely(browser)
-                }
+                disposeBrowserSafely(component.getBrowser())
               }
             }
           }
 
           // Clean up DevTools window
-          toolWindowManager.getToolWindow(GBrowserUtil.DEVTOOLS_TOOL_WINDOW_ID)?.let { devToolsWindow ->
+          toolWindowManager.getToolWindow(GBrowserUtil.DEVTOOLS_TOOL_WINDOW_ID)?.let { _ ->
             // DevTools browsers should be disposed with their parent browsers
           }
         }

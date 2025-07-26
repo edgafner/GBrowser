@@ -92,7 +92,7 @@ class GBrowserProjectSettingsComponent(val project: Project) : SimpleToolWindowP
       }
       group("Browser History", false) {
         row {
-          val historyCheckBox = checkBox("History enables").bindSelected(settings::isHistoryEnabled) { value ->
+          val historyCheckBox = checkBox("History enabled").bindSelected(settings::isHistoryEnabled) { value ->
             settings.isHistoryEnabled = value
           }.gap(RightGap.SMALL)
           spinner(0..60, 1).bindIntValue(settings::historyItemsToKeep) { value ->

@@ -10,7 +10,9 @@
       "Bash(rm:*)",
       "WebFetch(domain:platform.jetbrains.com)",
       "Bash(cat:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh api:*)"
     ],
     "deny": []
   },
