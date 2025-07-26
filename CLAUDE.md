@@ -89,6 +89,8 @@ experience without leaving the development environment.
   - Tests actual IDE and browser integration
   - Uses fixtures and automated UI interaction
   - Requires JCEF-enabled JBR (JetBrains Runtime)
+  - Automated cleanup of test projects after all tests complete (@AfterAll)
+  - Cleans up projects from both build/out/ide-tests and ~/IdeaProjects
 - **Static Analysis**: Qodana integration for code quality checks
 - **Code Coverage**: Automated reporting via Codecov
 

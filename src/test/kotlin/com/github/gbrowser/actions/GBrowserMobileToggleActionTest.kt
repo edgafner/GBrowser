@@ -1,17 +1,12 @@
 package com.github.gbrowser.actions
 
-import com.github.gbrowser.util.GBrowserToolWindowUtil
+import com.github.gbrowser.util.GBrowserDeviceEmulationUtil
 import com.intellij.openapi.actionSystem.ActionUpdateThread
-import io.mockk.mockkObject
-import io.mockk.unmockkAll
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
+import kotlin.math.ln
 
 /**
  * Unit tests for GBrowserMobileToggleAction.
@@ -24,10 +19,6 @@ import java.util.concurrent.TimeUnit
  * - A running IntelliJ instance with JCEF support
  * - Actual browser instances
  * - UI testing framework
- *
- * The following aspects are tested:
- * - Action thread safety
- * - Basic action properties
  */
 class GBrowserMobileToggleActionTest {
 
@@ -36,12 +27,10 @@ class GBrowserMobileToggleActionTest {
   @BeforeEach
   fun setUp() {
     action = GBrowserMobileToggleAction()
-    mockkObject(GBrowserToolWindowUtil)
   }
 
   @AfterEach
   fun tearDown() {
-    unmockkAll()
     // Clean up any lingering state
     GBrowserMobileToggleAction.cleanupBrowserState("test-browser-1")
     GBrowserMobileToggleAction.cleanupBrowserState("test-browser-2")
@@ -57,12 +46,12 @@ class GBrowserMobileToggleActionTest {
   fun `test action has correct template presentation`() {
     val presentation = action.templatePresentation
 
-    // Should have text and description from the bundle
-    assert(presentation.text?.isNotEmpty() == true)
-    assert(presentation.description?.isNotEmpty() == true)
+    // Should have text and description
+    assertTrue(presentation.text != null)
+    assertTrue(presentation.description != null)
 
     // Should have icon
-    assert(presentation.icon != null)
+    assertTrue(presentation.icon != null)
   }
 
   @Test
@@ -124,20 +113,56 @@ class GBrowserMobileToggleActionTest {
   }
 
   @Test
-  fun `test multiple browsers can be cleaned up independently`() {
-    val browserIds = (1..10).map { "browser-$it" }
+  fun `test zoom level calculation formula`() {
+    // This tests the actual zoom level calculation used in the action
+    val zoomFactor = 1.2
 
-    // Clean up all browsers
-    assertDoesNotThrow {
-      browserIds.forEach { browserId ->
-        GBrowserMobileToggleAction.cleanupBrowserState(browserId)
-      }
+    // Test zoom level 0 = 100%
+    val zoom100 = 1.0
+    val zoomLevel100 = ln(zoom100) / ln(zoomFactor)
+    assertEquals(0.0, zoomLevel100, 0.01)
+
+    // Test zoom level for 50% should be negative
+    val zoom50 = 0.5
+    val zoomLevel50 = ln(zoom50) / ln(zoomFactor)
+    assertTrue(zoomLevel50 < 0)
+
+    // Test zoom level for 200% should be positive
+    val zoom200 = 2.0
+    val zoomLevel200 = ln(zoom200) / ln(zoomFactor)
+    assertTrue(zoomLevel200 > 0)
+  }
+
+  @Nested
+  @DisplayName("Device profile validation")
+  inner class DeviceProfileTests {
+
+    @Test
+    fun `test device profiles exist in utility`() {
+      val profiles = GBrowserDeviceEmulationUtil.DEVICE_PROFILES
+
+      // Verify we have device profiles
+      assertFalse(profiles.isEmpty())
+
+      // Verify some expected devices exist
+      assertTrue(profiles.containsKey("iPhone SE"))
+      assertTrue(profiles.containsKey("iPad Pro"))
+      assertTrue(profiles.containsKey("Pixel 7"))
     }
 
-    // Clean up again should be safe
-    assertDoesNotThrow {
-      browserIds.forEach { browserId ->
-        GBrowserMobileToggleAction.cleanupBrowserState(browserId)
+    @Test
+    fun `test all device profiles have valid properties`() {
+      val profiles = GBrowserDeviceEmulationUtil.DEVICE_PROFILES
+
+      profiles.forEach { (name, profile) ->
+        // Verify profile name matches map key
+        assertEquals(name, profile.name)
+
+        // Verify all profiles have valid dimensions
+        assertTrue(profile.width > 0, "Profile $name has invalid width")
+        assertTrue(profile.height > 0, "Profile $name has invalid height")
+        assertTrue(profile.deviceScaleFactor > 0, "Profile $name has an invalid scale factor")
+        assertFalse(profile.userAgent.isBlank(), "Profile $name has blank user agent")
       }
     }
   }

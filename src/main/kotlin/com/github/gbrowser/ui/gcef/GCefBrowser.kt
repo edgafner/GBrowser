@@ -58,7 +58,7 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
   private val favIconLoader: CachingWebPageTitleLoader = service()
 
 
-  val devTools: CefBrowser
+  val devTools: CefBrowser?
     get() {
       return cefBrowser.devTools
     }
@@ -257,13 +257,11 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
   }
 
   fun disposeDevTools() {
-    devTools.close(true)
+    devTools?.close(true)
     devToolsDelegates.forEach {
       it.onDisposeDevtools()
-
     }
     removeDevToolsListener()
-
   }
 
   fun refreshTheme() {
@@ -309,9 +307,6 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
     }
     removeDevToolsListener()
     removeLifeSpanHandler()
-
-    // Unregister from lifecycle manager
-    GCefBrowserLifecycleManager.getInstance().unregisterBrowser(id)
 
     // Clean up device emulation state
     GBrowserMobileToggleAction.cleanupBrowserState(id)

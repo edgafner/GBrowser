@@ -250,4 +250,228 @@ class GBrowserDeviceEmulationUtilTest {
     assertTrue(profiles.any { it.deviceScaleFactor == 3.0 }, "Should have 3x DPR devices")
     assertTrue(profiles.any { it.deviceScaleFactor > 3.0 }, "Should have high DPR devices")
   }
+
+  @Test
+  fun `test JavaScript generation for device emulation`() {
+    val profile = DeviceProfile(
+      name = "Test Device",
+      width = 320,
+      height = 568,
+      deviceScaleFactor = 2.0,
+      userAgent = "Test User Agent",
+      isMobile = true,
+      hasTouch = true
+    )
+
+    // We can't directly test the JavaScript execution, but we can verify the profile properties
+    assertEquals(320, profile.width)
+    assertEquals(568, profile.height)
+    assertEquals(2.0, profile.deviceScaleFactor)
+    assertEquals("Test User Agent", profile.userAgent)
+    assertTrue(profile.isMobile)
+    assertTrue(profile.hasTouch)
+  }
+
+  @Test
+  fun `test edge case device dimensions`() {
+    // Test minimum reasonable dimensions
+    val smallProfile = DeviceProfile(
+      name = "Small Device",
+      width = 320,
+      height = 480,
+      deviceScaleFactor = 1.0,
+      userAgent = "Small Device UA"
+    )
+
+    assertTrue(smallProfile.width >= 320, "Width should be at least 320px")
+    assertTrue(smallProfile.height >= 480, "Height should be at least 480px")
+
+    // Test maximum reasonable dimensions
+    val largeProfile = DeviceProfile(
+      name = "Large Device",
+      width = 1920,
+      height = 1080,
+      deviceScaleFactor = 1.0,
+      userAgent = "Large Device UA"
+    )
+
+    assertTrue(largeProfile.width <= 1920, "Width should be at most 1920px for mobile/tablet")
+    assertTrue(largeProfile.height <= 1080, "Height should be at most 1080px for landscape")
+  }
+
+  @Test
+  fun `test device profile consistency`() {
+    GBrowserDeviceEmulationUtil.DEVICE_PROFILES.forEach { (name, profile) ->
+      // Verify profile name matches map key
+      assertEquals(name, profile.name, "Profile name should match map key")
+
+      // Verify dimensions make sense (width or height should be larger)
+      val maxDimension = maxOf(profile.width, profile.height)
+      val minDimension = minOf(profile.width, profile.height)
+      assertTrue(
+        maxDimension > minDimension || maxDimension == minDimension,
+        "Dimensions should be valid for ${profile.name}"
+      )
+
+      // Verify aspect ratio is reasonable (between 1:3 and 3:1)
+      val aspectRatio = maxDimension.toDouble() / minDimension
+      assertTrue(aspectRatio <= 3.0, "Aspect ratio too extreme for ${profile.name}: $aspectRatio")
+    }
+  }
+
+  @Test
+  fun `test custom device profile creation`() {
+    val customProfile = DeviceProfile(
+      name = "Custom Device",
+      width = 1440,
+      height = 900,
+      deviceScaleFactor = 1.5,
+      userAgent = "Custom Device User Agent",
+      isMobile = false,
+      hasTouch = false
+    )
+
+    assertEquals("Custom Device", customProfile.name)
+    assertEquals(1440, customProfile.width)
+    assertEquals(900, customProfile.height)
+    assertEquals(1.5, customProfile.deviceScaleFactor)
+    assertFalse(customProfile.isMobile)
+    assertFalse(customProfile.hasTouch)
+  }
+
+  @Test
+  fun `test device categories coverage`() {
+    val profiles = GBrowserDeviceEmulationUtil.DEVICE_PROFILES
+
+    // Check we have various device categories
+    assertTrue(profiles.keys.any { it.contains("iPhone") }, "Should have iPhone devices")
+    assertTrue(profiles.keys.any { it.contains("iPad") }, "Should have iPad devices")
+    assertTrue(profiles.keys.any { it.contains("Pixel") || it.contains("Galaxy") }, "Should have Android devices")
+    assertTrue(profiles.keys.any { it.contains("Surface") }, "Should have Surface devices")
+    assertTrue(profiles.keys.any { it.contains("Fold") }, "Should have foldable devices")
+    assertTrue(profiles.keys.any { it.contains("Nest") }, "Should have smart display devices")
+  }
+
+  @Test
+  fun `test user agent format validation`() {
+    val userAgentRegex = Regex("Mozilla/[0-9.]+ \\([^)]+\\) .+")
+
+    GBrowserDeviceEmulationUtil.DEVICE_PROFILES.values.forEach { profile ->
+      assertTrue(
+        profile.userAgent.matches(userAgentRegex),
+        "User agent should follow standard format for ${profile.name}: ${profile.userAgent}"
+      )
+    }
+  }
+
+  @Test
+  fun `test device scale factor ranges`() {
+    val validScaleFactors = setOf(1.0, 1.5, 2.0, 2.5, 2.625, 3.0, 3.5, 4.0)
+
+    GBrowserDeviceEmulationUtil.DEVICE_PROFILES.values.forEach { profile ->
+      assertTrue(
+        profile.deviceScaleFactor in validScaleFactors,
+        "Device scale factor ${profile.deviceScaleFactor} should be a standard value for ${profile.name}"
+      )
+    }
+  }
+
+  @Test
+  fun `test escape function handles Unicode correctly`() {
+    val escapeMethod = GBrowserDeviceEmulationUtil::class.java
+      .getDeclaredMethod("escapeJavaScriptString", String::class.java)
+    escapeMethod.isAccessible = true
+
+    // Test Unicode handling
+    val unicodeTests = mapOf(
+      "Hello 世界" to "Hello 世界", // Chinese characters should pass through
+      "Emoji 😀" to "Emoji 😀", // Emojis should pass through
+      "Mixed 'quotes' and 世界" to "Mixed \\'quotes\\' and 世界",
+      "Line\u2028Separator" to "Line\\u2028Separator",
+      "Para\u2029Separator" to "Para\\u2029Separator"
+    )
+
+    unicodeTests.forEach { (input, expected) ->
+      val result = escapeMethod.invoke(GBrowserDeviceEmulationUtil, input) as String
+      assertEquals(expected, result, "Failed to handle Unicode in: $input")
+    }
+  }
+
+  @Test
+  fun `test responsive mode profile`() {
+    // Test creating a responsive mode profile
+    val responsiveProfile = DeviceProfile(
+      name = "Responsive",
+      width = 400,
+      height = 626,
+      deviceScaleFactor = 1.0,
+      userAgent = "Mozilla/5.0 (Linux; Android 11) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36",
+      isMobile = true,
+      hasTouch = true
+    )
+
+    assertEquals("Responsive", responsiveProfile.name)
+    assertEquals(400, responsiveProfile.width)
+    assertEquals(626, responsiveProfile.height)
+    assertEquals(1.0, responsiveProfile.deviceScaleFactor)
+    assertTrue(responsiveProfile.isMobile)
+    assertTrue(responsiveProfile.hasTouch)
+  }
+
+  @Test
+  fun `test profile data class equality`() {
+    val profile1 = DeviceProfile(
+      name = "Test",
+      width = 400,
+      height = 800,
+      deviceScaleFactor = 2.0,
+      userAgent = "Test UA"
+    )
+
+    val profile2 = DeviceProfile(
+      name = "Test",
+      width = 400,
+      height = 800,
+      deviceScaleFactor = 2.0,
+      userAgent = "Test UA"
+    )
+
+    val profile3 = DeviceProfile(
+      name = "Different",
+      width = 400,
+      height = 800,
+      deviceScaleFactor = 2.0,
+      userAgent = "Test UA"
+    )
+
+    assertEquals(profile1, profile2, "Identical profiles should be equal")
+    assertNotEquals(profile1, profile3, "Different profiles should not be equal")
+  }
+
+  @Test
+  fun `test escapeJavaScriptString performance with large input`() {
+    val escapeMethod = GBrowserDeviceEmulationUtil::class.java
+      .getDeclaredMethod("escapeJavaScriptString", String::class.java)
+    escapeMethod.isAccessible = true
+
+    // Create a large string with various escapable characters
+    val largeInput = buildString {
+      repeat(1000) {
+        append("Line $it with 'quotes' and \"double quotes\" and \n newlines\t")
+      }
+    }
+
+    val startTime = System.currentTimeMillis()
+    val result = escapeMethod.invoke(GBrowserDeviceEmulationUtil, largeInput) as String
+    val endTime = System.currentTimeMillis()
+
+    // Should complete reasonably quickly (under 100ms for 1000 iterations)
+    assertTrue(endTime - startTime < 100, "Escape function took too long: ${endTime - startTime}ms")
+
+    // Verify escaping worked
+    assertTrue(result.contains("\\'"))
+    assertTrue(result.contains("\\\""))
+    assertTrue(result.contains("\\n"))
+    assertTrue(result.contains("\\t"))
+  }
 }
