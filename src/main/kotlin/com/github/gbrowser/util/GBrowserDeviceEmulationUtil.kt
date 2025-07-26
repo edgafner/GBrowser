@@ -19,6 +19,22 @@ object GBrowserDeviceEmulationUtil {
 
   private const val INLINE_SCRIPT_LINE = 0
 
+  /**
+   * Escapes a string for safe inclusion in JavaScript string literals.
+   * Prevents XSS attacks by escaping quotes, backslashes, and newlines.
+   */
+  private fun escapeJavaScriptString(input: String): String {
+    return input
+      .replace("\\", "\\\\")  // Escape backslashes first
+      .replace("'", "\\'")    // Escape single quotes
+      .replace("\"", "\\\"")  // Escape double quotes
+      .replace("\n", "\\n")   // Escape newlines
+      .replace("\r", "\\r")   // Escape carriage returns
+      .replace("\t", "\\t")   // Escape tabs
+      .replace("\u2028", "\\u2028") // Escape line separator
+      .replace("\u2029", "\\u2029") // Escape paragraph separator
+  }
+
   val DEVICE_PROFILES = mapOf(
     "iPhone SE" to DeviceProfile(
       name = "iPhone SE",
@@ -146,6 +162,10 @@ object GBrowserDeviceEmulationUtil {
     LOG.debug("GBrowserDeviceEmulationUtil: User agent: ${profile.userAgent}")
     LOG.debug("GBrowserDeviceEmulationUtil: isMobile: ${profile.isMobile}, hasTouch: ${profile.hasTouch}")
 
+    // Escape values for safe JavaScript injection
+    val escapedUserAgent = escapeJavaScriptString(profile.userAgent)
+    val escapedName = escapeJavaScriptString(profile.name)
+
     // Apply device metrics override using JavaScript injection
     val js = """
             (function() {
@@ -198,7 +218,7 @@ object GBrowserDeviceEmulationUtil {
                 
                 // Override navigator properties
                 Object.defineProperty(navigator, 'userAgent', {
-                    get: function() { return '${profile.userAgent}'; },
+                    get: function() { return '${escapedUserAgent}'; },
                     configurable: true
                 });
                 
@@ -206,7 +226,7 @@ object GBrowserDeviceEmulationUtil {
                 if (${profile.isMobile}) {
                     Object.defineProperty(navigator, 'platform', {
                         get: function() { 
-                            if ('${profile.userAgent}'.includes('iPhone') || '${profile.userAgent}'.includes('iPad')) {
+                            if ('${escapedUserAgent}'.includes('iPhone') || '${escapedUserAgent}'.includes('iPad')) {
                                 return 'iPhone';
                             }
                             return 'Linux armv8l';
@@ -277,7 +297,7 @@ object GBrowserDeviceEmulationUtil {
                 }
                 
                 console.log('[GBrowser] Device emulation applied:', {
-                    name: '${profile.name}',
+                    name: '${escapedName}',
                     width: ${profile.width},
                     height: ${profile.height},
                     devicePixelRatio: ${profile.deviceScaleFactor}
@@ -285,8 +305,12 @@ object GBrowserDeviceEmulationUtil {
             })();
         """.trimIndent()
 
-    browser.executeJavaScript(js, "", INLINE_SCRIPT_LINE)
-    LOG.info("GBrowserDeviceEmulationUtil: JavaScript executed for device emulation.\n  Current URL: ${browser.url}")
+    try {
+      browser.executeJavaScript(js, "", INLINE_SCRIPT_LINE)
+      LOG.info("GBrowserDeviceEmulationUtil: JavaScript executed for device emulation.\n  Current URL: ${browser.url}")
+    } catch (e: Exception) {
+      LOG.error("GBrowserDeviceEmulationUtil: Failed to apply device emulation", e)
+    }
   }
 
   fun resetDeviceEmulation(browser: CefBrowser) {
@@ -388,6 +412,11 @@ object GBrowserDeviceEmulationUtil {
             })();
         """.trimIndent()
 
-    browser.executeJavaScript(js, "", INLINE_SCRIPT_LINE)
+    try {
+      browser.executeJavaScript(js, "", INLINE_SCRIPT_LINE)
+      LOG.info("GBrowserDeviceEmulationUtil: Device emulation reset successfully")
+    } catch (e: Exception) {
+      LOG.error("GBrowserDeviceEmulationUtil: Failed to reset device emulation", e)
+    }
   }
 }

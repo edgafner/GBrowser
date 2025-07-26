@@ -35,6 +35,26 @@ class GBrowserMobileToggleAction : ToggleAction(
     // Chrome DevTools colors - matching the actual Chrome DevTools colors
     private val CHROME_DEVTOOLS_DARK_BG = JBColor(Color(0x202124), Color(0x202124)) // Chrome's actual dark background (lighter gray)
     private val CHROME_DEVTOOLS_LIGHT_BG = JBColor(Color(0xF3F3F3), Color(0xF3F3F3)) // Chrome's actual light background
+
+    // Default responsive mode dimensions
+    private const val DEFAULT_RESPONSIVE_WIDTH = 400
+    private const val DEFAULT_RESPONSIVE_HEIGHT = 626
+
+    // Zoom calculation constant
+    private const val ZOOM_FACTOR = 1.2
+
+    /**
+     * Cleans up device emulation state for a disposed browser.
+     * Should be called when a browser is closed or disposed.
+     */
+    fun cleanupBrowserState(browserId: String) {
+      deviceEmulationState.remove(browserId)?.let { state ->
+        LOG.debug("GBrowserMobileToggleAction: Cleaned up device emulation state for browser $browserId")
+        // Clean up any UI components
+        state.deviceToolbar = null
+        state.browserWrapper = null
+      }
+    }
   }
 
   private data class DeviceEmulationState(
@@ -43,8 +63,8 @@ class GBrowserMobileToggleAction : ToggleAction(
     var deviceToolbar: JPanel? = null,
     var browserWrapper: JPanel? = null,
     var isRotated: Boolean = false,
-    var currentWidth: Int = 400,  // Default responsive width
-    var currentHeight: Int = 626  // Default responsive height
+    var currentWidth: Int = DEFAULT_RESPONSIVE_WIDTH,
+    var currentHeight: Int = DEFAULT_RESPONSIVE_HEIGHT
   )
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
@@ -131,7 +151,7 @@ class GBrowserMobileToggleAction : ToggleAction(
     if (browser != null) {
       val state = deviceEmulationState[browser.id]
       val text = if (state?.isActive == true && state.currentDevice != null) {
-        GBrowserBundle.message("action.device.emulation.active", state.currentDevice!!)
+        GBrowserBundle.message("action.device.emulation.active", state.currentDevice)
       } else {
         GBrowserBundle.message("emulate.mobile.description")
       }
@@ -164,9 +184,12 @@ class GBrowserMobileToggleAction : ToggleAction(
     }
 
     // Create a container panel
+    val deviceToolbar = state.deviceToolbar ?: return
+    val browserWrapper = state.browserWrapper ?: return
+    
     val containerPanel = JBPanel<JBPanel<*>>(BorderLayout()).apply {
-      add(state.deviceToolbar!!, BorderLayout.NORTH)
-      add(state.browserWrapper!!, BorderLayout.CENTER)
+      add(deviceToolbar, BorderLayout.NORTH)
+      add(browserWrapper, BorderLayout.CENTER)
     }
 
     // Replace the content
@@ -219,7 +242,7 @@ class GBrowserMobileToggleAction : ToggleAction(
   }
 
   private fun createDeviceToolbar(browser: GCefBrowser): JPanel {
-    val state = deviceEmulationState[browser.id]!!
+    val state = deviceEmulationState[browser.id] ?: throw IllegalStateException("Device emulation state not found for browser ${browser.id}")
 
     val deviceComboBox = ComboBox<String>().apply {
       // Add "Responsive" as default
@@ -287,7 +310,7 @@ class GBrowserMobileToggleAction : ToggleAction(
         val zoomText = selectedItem as? String ?: return@addActionListener
         val zoomValue = zoomText.removeSuffix("%").toDoubleOrNull() ?: return@addActionListener
         val zoom = zoomValue / 100.0
-        val zoomLevel = ln(zoom) / ln(1.2)
+        val zoomLevel = ln(zoom) / ln(ZOOM_FACTOR)
         LOG.debug("GBrowserMobileToggleAction: Zoom changed to $zoomText, zoom level: $zoomLevel")
         browser.cefBrowser.zoomLevel = zoomLevel
       }

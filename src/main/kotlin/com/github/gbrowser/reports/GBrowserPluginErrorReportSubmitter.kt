@@ -29,7 +29,7 @@ internal class GBrowserPluginErrorReportSubmitter : ErrorReportSubmitter() {
                       consumer: Consumer<in SubmittedReportInfo?>): Boolean {
     val event = events.first()
     val throwableText = event.throwableText
-    val throwableTextTitle = throwableText.take(100)
+    val throwableTextTitle = throwableText.take(throwableText.length.coerceAtMost(100))
     val reportStringBuilder = buildReportUrl(event, throwableTextTitle, additionalInfo)
 
     BrowserUtil.browse(reportStringBuilder.toString())

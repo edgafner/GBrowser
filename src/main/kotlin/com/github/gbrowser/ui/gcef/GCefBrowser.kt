@@ -1,5 +1,6 @@
 package com.github.gbrowser.ui.gcef
 
+import com.github.gbrowser.actions.GBrowserMobileToggleAction
 import com.github.gbrowser.i18n.GBrowserBundle
 import com.github.gbrowser.services.GBrowserService
 import com.github.gbrowser.services.providers.CachingWebPageTitleLoader
@@ -281,6 +282,9 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
 
     // Unregister from lifecycle manager
     GCefBrowserLifecycleManager.getInstance().unregisterBrowser(id)
+
+    // Clean up device emulation state
+    GBrowserMobileToggleAction.cleanupBrowserState(id)
 
     // Ensure browser is properly closed
     if (!cefBrowser.isClosing) {
