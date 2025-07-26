@@ -21,13 +21,11 @@ import com.intellij.ide.starter.driver.engine.BackgroundRun
 import com.intellij.ide.starter.driver.engine.runIdeWithDriver
 import com.intellij.ide.starter.junit5.config.UseLatestDownloadedIdeBuild
 import com.intellij.openapi.diagnostic.logger
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Tag
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.Paths
 import kotlin.time.Duration.Companion.seconds
 
 @Tag("ui")
@@ -36,6 +34,47 @@ class GBrowserUITest {
 
   companion object {
     val LOG = logger<GBrowserUITest>()
+    private val createdProjects = mutableListOf<String>()
+
+    @JvmStatic
+    @AfterAll
+    fun cleanUpAllProjects() {
+      // Clean up any leftover test projects from the IDE's test directory
+      val buildDir = Paths.get(System.getProperty("user.dir"), "build", "out", "ide-tests")
+      if (Files.exists(buildDir)) {
+        try {
+          Files.walk(buildDir)
+            .filter { path ->
+              path.fileName.toString().startsWith("GBrowserTest_") &&
+                Files.isDirectory(path)
+            }
+            .forEach { path ->
+              try {
+                LOG.info("Cleaning up test project directory: $path")
+                path.toFile().deleteRecursively()
+              } catch (e: Exception) {
+                LOG.warn("Failed to delete test project directory: $path", e)
+              }
+            }
+        } catch (e: Exception) {
+          LOG.error("Error during test cleanup", e)
+        }
+      }
+
+      // Also clean up any projects that might have been created in IdeaProjects
+      createdProjects.forEach { projectName ->
+        val projectPath = Paths.get(System.getProperty("user.home"), "IdeaProjects", projectName)
+        if (Files.exists(projectPath)) {
+          try {
+            LOG.info("Cleaning up project from IdeaProjects: $projectPath")
+            projectPath.toFile().deleteRecursively()
+          } catch (e: Exception) {
+            LOG.warn("Failed to delete project: $projectPath", e)
+          }
+        }
+      }
+      createdProjects.clear()
+    }
   }
 
   private lateinit var run: BackgroundRun
@@ -45,6 +84,7 @@ class GBrowserUITest {
   @BeforeEach
   fun setupTest() {
     projectName = "GBrowserTest_${System.currentTimeMillis()}"
+    createdProjects.add(projectName)
 
     // Create a parent directory for our project
     val baseDir = Files.createTempDirectory("gbrowser-parent")
@@ -61,6 +101,40 @@ class GBrowserUITest {
     } finally { // Ensure cleanup happens even if the test fails
       if (::tempDir.isInitialized && Files.exists(tempDir)) {
         tempDir.toFile().deleteRecursively()
+      }
+
+      // Also attempt to clean up the project immediately after each test
+      cleanUpProjectDirectory(projectName)
+    }
+  }
+
+  private fun cleanUpProjectDirectory(projectName: String) {
+    // Try to clean up from various possible locations
+    val possibleLocations = listOf(
+      Paths.get(System.getProperty("user.dir"), "build", "out", "ide-tests"),
+      Paths.get(System.getProperty("user.home"), "IdeaProjects")
+    )
+
+    possibleLocations.forEach { baseDir ->
+      if (Files.exists(baseDir)) {
+        try {
+          Files.walk(baseDir, 2) // Limit depth to avoid excessive traversal
+            .filter { path ->
+              path.fileName.toString() == projectName ||
+                path.fileName.toString().startsWith("$projectName.")
+            }
+            .filter { Files.isDirectory(it) }
+            .forEach { path ->
+              try {
+                LOG.info("Cleaning up project directory: $path")
+                path.toFile().deleteRecursively()
+              } catch (e: Exception) {
+                LOG.warn("Failed to delete project directory: $path", e)
+              }
+            }
+        } catch (e: Exception) {
+          LOG.debug("Error walking directory $baseDir", e)
+        }
       }
     }
   }
