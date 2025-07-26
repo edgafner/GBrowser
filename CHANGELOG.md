@@ -11,7 +11,7 @@
 ### Fixed
 
 - 🪲 Fixed an issue with the tool window not opening correctly [Issue #224](https://github.com/edgafner/dorkag/issues/224)
--
+- 🪲 Fixed various concurrency issues in the browser
 
 ## [2025.2.2] - 2025-06-19
 
