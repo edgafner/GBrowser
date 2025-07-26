@@ -229,6 +229,7 @@ class GBrowserUITest {
         byTooltip("https://github.com/")
       }.waitFound(2.seconds).click()
 
+      moveMouse()
       rightClick()
       driver.ui.ideFrame {
         popup().accessibleList().clickItem("Open DevTools", false)
