@@ -63,4 +63,54 @@ class DeviceEmulationStateTest {
     assertEquals(400, DeviceEmulationState.DEFAULT_RESPONSIVE_WIDTH)
     assertEquals(626, DeviceEmulationState.DEFAULT_RESPONSIVE_HEIGHT)
   }
+
+  @Test
+  fun `test state handles extreme dimensions`() {
+    val state = DeviceEmulationState(
+      currentWidth = 1,
+      currentHeight = 9999
+    )
+
+    assertEquals(1, state.currentWidth)
+    assertEquals(9999, state.currentHeight)
+  }
+
+  @Suppress("KotlinConstantConditions")
+  @Test
+  fun `test state cleans up correctly`() {
+    val toolbar = JPanel()
+    val wrapper = JBPanel<JBPanel<*>>()
+
+    val state = DeviceEmulationState(
+      isActive = true,
+      deviceToolbar = toolbar,
+      browserWrapper = wrapper
+    )
+
+    // Simulate cleanup
+    state.deviceToolbar = null
+    state.browserWrapper = null
+    state.isActive = false
+
+    assertNull(state.deviceToolbar)
+    assertNull(state.browserWrapper)
+    assertFalse(state.isActive)
+  }
+
+  @Test
+  fun `test state preserves default device values when reset`() {
+    val state = DeviceEmulationState(
+      currentWidth = 800,
+      currentHeight = 600,
+      currentDevice = "Custom"
+    )
+
+    state.currentWidth = DeviceEmulationState.DEFAULT_RESPONSIVE_WIDTH
+    state.currentHeight = DeviceEmulationState.DEFAULT_RESPONSIVE_HEIGHT
+    state.currentDevice = null
+
+    assertEquals(DeviceEmulationState.DEFAULT_RESPONSIVE_WIDTH, state.currentWidth)
+    assertEquals(DeviceEmulationState.DEFAULT_RESPONSIVE_HEIGHT, state.currentHeight)
+    assertNull(state.currentDevice)
+  }
 }

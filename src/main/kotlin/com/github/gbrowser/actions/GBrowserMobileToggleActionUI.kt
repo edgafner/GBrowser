@@ -96,7 +96,7 @@ object GBrowserMobileToggleActionUI {
 
   private fun createWidthSpinner(state: DeviceEmulationState, browser: GCefBrowser): JSpinner {
     return JSpinner(SpinnerNumberModel(state.currentWidth, 50, 9999, 1)).apply {
-      name = "widthSpinner"
+      name = "device-width-spinner"
       preferredSize = Dimension(80, preferredSize.height)
       addChangeListener {
         val newWidth = value as Int
@@ -111,7 +111,7 @@ object GBrowserMobileToggleActionUI {
 
   private fun createHeightSpinner(state: DeviceEmulationState, browser: GCefBrowser): JSpinner {
     return JSpinner(SpinnerNumberModel(state.currentHeight, 50, 9999, 1)).apply {
-      name = "heightSpinner"
+      name = "device-height-spinner"
       preferredSize = Dimension(80, preferredSize.height)
       addChangeListener {
         val newHeight = value as Int
@@ -275,11 +275,11 @@ object GBrowserMobileToggleActionUI {
     state.deviceToolbar?.components?.forEach { component ->
       if (component is JSpinner) {
         when (component.name) {
-          "widthSpinner" -> {
+          "device-width-spinner" -> {
             LOG.debug("GBrowserMobileToggleAction: Setting width spinner to ${state.currentWidth}")
             component.value = state.currentWidth
           }
-          "heightSpinner" -> {
+          "device-height-spinner" -> {
             LOG.debug("GBrowserMobileToggleAction: Setting height spinner to ${state.currentHeight}")
             component.value = state.currentHeight
           }
