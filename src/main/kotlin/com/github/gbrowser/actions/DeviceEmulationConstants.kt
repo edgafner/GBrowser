@@ -50,7 +50,7 @@ object DeviceEmulationConstants {
   const val USER_AGENT_NEST_HUB = "Mozilla/5.0 (X11; Linux armv7l) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 CrKey/1.56.500000"
   const val USER_AGENT_NEST_HUB_MAX = "Mozilla/5.0 (X11; Linux aarch64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 CrKey/1.56.500000"
 
-  // Default Browser User Agent
+  // Default User Agent
   const val USER_AGENT_DEFAULT_BROWSER =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36 /CefSharp Browser 90.0"
 
