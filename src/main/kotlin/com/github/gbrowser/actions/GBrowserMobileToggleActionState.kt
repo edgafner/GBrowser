@@ -12,11 +12,6 @@ data class DeviceEmulationState(
   var deviceToolbar: JPanel? = null,
   var browserWrapper: JBPanel<JBPanel<*>>? = null,
   var isRotated: Boolean = false,
-  var currentWidth: Int = DEFAULT_RESPONSIVE_WIDTH,
-  var currentHeight: Int = DEFAULT_RESPONSIVE_HEIGHT
-) {
-  companion object {
-    const val DEFAULT_RESPONSIVE_WIDTH = 400
-    const val DEFAULT_RESPONSIVE_HEIGHT = 626
-  }
-}
+  var currentWidth: Int = DeviceEmulationConstants.DEFAULT_RESPONSIVE_WIDTH,
+  var currentHeight: Int = DeviceEmulationConstants.DEFAULT_RESPONSIVE_HEIGHT
+) 

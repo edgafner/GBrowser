@@ -87,8 +87,8 @@ object GBrowserMobileToggleActionHelper {
     state.deviceToolbar = null
     state.browserWrapper = null
     state.isRotated = false
-    state.currentWidth = DeviceEmulationState.DEFAULT_RESPONSIVE_WIDTH
-    state.currentHeight = DeviceEmulationState.DEFAULT_RESPONSIVE_HEIGHT
+    state.currentWidth = DeviceEmulationConstants.DEFAULT_RESPONSIVE_WIDTH
+    state.currentHeight = DeviceEmulationConstants.DEFAULT_RESPONSIVE_HEIGHT
 
     // Reset browser emulation
     GBrowserDeviceEmulationUtil.resetDeviceEmulation(browser.cefBrowser)
@@ -96,8 +96,6 @@ object GBrowserMobileToggleActionHelper {
     // Reset zoom level to 100%
     browser.cefBrowser.zoomLevel = 0.0
 
-    // Remove browser component from wrapper first to avoid duplicate parent issues
-    state.browserWrapper?.remove(browser.component)
 
     // Restore original browser component
     browserPanel.setContent(browser.component)

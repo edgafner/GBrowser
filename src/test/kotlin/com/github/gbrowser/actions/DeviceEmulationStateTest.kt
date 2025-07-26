@@ -16,8 +16,8 @@ class DeviceEmulationStateTest {
     assertNull(state.deviceToolbar)
     assertNull(state.browserWrapper)
     assertFalse(state.isRotated)
-    assertEquals(DeviceEmulationState.DEFAULT_RESPONSIVE_WIDTH, state.currentWidth)
-    assertEquals(DeviceEmulationState.DEFAULT_RESPONSIVE_HEIGHT, state.currentHeight)
+    assertEquals(DeviceEmulationConstants.DEFAULT_RESPONSIVE_WIDTH, state.currentWidth)
+    assertEquals(DeviceEmulationConstants.DEFAULT_RESPONSIVE_HEIGHT, state.currentHeight)
   }
 
   @Test
@@ -60,8 +60,8 @@ class DeviceEmulationStateTest {
 
   @Test
   fun `test default responsive dimensions`() {
-    assertEquals(400, DeviceEmulationState.DEFAULT_RESPONSIVE_WIDTH)
-    assertEquals(626, DeviceEmulationState.DEFAULT_RESPONSIVE_HEIGHT)
+    assertEquals(400, DeviceEmulationConstants.DEFAULT_RESPONSIVE_WIDTH)
+    assertEquals(626, DeviceEmulationConstants.DEFAULT_RESPONSIVE_HEIGHT)
   }
 
   @Test
@@ -105,12 +105,12 @@ class DeviceEmulationStateTest {
       currentDevice = "Custom"
     )
 
-    state.currentWidth = DeviceEmulationState.DEFAULT_RESPONSIVE_WIDTH
-    state.currentHeight = DeviceEmulationState.DEFAULT_RESPONSIVE_HEIGHT
+    state.currentWidth = DeviceEmulationConstants.DEFAULT_RESPONSIVE_WIDTH
+    state.currentHeight = DeviceEmulationConstants.DEFAULT_RESPONSIVE_HEIGHT
     state.currentDevice = null
 
-    assertEquals(DeviceEmulationState.DEFAULT_RESPONSIVE_WIDTH, state.currentWidth)
-    assertEquals(DeviceEmulationState.DEFAULT_RESPONSIVE_HEIGHT, state.currentHeight)
+    assertEquals(DeviceEmulationConstants.DEFAULT_RESPONSIVE_WIDTH, state.currentWidth)
+    assertEquals(DeviceEmulationConstants.DEFAULT_RESPONSIVE_HEIGHT, state.currentHeight)
     assertNull(state.currentDevice)
   }
 }

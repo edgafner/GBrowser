@@ -191,8 +191,8 @@ object GBrowserMobileToggleActionUI {
 
     // Set default responsive size
     if (state.currentWidth == 0 || state.currentHeight == 0) {
-      state.currentWidth = DeviceEmulationConstants.RESPONSIVE_MODE_WIDTH
-      state.currentHeight = DeviceEmulationConstants.RESPONSIVE_MODE_HEIGHT
+      state.currentWidth = DeviceEmulationConstants.DEFAULT_RESPONSIVE_WIDTH
+      state.currentHeight = DeviceEmulationConstants.DEFAULT_RESPONSIVE_HEIGHT
     }
 
     LOG.info("GBrowserMobileToggleAction: Applying responsive mode with dimensions ${state.currentWidth}x${state.currentHeight}")

@@ -10,8 +10,8 @@ object DeviceEmulationConstants {
   const val DEVICE_FRAME_PADDING_HALF = 20 // Padding on one side
   const val SCALE_PADDING_FACTOR = 0.9 // 90% scale to ensure padding
   const val DEVICE_FRAME_INNER_PADDING = 2 // Inner padding for device frame border
-  const val RESPONSIVE_MODE_WIDTH = 400
-  const val RESPONSIVE_MODE_HEIGHT = 626
+  const val DEFAULT_RESPONSIVE_WIDTH = 400
+  const val DEFAULT_RESPONSIVE_HEIGHT = 626
   // Spinner Constraints
   const val MIN_DEVICE_DIMENSION = 50
   const val MAX_DEVICE_DIMENSION = 9999
