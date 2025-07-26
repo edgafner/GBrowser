@@ -201,6 +201,30 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
     }
   }
 
+  fun forceResize() {
+    // Force the browser to recalculate its size
+    component.apply {
+      invalidate()
+      revalidate()
+      repaint()
+    }
+
+    // Also update the CEF browser UI component
+    cefBrowser.uiComponent?.apply {
+      invalidate()
+      revalidate()
+      repaint()
+    }
+
+    // Reapply theme after resize to ensure it's properly rendered
+    javax.swing.Timer(100) {
+      GBrowserThemeUtil.applyTheme(cefBrowser, project)
+    }.apply {
+      isRepeats = false
+      start()
+    }
+  }
+
   fun deleteCookies() {
     val manager = CefCookieManager.getGlobalManager()
     manager.deleteCookies(null, null)

@@ -65,24 +65,36 @@ class GCefBrowserLifecycleManager(
     scope.launch {
       try {
         withContext(Dispatchers.EDT) {
-          val toolWindowManager = ToolWindowManager.getInstance(project)
-
-          // Clean up main browser window
-          toolWindowManager.getToolWindow(GBrowserUtil.GBROWSER_TOOL_WINDOW_ID)?.let { toolWindow ->
-            val contentManager = toolWindow.contentManager
-            val contents = contentManager.contents
-
-            contents.forEach { content ->
-              val component = content.component
-              if (component is GBrowserToolWindowBrowser) {
-                disposeBrowserSafely(component.getBrowser())
-              }
-            }
+          // Check if project is already disposed
+          if (project.isDisposed) {
+            LOG.info("Project is already disposed, skipping browser cleanup")
+            return@withContext
           }
 
-          // Clean up DevTools window
-          toolWindowManager.getToolWindow(GBrowserUtil.DEVTOOLS_TOOL_WINDOW_ID)?.let { _ ->
-            // DevTools browsers should be disposed with their parent browsers
+          try {
+            val toolWindowManager = ToolWindowManager.getInstance(project)
+
+            // Clean up main browser window
+            toolWindowManager.getToolWindow(GBrowserUtil.GBROWSER_TOOL_WINDOW_ID)?.let { toolWindow ->
+              val contentManager = toolWindow.contentManager
+              val contents = contentManager.contents
+
+              contents.forEach { content ->
+                val component = content.component
+                if (component is GBrowserToolWindowBrowser) {
+                  disposeBrowserSafely(component.getBrowser())
+                }
+              }
+            }
+
+            // Clean up DevTools window
+            toolWindowManager.getToolWindow(GBrowserUtil.DEVTOOLS_TOOL_WINDOW_ID)?.let { _ ->
+              // DevTools browsers should be disposed with their parent browsers
+            }
+          } catch (e: com.intellij.platform.instanceContainer.internal.ContainerDisposedException) {
+            LOG.info("Container was disposed during cleanup, this is expected during project close")
+          } catch (e: Exception) {
+            LOG.warn("Non-critical error during browser cleanup", e)
           }
         }
       } catch (e: Exception) {
