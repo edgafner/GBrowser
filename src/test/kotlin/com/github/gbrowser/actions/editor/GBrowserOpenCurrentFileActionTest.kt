@@ -42,6 +42,7 @@ class GBrowserOpenCurrentFileActionTest {
     assertEquals(ActionUpdateThread.BGT, action.actionUpdateThread)
   }
 
+  @Suppress("UnusedVariable")
   @Test
   fun `test supported extensions are defined`() {
     // This tests that the action has the expected supported extensions
