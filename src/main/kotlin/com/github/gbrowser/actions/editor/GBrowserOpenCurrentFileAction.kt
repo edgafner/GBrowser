@@ -22,7 +22,7 @@ class GBrowserOpenCurrentFileAction : AnAction(), DumbAware {
 
   private val supportedExtensions = setOf("html", "htm", "xhtml", "xml", "svg", "md", "markdown")
 
-  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
   override fun update(e: AnActionEvent) {
     val file = getCurrentFile(e)
