@@ -39,7 +39,7 @@ class GBrowserOpenCurrentFileActionTest {
 
   @Test
   fun `test action update thread is EDT`() {
-    assertEquals(ActionUpdateThread.EDT, action.actionUpdateThread)
+    assertEquals(ActionUpdateThread.BGT, action.actionUpdateThread)
   }
 
   @Test
