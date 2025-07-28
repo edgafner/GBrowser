@@ -8,7 +8,7 @@
 
 ### Fixed
 
-- 🪲 Fixed an issue running action on EDT.
+- 🪲 Fixed threading issue by moving GBrowserOpenCurrentFileAction to background thread (BGT)
 
 ## [2025.2.3] - 2025-07-26
 
