@@ -12,7 +12,12 @@
       "Bash(cat:*)",
       "Bash(mkdir:*)",
       "Bash(gh pr view:*)",
-      "Bash(gh api:*)"
+      "Bash(gh api:*)",
+      "WebFetch(domain:docs.codecov.com)",
+      "Bash(curl:*)",
+      "Bash(chmod:*)",
+      "Bash(./codecov:*)",
+      "Bash(gh repo view:*)"
     ],
     "deny": []
   },
