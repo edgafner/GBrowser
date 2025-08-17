@@ -59,7 +59,11 @@ val uiTestRuntimeOnly: Configuration by configurations.getting {
 
 dependencies { // IntelliJ Platform dependencies
   intellijPlatform {
-    create(providers.gradleProperty("platformType"), providers.gradleProperty("platformVersion"), useInstaller = false)
+    val platformVersion = providers.gradleProperty("platformVersion")
+    val platformType = providers.gradleProperty("platformType")
+    create(platformType, platformVersion) {
+      useInstaller = false
+    }
     bundledPlugins(providers.gradleProperty("platformBundledPlugins").map { it.split(',') })
     jetbrainsRuntime()
     pluginVerifier()
@@ -110,9 +114,9 @@ kotlin {
   }
 
   compilerOptions {
-    apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0)
+    apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_2)
     jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
-    languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0)
+    languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_2)
     freeCompilerArgs.addAll(
       "-Xjvm-default=all",
       "-opt-in=kotlinx.serialization.ExperimentalSerializationApi"
