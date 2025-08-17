@@ -27,7 +27,6 @@ import com.intellij.util.application
 import java.util.*
 
 
-@Suppress("UnstableApiUsage")
 class GBrowserToolWindowFactory : ToolWindowFactory, DumbAware, ContentManagerListener {
 
   private lateinit var myGBrowserProjectService: GBrowserProjectService
@@ -61,22 +60,22 @@ class GBrowserToolWindowFactory : ToolWindowFactory, DumbAware, ContentManagerLi
       })
 
     project.messageBus.connect(toolWindow.disposable).subscribe(ProjectCloseListener.TOPIC, object : ProjectCloseListener {
-        override fun projectClosingBeforeSave(project: Project) {
-          toolWindow.let {
-            val contentManager = it.contentManager
-            val tabs = contentManager.contents
+      override fun projectClosingBeforeSave(project: Project) {
+        toolWindow.let {
+          val contentManager = it.contentManager
+          val tabs = contentManager.contents
 
-            val gBrowserTabs = tabs.take(5).mapNotNull { con ->
-              val panel = con.component as? GBrowserToolWindowBrowser
-              panel?.getCurrentUrl()?.let { currentUrl ->
-                val title = panel.getCurrentTitle()
-                GBrowserTab(currentUrl, title, Date())
-              }
+          val gBrowserTabs = tabs.take(5).mapNotNull { con ->
+            val panel = con.component as? GBrowserToolWindowBrowser
+            panel?.getCurrentUrl()?.let { currentUrl ->
+              val title = panel.getCurrentTitle()
+              GBrowserTab(currentUrl, title, Date())
             }
-            myGBrowserProjectService.addTabs(gBrowserTabs)
           }
+          myGBrowserProjectService.addTabs(gBrowserTabs)
         }
-      })
+      }
+    })
 
     // We'll handle visibility management through ToolWindowManagerListener instead
   }
