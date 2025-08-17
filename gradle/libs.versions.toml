@@ -1,11 +1,12 @@
 [versions]
-changelog = "2.3.0"
-intelliJPlatform = "2.7.0"
-kotlin = "2.2.0"
+changelog = "2.4.0"
+intelliJPlatform = "2.7.2"
+kotlin = "2.2.10"
 kover = "0.9.1"
-qodana = "2025.1.1"
+qodana = "2025.2.1"
 mockkTest = "1.14.5"
 kotlinTest = "1.10.2"
+
 
 
 [plugins]

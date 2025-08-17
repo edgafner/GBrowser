@@ -49,7 +49,7 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0  # Fetch all history to ensure we get all commits
           ref: ${{ github.event.pull_request.head.sha }}  # Explicitly checkout the latest PR commit
@@ -84,9 +84,12 @@ jobs:
             - Security considerations
             - Whether the changes align with the PR's stated purpose
             - Test coverage for the new/modified code
+            - Alert in case a new dependency in the plugin.xml was added.
             
             Be specific, constructive, and reference actual code changes in your feedback.
             Mention specific files and line numbers when providing feedback.
+            
+            Don't alert for duplication content in the CHANGELOG.md.
 
           # Optional: Use sticky comments to make Claude reuse the same comment on later pushes to the same PR
           use_sticky_comment: true

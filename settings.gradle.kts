@@ -20,4 +20,3 @@ develocity {
     publishing.onlyIf { it.buildResult.failures.isNotEmpty() }
   }
 }
-include("graph_assets")

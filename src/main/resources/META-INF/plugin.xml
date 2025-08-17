@@ -24,6 +24,7 @@
                 secondary="false" canCloseContents="true" doNotActivateOnStart="true"
                 icon="com.github.gbrowser.GBrowserIcons.DEV_TOOLS_ACTIVE"/>
 
+
     <errorHandler implementation="com.github.gbrowser.reports.GBrowserPluginErrorReportSubmitter"/>
 
     <notificationGroup id="GBrowser Notifications" displayType="BALLOON" bundle="messages.GBrowserBundle" key="gbrowser.notification.group"/>
