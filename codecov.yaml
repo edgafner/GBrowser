@@ -41,5 +41,5 @@ flag_management:
 
 ignore:
   - src/main/kotlin/com/github/gbrowser/reports/GBrowserPluginErrorReportSubmitter.kt
-    - src/test/
+  - src/test/
   - src/uiTest/
