@@ -76,15 +76,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh release upload ${{ github.event.release.tag_name }} ./build/distributions/*
-
-
-      # Upload an artifact as a release asset
-      - name: Upload Mapping
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release upload ${{ github.event.release.tag_name }} ./build/*.txt
-
-
+      
+      
       # Create a pull request
       - name: Create Pull Request
         if: ${{ steps.changelog_changes.outputs.has_changes == 'true' }}
