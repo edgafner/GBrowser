@@ -53,7 +53,7 @@ jobs:
       # Set up the Java environment for the next steps
       - name: Setup JBR 21
         if: steps.check_changelog.outputs.is_changelog != 'true'
-        uses: actions/setup-java@v4.7.1
+        uses: actions/setup-java@v5.0.0
         with:
           distribution: 'jetbrains'
           java-version: 21
@@ -133,7 +133,7 @@ jobs:
       # Set up the Java environment for the next steps
       - name: Setup JBR 21
         if: needs.build.outputs.is_changelog_pr != 'true'
-        uses: actions/setup-java@v4.7.1
+        uses: actions/setup-java@v5.0.0
         with:
           distribution: 'jetbrains'
           java-version: 21
@@ -218,7 +218,7 @@ jobs:
 
       # Set up the Java environment for the next steps
       - name: Setup JBR 21
-        uses: actions/setup-java@v4.7.1
+        uses: actions/setup-java@v5.0.0
         with:
           distribution: 'jetbrains'
           java-version: 21
@@ -279,7 +279,7 @@ jobs:
 
       # Set up the Java environment for the next steps
       - name: Setup JBR 21
-        uses: actions/setup-java@v4.7.1
+        uses: actions/setup-java@v5.0.0
         with:
           distribution: 'jetbrains'
           java-version: 21
@@ -361,7 +361,7 @@ jobs:
       
       # Set up the Java environment for the next steps
       - name: Setup JBR 21
-        uses: actions/setup-java@v4.7.1
+        uses: actions/setup-java@v5.0.0
         with:
           distribution: 'jetbrains'
           java-version: 21
