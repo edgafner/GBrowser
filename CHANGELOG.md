@@ -9,6 +9,7 @@
 ### Fixed
 
 - 🪲 Fixed threading issue by moving GBrowserOpenCurrentFileAction to background thread (BGT)
+- 🪲 Fixed Cannot invoke "java.lang.Boolean.booleanValue()" (BGT) [Issue 476](https://github.com/edgafner/GBrowser/issues/476)
 
 ## [2025.2.4] - 2025-07-28
 

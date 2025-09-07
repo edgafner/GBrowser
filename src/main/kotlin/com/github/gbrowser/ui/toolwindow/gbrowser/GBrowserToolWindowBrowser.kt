@@ -114,10 +114,17 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
 
   // Example of a method conversion:
   fun loadUrl(url: String) {
-    if (!gbrowser.cefBrowser.isLoading) {
-      gbrowser.cefBrowser.loadURL(url)
-    } else {
-      gbrowser.cefBrowser.stopLoad()
+    try {
+      val isLoading = gbrowser.cefBrowser.isLoading
+      if (isLoading != true) {
+        gbrowser.cefBrowser.loadURL(url)
+      } else {
+        gbrowser.cefBrowser.stopLoad()
+        gbrowser.cefBrowser.loadURL(url)
+      }
+    } catch (e: Exception) {
+      // Handle case where isLoading check fails (e.g., RPC returns null)
+      thisLogger().warn("Failed to check browser loading state, proceeding with load", e)
       gbrowser.cefBrowser.loadURL(url)
     }
   }
@@ -128,11 +135,21 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
 
 
   fun canGoBack(): Boolean {
-    return gbrowser.cefBrowser.canGoBack()
+    return try {
+      gbrowser.cefBrowser.canGoBack()
+    } catch (e: Exception) {
+      thisLogger().warn("Failed to check canGoBack state", e)
+      false
+    }
   }
 
   fun canGoForward(): Boolean {
-    return gbrowser.cefBrowser.canGoForward()
+    return try {
+      gbrowser.cefBrowser.canGoForward()
+    } catch (e: Exception) {
+      thisLogger().warn("Failed to check canGoForward state", e)
+      false
+    }
   }
 
   fun goBack() {

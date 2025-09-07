@@ -8,6 +8,7 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowManager
@@ -44,15 +45,27 @@ object GBrowserToolWindowUtil {
 
     titleFuture.thenAccept { title ->
       application.invokeLater {
-        val content = toolWindow.contentManager.factory.createContent(toolWindowPanel, title, false).apply {
-          preferredFocusableComponent = toolWindowPanel.component
-        }
-        content.component = toolWindowPanel
-        toolWindow.contentManager.addContent(content)
-        toolWindow.contentManager.setSelectedContent(content)
+        try {
+          // Check if tool window and content manager are still valid
+          if (toolWindow.isDisposed) return@invokeLater
 
-        content.putUserData(ToolWindow.SHOW_CONTENT_ICON, toolWindow.project.service<GBrowserService>().isTabIconVisible)
-        content.icon = AllIcons.General.Web
+          val contentManager = toolWindow.contentManager
+          if (contentManager.isDisposed) return@invokeLater
+
+          val content = contentManager.factory.createContent(toolWindowPanel, title, false).apply {
+            preferredFocusableComponent = toolWindowPanel.component
+          }
+          content.component = toolWindowPanel
+
+          contentManager.addContent(content)
+          contentManager.setSelectedContent(content)
+
+          content.putUserData(ToolWindow.SHOW_CONTENT_ICON, toolWindow.project.service<GBrowserService>().isTabIconVisible)
+          content.icon = AllIcons.General.Web
+        } catch (e: Exception) {
+          // Handle case where content manager UI is not properly initialized
+          thisLogger().warn("Failed to create content tab", e)
+        }
       }
     }
   }
