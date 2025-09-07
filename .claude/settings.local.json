@@ -7,7 +7,6 @@
       "Bash(git grep:*)",
       "WebFetch(domain:github.com)",
       "Bash(gh issue list:*)",
-      "Bash(rm:*)",
       "WebFetch(domain:platform.jetbrains.com)",
       "Bash(cat:*)",
       "Bash(mkdir:*)",
@@ -17,7 +16,9 @@
       "Bash(curl:*)",
       "Bash(chmod:*)",
       "Bash(./codecov:*)",
-      "Bash(gh repo view:*)"
+      "Bash(gh repo view:*)",
+      "Bash(gh pr diff:*)",
+      "mcp__ide__getDiagnostics"
     ],
     "deny": []
   },
