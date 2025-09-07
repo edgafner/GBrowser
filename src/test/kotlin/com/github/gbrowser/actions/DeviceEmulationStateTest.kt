@@ -113,4 +113,51 @@ class DeviceEmulationStateTest {
     assertEquals(DeviceEmulationConstants.DEFAULT_RESPONSIVE_HEIGHT, state.currentHeight)
     assertNull(state.currentDevice)
   }
+
+  @Test
+  fun `test updated user agent constants contain Chrome 131`() {
+    // Test that updated mobile user agent contains Chrome 131
+    assertTrue(DeviceEmulationConstants.MOBILE_USER_AGENT_ANDROID.contains("Chrome/131.0.0.0"))
+    assertTrue(DeviceEmulationConstants.USER_AGENT_PIXEL_7.contains("Chrome/131.0.0.0"))
+    assertTrue(DeviceEmulationConstants.USER_AGENT_SAMSUNG_S20_ULTRA.contains("Chrome/131.0.0.0"))
+    assertTrue(DeviceEmulationConstants.USER_AGENT_GALAXY_Z_FOLD_5.contains("Chrome/131.0.0.0"))
+  }
+
+  @Test
+  fun `test iOS user agents contain iOS 17`() {
+    // Test that iOS devices have been updated to iOS 17
+    assertTrue(DeviceEmulationConstants.USER_AGENT_IPHONE_SE.contains("CPU iPhone OS 17_0"))
+    assertTrue(DeviceEmulationConstants.USER_AGENT_IPHONE_XR.contains("CPU iPhone OS 17_0"))
+    assertTrue(DeviceEmulationConstants.USER_AGENT_IPHONE_12_PRO.contains("CPU iPhone OS 17_0"))
+    assertTrue(DeviceEmulationConstants.USER_AGENT_IPAD_MINI.contains("CPU OS 17_0"))
+  }
+
+  @Test
+  fun `test modern browser user agent for anti-detection`() {
+    // Test new modern user agent constant
+    val modernUserAgent = DeviceEmulationConstants.USER_AGENT_MODERN_BROWSER
+    assertTrue(modernUserAgent.contains("Chrome/131.0.0.0"))
+    assertTrue(modernUserAgent.contains("Windows NT 10.0"))
+    assertFalse(modernUserAgent.contains("CefSharp"))
+    assertFalse(modernUserAgent.contains("/CefSharp Browser"))
+  }
+
+  @Test
+  fun `test default browser user agent maintains Gmail compatibility`() {
+    // Test that default user agent still contains Gmail-compatible identifiers
+    val defaultUserAgent = DeviceEmulationConstants.USER_AGENT_DEFAULT_BROWSER
+    assertTrue(defaultUserAgent.contains("Chrome/96.0.4664.110"))
+    assertTrue(defaultUserAgent.contains("/CefSharp Browser 90.0"))
+  }
+
+  @Test
+  fun `test Android versions updated to modern releases`() {
+    // Test Android versions have been updated
+    assertTrue(DeviceEmulationConstants.MOBILE_USER_AGENT_ANDROID.contains("Android 14"))
+    assertTrue(DeviceEmulationConstants.USER_AGENT_PIXEL_7.contains("Android 14"))
+    assertTrue(DeviceEmulationConstants.USER_AGENT_SAMSUNG_S20_ULTRA.contains("Android 14"))
+    assertTrue(DeviceEmulationConstants.USER_AGENT_GALAXY_Z_FOLD_5.contains("Android 14"))
+    assertTrue(DeviceEmulationConstants.USER_AGENT_SAMSUNG_A51_71.contains("Android 13"))
+    assertTrue(DeviceEmulationConstants.USER_AGENT_SURFACE_DUO.contains("Android 12"))
+  }
 }
