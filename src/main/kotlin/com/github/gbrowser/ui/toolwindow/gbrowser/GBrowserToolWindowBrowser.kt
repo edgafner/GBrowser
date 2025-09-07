@@ -116,7 +116,7 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
   fun loadUrl(url: String) {
     try {
       val isLoading = gbrowser.cefBrowser.isLoading
-      if (isLoading != true) {
+      if (isLoading.not()) {
         gbrowser.cefBrowser.loadURL(url)
       } else {
         gbrowser.cefBrowser.stopLoad()
