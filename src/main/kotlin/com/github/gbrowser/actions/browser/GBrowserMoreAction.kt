@@ -33,10 +33,7 @@ class GBrowserFindAction : AnAction(), DumbAware {
     val project = e.getData(CommonDataKeys.PROJECT) ?: return
     val findDialog = GBrowserFindDialog(project, browser)
 
-    if (!findDialog.isVisible) {
-      findDialog.setDialogLocation()
-    }
-
     findDialog.show()
+    findDialog.setDialogLocation()
   }
 }
