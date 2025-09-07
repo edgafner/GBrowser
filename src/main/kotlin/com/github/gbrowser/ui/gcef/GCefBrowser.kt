@@ -79,14 +79,15 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
       else GBrowserErrorPage.create(errorCode, errorText, failedUrl)
     }
 
-    // Add load handler to apply theme
+    // Add load handler to apply theme and anti-detection measures
     jbCefClient.addLoadHandler(object : CefLoadHandlerAdapter() {
       override fun onLoadEnd(browser: CefBrowser, frame: CefFrame, httpStatusCode: Int) {
         if (frame.isMain && httpStatusCode < 400) {
-          // Apply theme after page loads successfully
+          // Apply theme and anti-detection measures after page loads successfully
           // Add a small delay to ensure the DOM is ready
           javax.swing.Timer(50) {
             GBrowserThemeUtil.applyTheme(browser, project)
+            applyAntiDetectionMeasures(browser)
           }.apply {
             isRepeats = false
             start()
@@ -96,8 +97,9 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
 
       override fun onLoadStart(browser: CefBrowser, frame: CefFrame, transitionType: CefRequest.TransitionType) {
         if (frame.isMain) {
-          // Apply theme at the start of loading to minimize flashing
+          // Apply theme and anti-detection measures at the start of loading to minimize flashing
           GBrowserThemeUtil.applyTheme(browser, project)
+          applyAntiDetectionMeasures(browser)
         }
       }
     }, cefBrowser)
@@ -272,6 +274,195 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
     }.apply {
       isRepeats = false
       start()
+    }
+  }
+
+  /**
+   * Apply anti-detection measures to make the browser appear more legitimate
+   * and bypass bot detection systems like Cloudflare
+   */
+  private fun applyAntiDetectionMeasures(browser: CefBrowser) {
+    try {
+      val antiDetectionScript = """
+        (function() {
+          // Only apply anti-detection to sites that specifically need it
+          const needsAntiDetection = [
+            'perplexity.ai',
+            'challenges.cloudflare.com',
+            'openai.com',
+            'chat.openai.com',
+            'claude.ai'
+          ];
+          
+          const currentHost = location.hostname.toLowerCase();
+          const needsProtection = needsAntiDetection.some(domain => 
+            currentHost.includes(domain) || currentHost.endsWith(domain)
+          );
+          
+          if (!needsProtection) {
+            return; // Skip anti-detection for most sites
+          }
+          
+          // Remove automation indicators
+          if (typeof window.webdriver !== 'undefined') {
+            delete window.webdriver;
+          }
+          
+          // Hide automation properties
+          Object.defineProperty(navigator, 'webdriver', {
+            get: () => undefined,
+            configurable: true
+          });
+          
+          // Hide automation flags
+          ['__webdriver_evaluate', '__selenium_evaluate', '__webdriver_script_function', 
+           '__webdriver_script_func', '__webdriver_script_fn', '__fxdriver_evaluate',
+           '__driver_unwrapped', '__webdriver_unwrapped', '__driver_evaluate',
+           '__selenium_unwrapped', '__fxdriver_unwrapped'].forEach(prop => {
+            if (window[prop]) {
+              delete window[prop];
+            }
+          });
+          
+          // Spoof Chrome runtime
+          if (!window.chrome) {
+            window.chrome = {};
+          }
+          
+          if (!window.chrome.runtime) {
+            Object.defineProperty(window.chrome, 'runtime', {
+              get: () => ({
+                onConnect: undefined,
+                onMessage: undefined,
+                sendMessage: () => {},
+                connect: () => ({
+                  onMessage: { addListener: () => {}, removeListener: () => {} },
+                  onDisconnect: { addListener: () => {}, removeListener: () => {} },
+                  postMessage: () => {}
+                })
+              }),
+              configurable: true
+            });
+          }
+          
+          // Enhanced plugins spoofing
+          Object.defineProperty(navigator, 'plugins', {
+            get: () => {
+              const plugins = [
+                { name: 'Chrome PDF Plugin', description: 'Portable Document Format', filename: 'internal-pdf-viewer', length: 1 },
+                { name: 'Chrome PDF Viewer', description: 'Portable Document Format', filename: 'mhjfbmdgcfjbbpaeojofohoefgiehjai', length: 1 },
+                { name: 'Native Client', description: 'Native Client Executable', filename: 'internal-nacl-plugin', length: 2 }
+              ];
+              return Object.setPrototypeOf(plugins, PluginArray.prototype);
+            },
+            configurable: true
+          });
+          
+          // Mock WebGL to avoid fingerprinting
+          const getParameter = WebGLRenderingContext.prototype.getParameter;
+          WebGLRenderingContext.prototype.getParameter = function(parameter) {
+            if (parameter === 37445) {
+              return 'Intel Inc.';
+            }
+            if (parameter === 37446) {
+              return 'Intel(R) Iris(TM) Graphics 6100';
+            }
+            return getParameter.call(this, parameter);
+          };
+          
+          // Override permissions API for better compatibility
+          if (navigator.permissions && navigator.permissions.query) {
+            const originalQuery = navigator.permissions.query;
+            navigator.permissions.query = (parameters) => {
+              return parameters.name === 'notifications' ?
+                Promise.resolve({ state: 'default' }) :
+                originalQuery.call(navigator.permissions, parameters);
+            };
+          }
+          
+          // Mock realistic connection
+          Object.defineProperty(navigator, 'connection', {
+            get: () => ({
+              effectiveType: '4g',
+              rtt: 50 + Math.random() * 100,
+              downlink: 5 + Math.random() * 20,
+              saveData: false
+            }),
+            configurable: true
+          });
+          
+          // Mock battery with realistic values
+          if (!navigator.getBattery) {
+            navigator.getBattery = () => Promise.resolve({
+              charging: Math.random() > 0.5,
+              chargingTime: Math.random() * 3600,
+              dischargingTime: 14400 + Math.random() * 7200,
+              level: 0.5 + Math.random() * 0.5
+            });
+          }
+          
+          // Consistent language settings
+          Object.defineProperty(navigator, 'language', {
+            get: () => 'en-US',
+            configurable: true
+          });
+          
+          Object.defineProperty(navigator, 'languages', {
+            get: () => ['en-US', 'en'],
+            configurable: true
+          });
+          
+          // Realistic hardware specs
+          Object.defineProperty(navigator, 'hardwareConcurrency', {
+            get: () => Math.max(2, Math.min(16, navigator.hardwareConcurrency || 4)),
+            configurable: true
+          });
+          
+          // Memory info spoofing
+          Object.defineProperty(navigator, 'deviceMemory', {
+            get: () => 8,
+            configurable: true
+          });
+          
+          // Hide automation in console
+          const originalConsoleDebug = console.debug;
+          console.debug = function(...args) {
+            if (args.length > 0 && typeof args[0] === 'string' && 
+                (args[0].includes('DevTools') || args[0].includes('automation'))) {
+              return;
+            }
+            return originalConsoleDebug.apply(console, args);
+          };
+          
+          // Mouse and keyboard event simulation
+          ['mouse', 'keyboard'].forEach(eventType => {
+            const events = eventType === 'mouse' ? 
+              ['click', 'mousedown', 'mouseup', 'mousemove'] : 
+              ['keydown', 'keyup', 'keypress'];
+            
+            events.forEach(event => {
+              const originalAddEventListener = EventTarget.prototype.addEventListener;
+              EventTarget.prototype.addEventListener = function(type, listener, options) {
+                if (type === event && typeof listener === 'function') {
+                  const wrappedListener = function(e) {
+                    // Add realistic timing
+                    if (!e.isTrusted) {
+                      Object.defineProperty(e, 'isTrusted', { value: true, configurable: false });
+                    }
+                    return listener.call(this, e);
+                  };
+                  return originalAddEventListener.call(this, type, wrappedListener, options);
+                }
+                return originalAddEventListener.call(this, type, listener, options);
+              };
+            });
+          });
+        })();
+      """.trimIndent()
+
+      browser.executeJavaScript(antiDetectionScript, "", 0)
+    } catch (e: Exception) {
+      thisLogger().warn("Failed to apply anti-detection measures", e)
     }
   }
 

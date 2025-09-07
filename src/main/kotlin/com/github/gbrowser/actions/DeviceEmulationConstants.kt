@@ -51,8 +51,12 @@ object DeviceEmulationConstants {
   const val USER_AGENT_NEST_HUB = "Mozilla/5.0 (X11; Linux armv7l) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 CrKey/1.56.500000"
   const val USER_AGENT_NEST_HUB_MAX = "Mozilla/5.0 (X11; Linux aarch64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 CrKey/1.56.500000"
 
-  // Default User Agent (Updated to latest Chrome version without automation indicators)
+  // Default User Agent - Keep the original working version for Gmail compatibility
   const val USER_AGENT_DEFAULT_BROWSER =
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36 /CefSharp Browser 90.0"
+
+  // Modern User Agent for anti-detection (without automation indicators)
+  const val USER_AGENT_MODERN_BROWSER =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
 
   // Component Names for Testing
