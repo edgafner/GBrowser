@@ -187,6 +187,20 @@ class GBrowserUITest {
 
         gBrowserToolWindow {
           browserFinalActions()
+
+          gBrowserPanel {
+
+            moveMouse()
+            rightClick()
+            driver.ui.ideFrame {
+              popup().accessibleList().clickItem("Open DevTools", false)
+              wait(1.seconds)
+            }
+          }
+
+          keyboard {
+            escape()
+          }
         }
 
       }
@@ -239,23 +253,8 @@ class GBrowserUITest {
     selectPopupMenuItem("Reload Page")
     selectPopupMenuItem("Preferences")
     presencesActions()
+    wait(2.seconds)
 
-    gBrowserPanel {
-      button {
-        byTooltip("https://github.com/")
-      }.waitFound(2.seconds).click()
-
-      moveMouse()
-      rightClick()
-      driver.ui.ideFrame {
-        popup().accessibleList().clickItem("Open DevTools", false)
-        wait(1.seconds)
-      }
-    }
-
-    keyboard {
-      escape()
-    }
 
   }
 
