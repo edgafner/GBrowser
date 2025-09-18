@@ -9,10 +9,8 @@ import com.github.gbrowser.settings.bookmarks.GBrowserBookmark
 import com.github.gbrowser.ui.gcef.impl.GBrowserCefDisplayChangeHandler
 import com.github.gbrowser.ui.gcef.impl.GBrowserCefLifeSpanDelegate
 import com.github.gbrowser.ui.gcef.impl.GBrowserCefRequestHandler
-import com.github.gbrowser.ui.toolwindow.dev_tools.GBrowserToolWindowDevToolsFactory
 import com.github.gbrowser.ui.toolwindow.gbrowser.GBrowserToolWindowActionBarDelegate
 import com.github.gbrowser.util.GBrowserThemeUtil
-import com.github.gbrowser.util.GBrowserToolWindowUtil
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
@@ -20,7 +18,6 @@ import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.jcef.JBCefBrowser
 import com.intellij.ui.jcef.JBCefBrowserBuilder
 import com.intellij.ui.jcef.JBCefClient
-import com.intellij.util.application
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
 import org.cef.callback.CefContextMenuParams
@@ -59,17 +56,11 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
   private val favIconLoader: CachingWebPageTitleLoader = service()
 
 
-  val devTools: CefBrowser?
-    get() {
-      return cefBrowser.devTools
-    }
-
   val client: JBCefClient
     get() {
       return jbCefClient
     }
   private var titleChangeDelegate: GBrowserCefBrowserTitleDelegate? = null
-  private var devToolsDelegates: MutableList<GBrowserCefDevToolsListener> = mutableListOf()
 
   init {
     setProperty("JBCefBrowser.focusOnShow", true)
@@ -83,7 +74,7 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
     jbCefClient.addLoadHandler(object : CefLoadHandlerAdapter() {
       override fun onLoadEnd(browser: CefBrowser, frame: CefFrame, httpStatusCode: Int) {
         if (frame.isMain && httpStatusCode < 400) {
-          // Apply theme and anti-detection measures after page loads successfully
+          // Apply theme and anti-detection measures after the page loads successfully
           // Add a small delay to ensure the DOM is ready
           javax.swing.Timer(50) {
             GBrowserThemeUtil.applyTheme(browser, project)
@@ -147,39 +138,9 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
 
       private fun openDevtools() {
         thisLogger().debug("GCefBrowser.openDevtools() called from context menu")
-
-        val settings = project.service<GBrowserService>()
-        val openInDialog = settings.isDevToolsInDialog
-        thisLogger().debug("isDevToolsInDialog setting: $openInDialog")
-
-        if (openInDialog) {
-          // Open in dialog using JCEF's built-in DevTools dialog
-          thisLogger().debug("Opening DevTools in dialog")
-          // Use JCEF to open DevTools in a new window/dialog
-          val devToolsBrowser = cefBrowser.devTools
-          val frame = javax.swing.JFrame("DevTools - ${cefBrowser.url}")
-          frame.defaultCloseOperation = javax.swing.WindowConstants.DISPOSE_ON_CLOSE
-          frame.add(devToolsBrowser.uiComponent)
-          frame.setSize(1024, 768)
-          frame.setLocationRelativeTo(null)
-          frame.isVisible = true
-        } else {
-          // Open in the tool window
-          val selectedBrowser = GBrowserToolWindowUtil.getSelectedBrowserPanel(project)
-          if (selectedBrowser == null) {
-            thisLogger().debug("No selected browser panel found")
-            return
-          }
-
-          thisLogger().debug("Getting DevTools browser instance")
-          val browser = selectedBrowser.getDevToolsBrowser()
-          thisLogger().debug("Got DevTools browser: $browser")
-
-          application.invokeLater {
-            thisLogger().debug("Opening DevTools in the tool window")
-            GBrowserToolWindowDevToolsFactory.Companion.createTab(project, browser, selectedBrowser.getCurrentTitle())
-          }
-        }
+        // In the new API (253 EAP), DevTools can only be opened in a built-in dialog
+        thisLogger().debug("Opening DevTools using a built-in dialog (new API)")
+        this@GCefBrowser.openDevtools()
       }
     }
   }
@@ -225,7 +186,7 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
       repaint()
     }
 
-    // Reapply theme after resize to ensure it's properly rendered
+    // Reapply the theme after resize to ensure it's properly rendered
     javax.swing.Timer(DeviceEmulationConstants.THEME_UPDATE_DELAY_MS) {
       GBrowserThemeUtil.applyTheme(cefBrowser, project)
     }.apply {
@@ -239,33 +200,11 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
     manager.deleteCookies(null, null)
   }
 
-  fun addTitleChangeListener(delegate: GBrowserCefBrowserTitleDelegate) {
-    titleChangeDelegate = delegate
-  }
-
-  fun removeTitleChangeListener() {
-    titleChangeDelegate = null
-  }
 
   fun notifyTitleChanged(title: String?) {
     titleChangeDelegate?.onChangeTitle(title)
   }
 
-  fun addDevToolsListener(listener: GBrowserCefDevToolsListener) {
-    devToolsDelegates.add(listener)
-  }
-
-  fun removeDevToolsListener() {
-    devToolsDelegates = mutableListOf()
-  }
-
-  fun disposeDevTools() {
-    devTools?.close(true)
-    devToolsDelegates.forEach {
-      it.onDisposeDevtools()
-    }
-    removeDevToolsListener()
-  }
 
   fun refreshTheme() {
     // Add a small delay to ensure the page is ready
@@ -494,10 +433,7 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
   override fun dispose() {
     removeDisplayHandler()
     removeRequestHandler()
-    devToolsDelegates.forEach {
-      it.onDisposeDevtools()
-    }
-    removeDevToolsListener()
+    // DevTools cleanup removed - no longer available in new API
     removeLifeSpanHandler()
 
     // Clean up device emulation state
@@ -510,4 +446,5 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
 
     super.dispose()
   }
+
 }

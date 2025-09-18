@@ -6,9 +6,9 @@ import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.diagnostic.ErrorReportSubmitter
 import com.intellij.openapi.diagnostic.IdeaLoggingEvent
 import com.intellij.openapi.diagnostic.SubmittedReportInfo
-import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.Consumer
+import com.intellij.util.system.OS
 import org.jetbrains.annotations.NonNls
 import java.awt.Component
 import java.net.URLEncoder
@@ -83,7 +83,7 @@ internal class GBrowserPluginErrorReportSubmitter : ErrorReportSubmitter() {
 
   private fun StringBuilder.appendRuntimeInformation() {
     val descriptor = PluginManagerCore.getPlugin(pluginDescriptor.pluginId)!!
-    appendEncoded("- **OS:** ${SystemInfo.getOsNameAndVersion()}\n")
+    appendEncoded("- **OS:** ${OS.CURRENT}\n")
     appendEncoded("- **Plugin Version:** ${descriptor.version}\n")
     appendEncoded("- **IDE:** ${ApplicationInfo.getInstance().fullApplicationName}\n")
     appendEncoded("- **IDE Version:** ${ApplicationInfo.getInstance().build.asString()}")

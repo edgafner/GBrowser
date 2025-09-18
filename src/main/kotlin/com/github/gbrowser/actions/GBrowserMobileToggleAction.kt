@@ -1,7 +1,6 @@
 package com.github.gbrowser.actions
 
 import com.github.gbrowser.i18n.GBrowserBundle
-import com.github.gbrowser.util.GBrowserUtil
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ToggleAction
@@ -79,28 +78,8 @@ class GBrowserMobileToggleAction : ToggleAction(
     // Try to get the browser panel - handle both regular browser and DevTools
     val browserPanel = GBrowserMobileToggleActionUtils.getBrowserPanel(project)
 
-    // If we couldn't find the browser panel directly, it might be in DevTools
-    if (browserPanel == null) {
-      // For DevTools, we need to handle it differently
-      val toolWindowManager = project.getService(com.intellij.openapi.wm.ToolWindowManager::class.java)
-      val devToolsWindow = toolWindowManager.getToolWindow(GBrowserUtil.DEVTOOLS_TOOL_WINDOW_ID)
-      val selectedContent = devToolsWindow?.contentManager?.selectedContent
-      val devToolsPanel = selectedContent?.component as? com.github.gbrowser.ui.toolwindow.dev_tools.GBrowserToolWindowDevTools
-
-      if (devToolsPanel != null) {
-        // For DevTools, we need to create a wrapper approach
-        // This is a limitation - device emulation works best in the main browser window
-        com.intellij.notification.NotificationGroupManager.getInstance()
-          .getNotificationGroup("GBrowser Notifications")
-          .createNotification(
-            "Emulation device",
-            "Device emulation works best in the main browser window. Please use the browser tab instead of DevTools.",
-            com.intellij.notification.NotificationType.WARNING
-          )
-          .notify(project)
-        return
-      }
-    }
+    // DevTools tool window removed - no longer available in new API (253 EAP)
+    // Device emulation only works in the main browser window
 
     if (browserPanel == null) {
       com.intellij.notification.NotificationGroupManager.getInstance()

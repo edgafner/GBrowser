@@ -139,11 +139,13 @@ class GBrowserProjectSettingsComponent(val project: Project) : SimpleToolWindowP
       row {
         comment("Port, which can be used for debugging JavaScript in JCEF components")
       }
-      row {
-        checkBox("Open DevTools in dialog").bindSelected(settings::isDevToolsInDialog) { value ->
-          settings.isDevToolsInDialog = value
-        }.comment("When unchecked, DevTools will open in a tool window")
-      }
+      // DevTools tool window option removed in IntelliJ 253 EAP
+      // The new JCEF API only supports opening DevTools in a built-in dialog
+      // row {
+      //   checkBox("Open DevTools in dialog").bindSelected(settings::isDevToolsInDialog) { value ->
+      //     settings.isDevToolsInDialog = value
+      //   }.comment("This option is no longer available in the new API")
+      // }
     }
 
 

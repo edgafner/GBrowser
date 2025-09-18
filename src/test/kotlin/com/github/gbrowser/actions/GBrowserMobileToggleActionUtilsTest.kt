@@ -3,7 +3,6 @@ package com.github.gbrowser.actions
 import com.github.gbrowser.ui.gcef.GCefBrowser
 import com.github.gbrowser.ui.toolwindow.gbrowser.GBrowserToolWindowBrowser
 import com.github.gbrowser.util.GBrowserToolWindowUtil
-import com.github.gbrowser.util.GBrowserUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowManager
@@ -59,7 +58,7 @@ class GBrowserMobileToggleActionUtilsTest {
   fun `test getCurrentBrowser returns null when no browser found`() {
     // Given
     every { GBrowserToolWindowUtil.getSelectedBrowserPanel(mockProject) } returns null
-    every { mockToolWindowManager.getToolWindow(GBrowserUtil.DEVTOOLS_TOOL_WINDOW_ID) } returns null
+    // DevTools tool window removed - no longer available in new API (253 EAP)
 
     // When
     val result = GBrowserMobileToggleActionUtils.getCurrentBrowser(mockProject)
@@ -86,7 +85,7 @@ class GBrowserMobileToggleActionUtilsTest {
   fun `test getBrowserPanel returns null when no panel found`() {
     // Given
     every { GBrowserToolWindowUtil.getSelectedBrowserPanel(mockProject) } returns null
-    every { mockToolWindowManager.getToolWindow(GBrowserUtil.DEVTOOLS_TOOL_WINDOW_ID) } returns null
+    // DevTools tool window removed - no longer available in new API (253 EAP)
 
     // When
     val result = GBrowserMobileToggleActionUtils.getBrowserPanel(mockProject)

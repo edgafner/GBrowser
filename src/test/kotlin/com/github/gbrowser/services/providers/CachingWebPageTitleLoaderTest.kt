@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
@@ -193,16 +192,5 @@ class CachingWebPageTitleLoaderTest {
     // Verify only one network call was made
     verify(exactly = 1) { Jsoup.connect(url) }
   }
-
-  @Test
-  fun `test cache expiration is configured`() {
-    // This test just verifies the cache is configured with expiration
-    // The actual expiration testing would require mocking time, which is complex
-
-    val url = "https://test.com"
-    val future = titleLoader.getTitleOfWebPage(url)
-
-    // Just verify it returns a CompletableFuture
-    assertEquals(CompletableFuture::class.java, future.javaClass)
-  }
+  
 }

@@ -19,17 +19,10 @@
                 anchor="left" secondary="false" canCloseContents="true"
                 icon="com.github.gbrowser.GBrowserIcons.GBROWSER_LOGO"/>
 
-    <toolWindow id="GDevTools" factoryClass="com.github.gbrowser.ui.toolwindow.dev_tools.GBrowserToolWindowDevToolsFactory"
-                anchor="bottom"
-                secondary="false" canCloseContents="true" doNotActivateOnStart="true"
-                icon="com.github.gbrowser.GBrowserIcons.DEV_TOOLS_ACTIVE"/>
-
 
     <errorHandler implementation="com.github.gbrowser.reports.GBrowserPluginErrorReportSubmitter"/>
 
     <notificationGroup id="GBrowser Notifications" displayType="BALLOON" bundle="messages.GBrowserBundle" key="gbrowser.notification.group"/>
-
-    <applicationService serviceImplementation="com.github.gbrowser.ui.gcef.GCefBrowserLifecycleManager"/>
 
   </extensions>
 

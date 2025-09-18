@@ -20,9 +20,7 @@ import java.util.concurrent.ConcurrentHashMap
  * This helps prevent the IDE from freezing when exiting after using GBrowser.
  */
 @Service(Service.Level.APP)
-class GCefBrowserLifecycleManager(
-  private val scope: CoroutineScope
-) : Disposable {
+class GCefBrowserLifecycleManager(private val scope: CoroutineScope) : Disposable {
 
   companion object {
     private val LOG = thisLogger()
@@ -86,10 +84,7 @@ class GCefBrowserLifecycleManager(
               }
             }
 
-            // Clean up DevTools window
-            toolWindowManager.getToolWindow(GBrowserUtil.DEVTOOLS_TOOL_WINDOW_ID)?.let { _ ->
-              // DevTools browsers should be disposed with their parent browsers
-            }
+            // DevTools tool window removed - no longer available in new API (253 EAP)
           } catch (e: CancellationException) {
             LOG.info("Container was disposed during cleanup, this is expected during project close")
             throw e
