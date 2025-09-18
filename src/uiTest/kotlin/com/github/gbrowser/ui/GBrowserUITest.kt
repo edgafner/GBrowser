@@ -10,6 +10,7 @@ import com.github.gbrowser.ui.utils.selectAll
 import com.intellij.driver.sdk.ui.Finder
 import com.intellij.driver.sdk.ui.components.UiComponent.Companion.waitFound
 import com.intellij.driver.sdk.ui.components.common.dialogs.newProjectDialog
+import com.intellij.driver.sdk.ui.components.common.editor
 import com.intellij.driver.sdk.ui.components.common.ideFrame
 import com.intellij.driver.sdk.ui.components.common.welcomeScreen
 import com.intellij.driver.sdk.ui.components.elements.*
@@ -174,8 +175,18 @@ class GBrowserUITest {
 
           basicTab()
 
-          browserActions()
+          browserInitialActions()
+        }
 
+        editor {
+          rightClick()
+          keyboard {
+            escape()
+          }
+        }
+
+        gBrowserToolWindow {
+          browserFinalActions()
         }
 
       }
@@ -204,15 +215,20 @@ class GBrowserUITest {
     }
   }
 
-  private fun GBrowserToolWindowPanel.browserActions() {
+  private fun GBrowserToolWindowPanel.browserInitialActions() {
 
     // Home menu action
     selectPopupMenuItem("Home")
 
     selectPopupMenuItem("Find...")
     keyboard {
+      typeText("abc")
       escape()
     }
+  }
+
+  private fun GBrowserToolWindowPanel.browserFinalActions() {
+
     selectPopupMenuItem("Add to Bo")
 
     selectPopupMenuItem("Zoom Out")
