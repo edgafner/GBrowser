@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+### Changed
+
+- 🚀 Changelog and Gradle platform updated version
+
+### Fixed
+
+- 🪲 Fixed threading issue by moving GBrowserOpenCurrentFileAction to background thread (BGT)
+- 🪲 Fixed Cannot invoke "java.lang.Boolean.booleanValue()" (BGT) [Issue 476](https://github.com/edgafner/GBrowser/issues/476)
+- 🪲 Fixed component must be showing on the screen to determine its location [Issue 470](https://github.com/edgafner/GBrowser/issues/470)
+
 ## [2025.3.1] - 2025-09-18
 
 ### Changed
