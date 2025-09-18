@@ -50,7 +50,14 @@ class GBrowserService : SerializablePersistentStateComponent<GBrowserService.Set
                              )
                            ),
                            var history: LinkedHashSet<GBrowserHistory> = linkedSetOf(),
-                           var bookmarks: MutableSet<GBrowserBookmark> = mutableSetOf())
+                           var bookmarks: MutableSet<GBrowserBookmark> = mutableSetOf(),
+                           var antiDetectionSites: MutableSet<String> = mutableSetOf(
+                             "perplexity.ai",
+                             "challenges.cloudflare.com",
+                             "openai.com",
+                             "chat.openai.com",
+                             "claude.ai"
+                           ))
 
 
   var isProtocolHidden: Boolean
@@ -175,14 +182,6 @@ class GBrowserService : SerializablePersistentStateComponent<GBrowserService.Set
       }
     }
 
-  var isDevToolsInDialog: Boolean
-    get() = state.isDevToolsInDialog
-    set(value) {
-      updateStateAndEmit {
-        it.copy(isDevToolsInDialog = value)
-      }
-    }
-
   var theme: GBrowserTheme
     get() = GBrowserTheme.fromString(state.theme)
     set(value) {
@@ -223,7 +222,7 @@ class GBrowserService : SerializablePersistentStateComponent<GBrowserService.Set
           it.history.remove(existingHistory)
           it.history.add(historyItem)
         }
-      } else { // Add new history item, removing the oldest one if the size limit is reached
+      } else { // Add the new history item, removing the oldest one if the size limit is reached
         if (it.history.size >= state.historyItemsToKeep) {
           it.history.remove(it.history.first())
         }
@@ -289,6 +288,14 @@ class GBrowserService : SerializablePersistentStateComponent<GBrowserService.Set
   fun existBookmark(url: String): Boolean {
     return state.bookmarks.any { fav -> fav.url == url }
   }
+
+  var antiDetectionSites: MutableSet<String>
+    get() = state.antiDetectionSites
+    set(value) {
+      updateStateAndEmit {
+        it.copy(antiDetectionSites = value)
+      }
+    }
 
 
   @Suppress("unused")

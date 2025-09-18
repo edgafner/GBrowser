@@ -12,6 +12,7 @@ object DeviceEmulationConstants {
   const val DEVICE_FRAME_INNER_PADDING = 2 // Inner padding for device frame border
   const val DEFAULT_RESPONSIVE_WIDTH = 400
   const val DEFAULT_RESPONSIVE_HEIGHT = 626
+
   // Spinner Constraints
   const val MIN_DEVICE_DIMENSION = 50
   const val MAX_DEVICE_DIMENSION = 9999
@@ -33,31 +34,31 @@ object DeviceEmulationConstants {
   const val HORIZONTAL_STRUT_SIZE = 10
 
   // User Agent Strings (Updated to latest versions)
-  const val MOBILE_USER_AGENT_ANDROID = "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36"
+  const val MOBILE_USER_AGENT_ANDROID = "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.7339.133 Mobile Safari/537.36"
 
   // Device-specific User Agents (Updated to modern versions)
   const val USER_AGENT_IPHONE_SE = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
   const val USER_AGENT_IPHONE_XR = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
   const val USER_AGENT_IPHONE_12_PRO = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
-  const val USER_AGENT_PIXEL_7 = "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36"
-  const val USER_AGENT_SAMSUNG_S8_PLUS = "Mozilla/5.0 (Linux; Android 11.0; SM-G955U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36"
-  const val USER_AGENT_SAMSUNG_S20_ULTRA = "Mozilla/5.0 (Linux; Android 14; SM-G988B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36"
-  const val USER_AGENT_SAMSUNG_A51_71 = "Mozilla/5.0 (Linux; Android 13; SM-A515F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36"
-  const val USER_AGENT_GALAXY_Z_FOLD_5 = "Mozilla/5.0 (Linux; Android 14; SM-F946B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36"
+  const val USER_AGENT_PIXEL_7 = "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.7339.133 Mobile Safari/537.36"
+  const val USER_AGENT_SAMSUNG_S8_PLUS = "Mozilla/5.0 (Linux; Android 11.0; SM-G955U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.7339.133 Mobile Safari/537.36"
+  const val USER_AGENT_SAMSUNG_S20_ULTRA = "Mozilla/5.0 (Linux; Android 14; SM-G988B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.7339.133 Mobile Safari/537.36"
+  const val USER_AGENT_SAMSUNG_A51_71 = "Mozilla/5.0 (Linux; Android 13; SM-A515F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.7339.133 Mobile Safari/537.36"
+  const val USER_AGENT_GALAXY_Z_FOLD_5 = "Mozilla/5.0 (Linux; Android 14; SM-F946B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.7339.133 Mobile Safari/537.36"
   const val USER_AGENT_IPAD_MINI = "Mozilla/5.0 (iPad; CPU OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
-  const val USER_AGENT_SURFACE_PRO_7 = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0"
-  const val USER_AGENT_SURFACE_DUO = "Mozilla/5.0 (Linux; Android 12; Surface Duo) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36"
-  const val USER_AGENT_ASUS_ZENBOOK_FOLD = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
-  const val USER_AGENT_NEST_HUB = "Mozilla/5.0 (X11; Linux armv7l) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 CrKey/1.56.500000"
-  const val USER_AGENT_NEST_HUB_MAX = "Mozilla/5.0 (X11; Linux aarch64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 CrKey/1.56.500000"
+  const val USER_AGENT_SURFACE_PRO_7 = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.7339.133 Safari/537.36 Edg/140.0.7339.133"
+  const val USER_AGENT_SURFACE_DUO = "Mozilla/5.0 (Linux; Android 12; Surface Duo) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.7339.133 Mobile Safari/537.36"
+  const val USER_AGENT_ASUS_ZENBOOK_FOLD = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.7339.133 Safari/537.36"
+  const val USER_AGENT_NEST_HUB = "Mozilla/5.0 (X11; Linux armv7l) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.7339.133 Safari/537.36 CrKey/1.56.500000"
+  const val USER_AGENT_NEST_HUB_MAX = "Mozilla/5.0 (X11; Linux aarch64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.7339.133 Safari/537.36 CrKey/1.56.500000"
 
   // Default User Agent - Keep the original working version for Gmail compatibility
   const val USER_AGENT_DEFAULT_BROWSER =
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36 /CefSharp Browser 90.0"
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/605.1.15 (KHTML, like Gecko) Chrome/140.0.7339.133 Safari/605.1.15 /CefSharp Browser 90.0"
 
   // Modern User Agent for anti-detection (without automation indicators)
   const val USER_AGENT_MODERN_BROWSER =
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.7339.133 Safari/537.36"
 
   // Component Names for Testing
   const val DEVICE_WIDTH_SPINNER_NAME = "device-width-spinner"

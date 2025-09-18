@@ -3,6 +3,7 @@ package com.github.gbrowser.settings.project
 import com.github.gbrowser.GBrowserIcons
 import com.github.gbrowser.i18n.GBrowserBundle
 import com.github.gbrowser.services.GBrowserService
+import com.github.gbrowser.settings.antidetection.GBrowserAntiDetectionSitesTableComponent
 import com.github.gbrowser.settings.bookmarks.GBrowserBookmarksTableComponent
 import com.github.gbrowser.settings.request_header.GBrowserRequestHeaderTableComponent
 import com.github.gbrowser.settings.theme.GBrowserTheme
@@ -29,6 +30,7 @@ class GBrowserProjectSettingsComponent(val project: Project) : SimpleToolWindowP
   val textField: JTextField by lazy { JTextField() }
   private val bookmarks: GBrowserBookmarksTableComponent by lazy { GBrowserBookmarksTableComponent(project) }
   private val responseHeaders: GBrowserRequestHeaderTableComponent by lazy { GBrowserRequestHeaderTableComponent(project) }
+  private val antiDetectionSites: GBrowserAntiDetectionSitesTableComponent by lazy { GBrowserAntiDetectionSitesTableComponent(project) }
 
 
   private fun createComponent(): DialogPanel = panel {
@@ -56,6 +58,7 @@ class GBrowserProjectSettingsComponent(val project: Project) : SimpleToolWindowP
     toolWindowOptions()
     bookmarksOptions()
     responseHeaderOptions()
+    antiDetectionOptions()
 
   }
 
@@ -213,14 +216,29 @@ class GBrowserProjectSettingsComponent(val project: Project) : SimpleToolWindowP
     }.topGap(TopGap.NONE)
   }
 
+  private fun Panel.antiDetectionOptions() {
+    collapsibleGroup("Anti-Detection Sites", true) {
+      row {
+        cell(antiDetectionSites).label("Sites", LabelPosition.TOP).comment(
+          "Manage sites where anti-bot detection measures should be applied. Add domains that use bot detection systems like Cloudflare."
+        ).align(
+          Align.FILL
+        )
+      }.resizableRow()
+    }.apply {
+      border = JBEmptyBorder(UIUtil.getRegularPanelInsets())
+    }.topGap(TopGap.NONE)
+  }
+
   fun isModified(): Boolean {
-    return settingsComponent.isModified() || bookmarks.isModified() || responseHeaders.isModified()
+    return settingsComponent.isModified() || bookmarks.isModified() || responseHeaders.isModified() || antiDetectionSites.isModified()
   }
 
   fun apply() {
     settingsComponent.apply()
     bookmarks.apply()
     responseHeaders.apply()
+    antiDetectionSites.apply()
 
     // Refresh all browser themes after settings are applied
     refreshAllBrowserThemes()
@@ -230,12 +248,14 @@ class GBrowserProjectSettingsComponent(val project: Project) : SimpleToolWindowP
     settingsComponent.reset()
     bookmarks.reset()
     responseHeaders.reset()
+    antiDetectionSites.reset()
 
   }
 
   override fun dispose() {
     bookmarks.dispose()
     responseHeaders.dispose()
+    // Note: antiDetectionSites doesn't need dispose as it doesn't implement Disposable
 
   }
 

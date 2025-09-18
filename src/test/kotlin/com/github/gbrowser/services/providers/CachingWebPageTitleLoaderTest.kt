@@ -19,67 +19,67 @@ import java.util.concurrent.TimeUnit
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 class CachingWebPageTitleLoaderTest {
 
-    private lateinit var titleLoader: CachingWebPageTitleLoader
+  private lateinit var titleLoader: CachingWebPageTitleLoader
   private lateinit var testDispatcher: TestDispatcher
   private lateinit var testScope: TestScope
   private lateinit var mockConnection: Connection
   private lateinit var mockDocument: Document
 
-    @BeforeEach
-    fun setup() {
-      testDispatcher = StandardTestDispatcher()
-      testScope = TestScope(testDispatcher)
+  @BeforeEach
+  fun setup() {
+    testDispatcher = StandardTestDispatcher()
+    testScope = TestScope(testDispatcher)
 
-      // Mock Jsoup static methods
-      mockkStatic(Jsoup::class)
+    // Mock Jsoup static methods
+    mockkStatic(Jsoup::class)
 
-      // Create mock objects
-      mockConnection = mockk<Connection>(relaxed = true)
-      mockDocument = mockk<Document>(relaxed = true)
+    // Create mock objects
+    mockConnection = mockk<Connection>(relaxed = true)
+    mockDocument = mockk<Document>(relaxed = true)
 
-      // Setup mock behavior
-      every { Jsoup.connect(any()) } returns mockConnection
-      every { mockConnection.get() } returns mockDocument
-      every { mockDocument.title() } returns "Test Page Title"
+    // Setup mock behavior
+    every { Jsoup.connect(any()) } returns mockConnection
+    every { mockConnection.get() } returns mockDocument
+    every { mockDocument.title() } returns "Test Page Title"
 
-      titleLoader = CachingWebPageTitleLoader(testScope)
+    titleLoader = CachingWebPageTitleLoader(testScope)
+  }
+
+  @AfterEach
+  fun tearDown() {
+    titleLoader.dispose()
+    unmockkAll()
+
+    // Cancel any remaining coroutines
+    testScope.cancel()
+  }
+
+  @Test
+  fun `test getTitleOfWebPage caches results`() {
+    // This test verifies that the same URL returns the same CompletableFuture
+    val url = "https://example.com"
+
+    val future1 = titleLoader.getTitleOfWebPage(url)
+    val future2 = titleLoader.getTitleOfWebPage(url)
+
+    // The same URL should return the same CompletableFuture instance
+    assertSame(future1, future2)
+
+    // Verify Jsoup.connect was only called once due to caching
+    verify(exactly = 1) { Jsoup.connect(url) }
+
+    // Advance the dispatcher to allow coroutines to complete
+    testScope.runTest {
+      testDispatcher.scheduler.advanceUntilIdle()
     }
-    
-    @AfterEach
-    fun tearDown() {
-      titleLoader.dispose()
-      unmockkAll()
 
-      // Cancel any remaining coroutines
-      testScope.cancel()
-    }
+    // Wait for the futures to complete
+    val title1 = future1.get(1, TimeUnit.SECONDS)
+    val title2 = future2.get(1, TimeUnit.SECONDS)
 
-    @Test
-    fun `test getTitleOfWebPage caches results`() {
-        // This test verifies that the same URL returns the same CompletableFuture
-        val url = "https://example.com"
-        
-        val future1 = titleLoader.getTitleOfWebPage(url)
-        val future2 = titleLoader.getTitleOfWebPage(url)
-        
-        // The same URL should return the same CompletableFuture instance
-      assertSame(future1, future2)
-
-      // Verify Jsoup.connect was only called once due to caching
-      verify(exactly = 1) { Jsoup.connect(url) }
-
-      // Advance the dispatcher to allow coroutines to complete
-      testScope.runTest {
-        testDispatcher.scheduler.advanceUntilIdle()
-      }
-
-      // Wait for the futures to complete
-      val title1 = future1.get(1, TimeUnit.SECONDS)
-      val title2 = future2.get(1, TimeUnit.SECONDS)
-
-      assertEquals("Test Page Title", title1)
-      assertEquals("Test Page Title", title2)
-    }
+    assertEquals("Test Page Title", title1)
+    assertEquals("Test Page Title", title2)
+  }
 
   @Test
   fun `test getTitleOfWebPage returns different futures for different URLs`() {
@@ -135,36 +135,36 @@ class CachingWebPageTitleLoaderTest {
     val title = future.get(1, TimeUnit.SECONDS)
 
     assertEquals("Unknown", title)
+  }
+
+  @Test
+  fun `test dispose cleans up cache`() {
+    val url = "https://example.com"
+
+    // Load something into the cache
+    val future1 = titleLoader.getTitleOfWebPage(url)
+
+    testScope.runTest {
+      testDispatcher.scheduler.advanceUntilIdle()
     }
 
-    @Test
-    fun `test dispose cleans up cache`() {
-      val url = "https://example.com"
-        
-        // Load something into the cache
-      val future1 = titleLoader.getTitleOfWebPage(url)
+    future1.get(1, TimeUnit.SECONDS)
 
-      testScope.runTest {
-        testDispatcher.scheduler.advanceUntilIdle()
-      }
+    // Verify it was cached
+    val future2 = titleLoader.getTitleOfWebPage(url)
+    assertSame(future1, future2)
 
-      future1.get(1, TimeUnit.SECONDS)
+    // Call dispose
+    titleLoader.dispose()
 
-      // Verify it was cached
-      val future2 = titleLoader.getTitleOfWebPage(url)
-      assertSame(future1, future2)
-        
-        // Call dispose
-        titleLoader.dispose()
+    // Create a new instance with fresh test scope
+    testScope = TestScope(testDispatcher)
+    titleLoader = CachingWebPageTitleLoader(testScope)
 
-      // Create a new instance with fresh test scope
-      testScope = TestScope(testDispatcher)
-      titleLoader = CachingWebPageTitleLoader(testScope)
-
-      // Should get a new future since cache was cleaned
-      val future3 = titleLoader.getTitleOfWebPage(url)
-      assertNotSame(future1, future3)
-    }
+    // Should get a new future since cache was cleaned
+    val future3 = titleLoader.getTitleOfWebPage(url)
+    assertNotSame(future1, future3)
+  }
 
   @Test
   fun `test concurrent requests for same URL`() {
@@ -192,5 +192,5 @@ class CachingWebPageTitleLoaderTest {
     // Verify only one network call was made
     verify(exactly = 1) { Jsoup.connect(url) }
   }
-  
+
 }
