@@ -70,9 +70,14 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
     // Add lifecycle handler to inject anti-detection measures once when browser is created
     jbCefClient.addLifeSpanHandler(object : CefLifeSpanHandlerAdapter() {
       override fun onAfterCreated(browser: CefBrowser) {
-        // Inject anti-detection measures once when browser is created
-        // This runs before any page is loaded
-        applyAntiDetectionMeasures(browser)
+        // Apply browser compatibility mode if enabled
+        val settings = project.service<GBrowserService>()
+        if (settings.antiDetectionEnabled) {
+          thisLogger().info("GBrowser: Browser compatibility mode enabled for browser $id")
+          applyAntiDetectionMeasures(browser)
+        } else {
+          thisLogger().debug("GBrowser: Browser compatibility mode is disabled for browser $id")
+        }
       }
     }, cefBrowser)
 
@@ -221,18 +226,19 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
   }
 
   /**
-   * Apply anti-detection measures to make the browser appear more legitimate
-   * and bypass bot detection systems like Cloudflare
+   * Apply browser compatibility mode to enable the IDE browser to work with
+   * sites that incorrectly identify it as a bot. This helps developers access
+   * documentation, cloud consoles, and test their own applications.
    * Note: This is only injected once per browser session for performance
    */
   private fun applyAntiDetectionMeasures(browser: CefBrowser) {
     try {
-      thisLogger().debug("GBrowser: Injecting anti-detection script for browser $id")
+      thisLogger().debug("GBrowser: Applying browser compatibility mode for browser $id")
 
-      // Load the anti-detection script template from resources
+      // Load the compatibility script template from resources
       val scriptTemplate = this::class.java.getResourceAsStream("/scripts/anti-detection.js")?.bufferedReader()?.readText()
         ?: run {
-          thisLogger().warn("GBrowser: Could not load anti-detection script template")
+          thisLogger().warn("GBrowser: Could not load browser compatibility script")
           return
         }
 
@@ -247,12 +253,12 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
       // The placeholder is in a comment to keep IDE's JS parser happy
       val antiDetectionScript = scriptTemplate.replace("/* %SITES_PLACEHOLDER% */", "[\n            $sitesJs\n          ]")
 
-      // Execute the anti-detection script
+      // Execute the compatibility script
       browser.executeJavaScript(antiDetectionScript, "", 0)
 
-      thisLogger().info("GBrowser: Anti-detection script injected successfully for ${sites.size} sites")
+      thisLogger().info("GBrowser: Browser compatibility mode applied for ${sites.size} sites")
     } catch (e: Exception) {
-      thisLogger().error("GBrowser: Failed to apply anti-detection measures", e)
+      thisLogger().error("GBrowser: Failed to apply browser compatibility mode", e)
     }
   }
 

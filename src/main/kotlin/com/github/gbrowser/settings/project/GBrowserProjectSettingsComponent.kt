@@ -22,6 +22,7 @@ import com.intellij.ui.dsl.builder.*
 import com.intellij.util.ui.JBEmptyBorder
 import com.intellij.util.ui.JBFont
 import com.intellij.util.ui.UIUtil
+import javax.swing.JCheckBox
 import javax.swing.JTextField
 
 class GBrowserProjectSettingsComponent(val project: Project) : SimpleToolWindowPanel(true, true), Disposable {
@@ -127,7 +128,7 @@ class GBrowserProjectSettingsComponent(val project: Project) : SimpleToolWindowP
         }
       }.bind(settings::theme)
     }
-    
+
     group("Developer Options", true) {
       row {
         val debugPortEnable = checkBox("Debug port").bindSelected(settings::isDebugEnabled) { value ->
@@ -217,13 +218,25 @@ class GBrowserProjectSettingsComponent(val project: Project) : SimpleToolWindowP
   }
 
   private fun Panel.antiDetectionOptions() {
-    collapsibleGroup("Anti-Detection Sites", true) {
+    collapsibleGroup("Browser Compatibility Mode", true) {
       row {
-        cell(antiDetectionSites).label("Sites", LabelPosition.TOP).comment(
-          "Manage sites where anti-bot detection measures should be applied. Add domains that use bot detection systems like Cloudflare."
+        text(
+          "<html><b>About:</b> Makes the IDE's embedded browser compatible with sites that incorrectly block development tools.<br>" +
+            "This helps developers access documentation, cloud consoles, and test their own applications.</html>"
+        )
+      }
+      lateinit var enableCheckbox: Cell<JCheckBox>
+      row {
+        enableCheckbox = checkBox("Enable browser compatibility mode").bindSelected(settings::antiDetectionEnabled) { value ->
+          settings.antiDetectionEnabled = value
+        }.comment("Recommended for developers. Helps access sites that block IDE browsers.")
+      }
+      row {
+        cell(antiDetectionSites).label("Compatible sites", LabelPosition.TOP).comment(
+          "Add domains that incorrectly block the IDE browser (e.g., documentation sites, cloud consoles, your own apps under development)."
         ).align(
           Align.FILL
-        )
+        ).enabledIf(enableCheckbox.selected)
       }.resizableRow()
     }.apply {
       border = JBEmptyBorder(UIUtil.getRegularPanelInsets())

@@ -1,6 +1,29 @@
+/**
+ * GBrowser Browser Compatibility Mode
+ *
+ * PURPOSE:
+ * Makes the IDE's embedded browser compatible with sites that incorrectly
+ * identify it as a bot, enabling developers to stay in their IDE workflow.
+ *
+ * IDE DEVELOPER USE CASES:
+ * - Testing your own web applications with bot protection enabled
+ * - Accessing developer documentation and API references
+ * - Using cloud consoles (AWS, Azure, GCP) without leaving IDE
+ * - Debugging OAuth flows and third-party integrations
+ * - Accessing coding platforms and educational resources
+ *
+ * TECHNICAL APPROACH:
+ * - Removes webdriver flags that identify IDE browsers
+ * - Provides standard browser plugin information
+ * - Normalizes hardware fingerprints
+ * - Ensures programmatic events work correctly
+ *
+ * This helps the IDE browser work with sites that would otherwise
+ * block legitimate development activities.
+ */
 (function () {
   // Only apply anti-detection to sites that specifically need it
-  // Note: %SITES_PLACEHOLDER% will be replaced at runtime with the actual site list 
+  // Note: %SITES_PLACEHOLDER% will be replaced at runtime with the actual site list
   // @formatter:off
   // noinspection JSMismatchedCollectionQueryUpdate
   const needsAntiDetection = /* %SITES_PLACEHOLDER% */ [];

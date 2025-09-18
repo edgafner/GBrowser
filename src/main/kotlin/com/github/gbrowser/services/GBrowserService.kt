@@ -51,6 +51,7 @@ class GBrowserService : SerializablePersistentStateComponent<GBrowserService.Set
                            ),
                            var history: LinkedHashSet<GBrowserHistory> = linkedSetOf(),
                            var bookmarks: MutableSet<GBrowserBookmark> = mutableSetOf(),
+                           var antiDetectionEnabled: Boolean = true,
                            var antiDetectionSites: MutableSet<String> = mutableSetOf(
                              "perplexity.ai",
                              "challenges.cloudflare.com",
@@ -288,6 +289,14 @@ class GBrowserService : SerializablePersistentStateComponent<GBrowserService.Set
   fun existBookmark(url: String): Boolean {
     return state.bookmarks.any { fav -> fav.url == url }
   }
+
+  var antiDetectionEnabled: Boolean
+    get() = state.antiDetectionEnabled
+    set(value) {
+      updateStateAndEmit {
+        it.copy(antiDetectionEnabled = value)
+      }
+    }
 
   var antiDetectionSites: MutableSet<String>
     get() = state.antiDetectionSites
