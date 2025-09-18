@@ -236,7 +236,8 @@ class GBrowserUITest {
 
     selectPopupMenuItem("Find...")
     keyboard {
-      typeText("abc")
+      typeText("ab")
+      escape()
       escape()
     }
   }
