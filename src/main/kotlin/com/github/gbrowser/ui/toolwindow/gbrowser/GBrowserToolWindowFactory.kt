@@ -173,10 +173,10 @@ class GBrowserToolWindowFactory : ToolWindowFactory, DumbAware, ContentManagerLi
         if (event.content.isSelected) {
           val component = event.content.component
           val panel = component as? GBrowserToolWindowBrowser
-          if (panel != null) { // Don't automatically request focus - let the user maintain a control
+          if (panel != null) { // Don't automatically request focus - let the user maintain control
             // Schedule with a small delay to ensure the UI is ready
             ApplicationManager.getApplication().invokeLater {
-              val browser = panel.getBrowser() // Force visibility and ensure the browser is properly displayed
+              val browser = panel.getBrowser() // Force visibility and ensure browser is properly displayed
               browser.setVisibility(true)
 
               // Force component layout update

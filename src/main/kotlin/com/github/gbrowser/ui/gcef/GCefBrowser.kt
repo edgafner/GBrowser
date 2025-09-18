@@ -74,7 +74,7 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
     jbCefClient.addLoadHandler(object : CefLoadHandlerAdapter() {
       override fun onLoadEnd(browser: CefBrowser, frame: CefFrame, httpStatusCode: Int) {
         if (frame.isMain && httpStatusCode < 400) {
-          // Apply theme and anti-detection measures after the page loads successfully
+          // Apply theme and anti-detection measures after page loads successfully
           // Add a small delay to ensure the DOM is ready
           javax.swing.Timer(50) {
             GBrowserThemeUtil.applyTheme(browser, project)
@@ -186,7 +186,7 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
       repaint()
     }
 
-    // Reapply the theme after resize to ensure it's properly rendered
+    // Reapply theme after resize to ensure it's properly rendered
     javax.swing.Timer(DeviceEmulationConstants.THEME_UPDATE_DELAY_MS) {
       GBrowserThemeUtil.applyTheme(cefBrowser, project)
     }.apply {

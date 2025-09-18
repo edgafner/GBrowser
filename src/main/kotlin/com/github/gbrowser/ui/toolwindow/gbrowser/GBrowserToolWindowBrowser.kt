@@ -49,10 +49,10 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
   }
 
   private fun setupResizeListener() {
-    // Add a component listener to handle resize events
+    // Add component listener to handle resize events
     addComponentListener(object : ComponentAdapter() {
       override fun componentResized(e: ComponentEvent?) {
-        // Force the browser component to update its size
+        // Force browser component to update its size
         SwingUtilities.invokeLater {
           gbrowser.forceResize()
           // Also revalidate the entire panel
@@ -121,7 +121,7 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
       }
     } catch (e: Exception) {
       // Handle case where isLoading check fails (e.g., RPC returns null)
-      thisLogger().warn("Failed to check browser loading state, proceeding with the load", e)
+      thisLogger().warn("Failed to check browser loading state, proceeding with load", e)
       gbrowser.cefBrowser.loadURL(url)
     }
   }
