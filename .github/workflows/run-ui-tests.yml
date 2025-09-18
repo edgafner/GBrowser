@@ -22,7 +22,9 @@ jobs:
       contents: write
       checks: write
       pull-requests: write
-    runs-on: ${{ matrix.os }}
+    runs-on:
+      - self-hosted
+      - azd-mac
     name: Test GBrowser UI on ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -71,7 +73,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4.6.2
         with:
-          name: debug-${{ matrix.test }}-${{ matrix.osName }}
+          name: tests-result-${{ matrix.os }}
           path: |
             ${{ github.workspace }}/build/out/ide-tests/tests/**/*/log/
             ${{ github.workspace }}/build/out/ide-tests/tests/**/*/reports/
