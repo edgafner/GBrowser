@@ -117,10 +117,10 @@ class DeviceEmulationStateTest {
   @Test
   fun `test updated user agent constants contain Chrome 131`() {
     // Test that updated mobile user agent contains Chrome 131
-    assertTrue(DeviceEmulationConstants.MOBILE_USER_AGENT_ANDROID.contains("Chrome/131.0.0.0"))
-    assertTrue(DeviceEmulationConstants.USER_AGENT_PIXEL_7.contains("Chrome/131.0.0.0"))
-    assertTrue(DeviceEmulationConstants.USER_AGENT_SAMSUNG_S20_ULTRA.contains("Chrome/131.0.0.0"))
-    assertTrue(DeviceEmulationConstants.USER_AGENT_GALAXY_Z_FOLD_5.contains("Chrome/131.0.0.0"))
+    assertTrue(DeviceEmulationConstants.MOBILE_USER_AGENT_ANDROID.contains("Chrome/140.0.7339.133"))
+    assertTrue(DeviceEmulationConstants.USER_AGENT_PIXEL_7.contains("Chrome/140.0.7339.133"))
+    assertTrue(DeviceEmulationConstants.USER_AGENT_SAMSUNG_S20_ULTRA.contains("Chrome/140.0.7339.133"))
+    assertTrue(DeviceEmulationConstants.USER_AGENT_GALAXY_Z_FOLD_5.contains("Chrome/140.0.7339.133"))
   }
 
   @Test
@@ -136,7 +136,7 @@ class DeviceEmulationStateTest {
   fun `test modern browser user agent for anti-detection`() {
     // Test new modern user agent constant
     val modernUserAgent = DeviceEmulationConstants.USER_AGENT_MODERN_BROWSER
-    assertTrue(modernUserAgent.contains("Chrome/131.0.0.0"))
+    assertTrue(modernUserAgent.contains("Chrome/140.0.7339.133"))
     assertTrue(modernUserAgent.contains("Windows NT 10.0"))
     assertFalse(modernUserAgent.contains("CefSharp"))
     assertFalse(modernUserAgent.contains("/CefSharp Browser"))
@@ -146,7 +146,7 @@ class DeviceEmulationStateTest {
   fun `test default browser user agent maintains Gmail compatibility`() {
     // Test that default user agent still contains Gmail-compatible identifiers
     val defaultUserAgent = DeviceEmulationConstants.USER_AGENT_DEFAULT_BROWSER
-    assertTrue(defaultUserAgent.contains("Chrome/96.0.4664.110"))
+    assertTrue(defaultUserAgent.contains("Chrome/140.0.7339.133"))
     assertTrue(defaultUserAgent.contains("/CefSharp Browser 90.0"))
   }
 

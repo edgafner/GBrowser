@@ -18,10 +18,7 @@ class GBrowserFindAction : AnAction(), DumbAware {
 
   override fun update(e: AnActionEvent) {
     val panel = GBrowserToolWindowUtil.getSelectedBrowserPanel(e)
-    if (panel == null) {
-      e.presentation.isEnabled = false
-    }
-    e.presentation.isEnabled = true
+    e.presentation.isEnabled = panel != null
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread {
@@ -33,10 +30,7 @@ class GBrowserFindAction : AnAction(), DumbAware {
     val project = e.getData(CommonDataKeys.PROJECT) ?: return
     val findDialog = GBrowserFindDialog(project, browser)
 
-    if (!findDialog.isVisible) {
-      findDialog.setDialogLocation()
-    }
-
     findDialog.show()
+    findDialog.setDialogLocation()
   }
 }

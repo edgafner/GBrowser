@@ -21,6 +21,7 @@ import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.openapi.wm.ex.ToolWindowEx
 import com.intellij.openapi.wm.ex.ToolWindowManagerListener
 import com.intellij.openapi.wm.impl.content.ToolWindowContentUi
+import com.intellij.openapi.wm.impl.content.ToolWindowContentUi.setAllowTabsReordering
 import com.intellij.ui.content.ContentManagerEvent
 import com.intellij.ui.content.ContentManagerListener
 import com.intellij.util.application
@@ -95,9 +96,7 @@ class GBrowserToolWindowFactory : ToolWindowFactory, DumbAware, ContentManagerLi
     (toolWindow as? ToolWindowEx)?.updateContentUi()
 
     toolWindow.component.putClientProperty(ToolWindowContentUi.DONT_HIDE_TOOLBAR_IN_HEADER, true)
-    toolWindow.component.putClientProperty(
-      ToolWindowContentUi.ALLOW_DND_FOR_TABS, myGBrowserService.isDragAndDropEnabled
-    )
+    setAllowTabsReordering(toolWindow, myGBrowserService.isDragAndDropEnabled)
 
     project.messageBus.connect(toolWindow.disposable).subscribe(
       ToolWindowManagerListener.TOPIC, object : ToolWindowManagerListener {
@@ -111,7 +110,7 @@ class GBrowserToolWindowFactory : ToolWindowFactory, DumbAware, ContentManagerLi
             val isUnpinned = gbrowserToolWindow.isAutoHide // unpinned mode
 
             // Detect visibility changes (becoming visible) or pin state changes
-            if ((isVisible && !wasVisible) || (isUnpinned != lastPinState)) { // When becoming visible again or when pin state changes,
+            if ((isVisible && !wasVisible) || (isUnpinned != lastPinState)) { // When becoming visible again or when the pin state changes,
 
               // First immediate refresh
               ApplicationManager.getApplication().invokeLater {
@@ -208,7 +207,7 @@ class GBrowserToolWindowFactory : ToolWindowFactory, DumbAware, ContentManagerLi
   private fun addSettingsListener(toolWindow: ToolWindow) {
     myGBrowserService.addListener { state: GBrowserService.SettingsState ->
       toolWindow.component.putClientProperty("HideIdLabel", state.hideIdLabel.toString())
-      toolWindow.component.putClientProperty(ToolWindowContentUi.ALLOW_DND_FOR_TABS, state.isDragAndDropEnabled)
+      setAllowTabsReordering(toolWindow, state.isDragAndDropEnabled)
       toolWindow.contentManager.contents.forEach { content ->
         content.putUserData(ToolWindow.SHOW_CONTENT_ICON, state.isTabIconVisible)
       }

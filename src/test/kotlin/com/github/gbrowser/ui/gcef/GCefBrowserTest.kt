@@ -13,7 +13,7 @@ class GCefBrowserTest {
     // Verify modern user agent is clean (no automation indicators)
     assertFalse(modernUserAgent.contains("CefSharp"))
     assertFalse(modernUserAgent.contains("/CefSharp Browser"))
-    assertTrue(modernUserAgent.contains("Chrome/131.0.0.0"))
+    assertTrue(modernUserAgent.contains("Chrome/140.0.7339.133"))
     assertTrue(modernUserAgent.contains("Windows NT 10.0"))
   }
 
@@ -22,7 +22,7 @@ class GCefBrowserTest {
     val defaultUserAgent = DeviceEmulationConstants.USER_AGENT_DEFAULT_BROWSER
 
     // Verify default user agent maintains Gmail compatibility
-    assertTrue(defaultUserAgent.contains("Chrome/96.0.4664.110"))
+    assertTrue(defaultUserAgent.contains("Chrome/140.0.7339.133"))
     assertTrue(defaultUserAgent.contains("/CefSharp Browser 90.0"))
   }
 
@@ -104,11 +104,11 @@ class GCefBrowserTest {
   @Test
   fun `test updated device user agents contain modern versions`() {
     // Test that device user agents have been updated
-    assertTrue(DeviceEmulationConstants.USER_AGENT_PIXEL_7.contains("Chrome/131.0.0.0"))
+    assertTrue(DeviceEmulationConstants.USER_AGENT_PIXEL_7.contains("Chrome/140.0.7339.133"))
     assertTrue(DeviceEmulationConstants.USER_AGENT_PIXEL_7.contains("Android 14"))
 
     assertTrue(DeviceEmulationConstants.USER_AGENT_IPHONE_SE.contains("CPU iPhone OS 17_0"))
-    assertTrue(DeviceEmulationConstants.USER_AGENT_SAMSUNG_S20_ULTRA.contains("Chrome/131.0.0.0"))
+    assertTrue(DeviceEmulationConstants.USER_AGENT_SAMSUNG_S20_ULTRA.contains("Chrome/140.0.7339.133"))
   }
 
   @Test

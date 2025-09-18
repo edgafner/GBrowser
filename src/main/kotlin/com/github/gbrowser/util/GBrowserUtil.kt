@@ -12,7 +12,7 @@ import java.util.regex.PatternSyntaxException
 
 object GBrowserUtil {
   const val GBROWSER_TOOL_WINDOW_ID = "GBrowser"
-  const val DEVTOOLS_TOOL_WINDOW_ID = "GDevTools"
+  // DevTools tool window removed - no longer available in new API (253 EAP)
 
   val LOG = logger<GBrowserUtil>()
 

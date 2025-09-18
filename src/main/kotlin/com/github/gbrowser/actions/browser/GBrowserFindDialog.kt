@@ -48,6 +48,10 @@ class GBrowserFindDialog(project: Project, private val jbCefBrowser: GCefBrowser
   }
 
   fun setDialogLocation() {
+    if (!jbCefBrowser.component.isShowing) {
+      return
+    }
+    
     val location = jbCefBrowser.component.locationOnScreen
     val width = jbCefBrowser.component.width
 
