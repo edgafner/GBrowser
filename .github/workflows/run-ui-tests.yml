@@ -22,9 +22,7 @@ jobs:
       contents: write
       checks: write
       pull-requests: write
-    runs-on:
-      - self-hosted
-      - azd-mac
+    runs-on: ${{ matrix.os }}
     name: Test GBrowser UI on ${{ matrix.os }}
     strategy:
       fail-fast: false
