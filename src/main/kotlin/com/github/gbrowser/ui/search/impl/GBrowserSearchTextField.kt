@@ -202,7 +202,8 @@ class GBrowserSearchTextField(project: Project, private val delegate: GBrowserTo
    * This method should be used when updating the URL due to navigation events.
    */
   fun updateUrlFromNavigation(url: String) {
-    if (!textEditor.hasFocus() && !isUpdatingFromNavigation) {
+    if (isUpdatingFromNavigation) return
+    if (!textEditor.hasFocus()) {
       isUpdatingFromNavigation = true
       try {
         text = url

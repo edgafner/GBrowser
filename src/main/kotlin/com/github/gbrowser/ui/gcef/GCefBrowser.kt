@@ -172,7 +172,9 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
       cefBrowser.uiComponent?.validate()
       cefBrowser.uiComponent?.repaint()
 
-      // Invalidate the browser to trigger proper rendering (aligns with IJPL-200255)
+      // Invalidate the browser to trigger proper rendering
+      // This forces a repaint of the CEF browser component when visibility changes
+      // to prevent rendering artifacts and ensure the browser content is properly displayed
       try {
         cefBrowser.invalidate()
       } catch (e: Exception) {
@@ -202,7 +204,9 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
       repaint()
     }
 
-    // Invalidate the browser to trigger resize handling (aligns with IJPL-200255)
+    // Invalidate the browser to trigger resize handling
+    // This ensures that the CEF browser properly handles component resizing
+    // by forcing a repaint after size changes to prevent display corruption
     try {
       cefBrowser.invalidate()
     } catch (e: Exception) {
@@ -332,14 +336,20 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
     }
 
     try {
-      // Stop any loading operations before closing (aligns with JBCefBrowserBase pattern)
+      // Stop any loading operations before closing.
+      // This is necessary because if the browser is disposed while a page is still loading,
+      // it can lead to resource leaks or exceptions. Stopping the load ensures that all
+      // network and rendering activity is halted before disposal, following best practices
+      // established in the JBCefBrowserBase implementation.
       cefBrowser.stopLoad()
     } catch (e: Exception) {
       thisLogger().warn("GBrowser: Failed to stop browser loading during disposal", e)
     }
 
     try {
-      // Allow the browser to close (aligns with JBCefBrowserBase pattern)
+      // Allow the browser to close. This is necessary because, by default, the CEF browser may prevent closing unless explicitly allowed.
+      // Following the JBCefBrowserBase pattern, we call setCloseAllowed() to ensure the browser can be closed safely during disposal.
+      // Omitting this step may result in the browser not closing properly, leading to resource leaks or hanging processes.
       cefBrowser.setCloseAllowed()
     } catch (e: Exception) {
       thisLogger().warn("GBrowser: Failed to set close allowed during disposal", e)
