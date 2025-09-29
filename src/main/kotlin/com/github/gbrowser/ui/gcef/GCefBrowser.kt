@@ -60,14 +60,14 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
   private var titleChangeDelegate: GBrowserCefBrowserTitleDelegate? = null
 
   init {
-    setProperty("JBCefBrowser.focusOnShow", true)
-    setProperty("JBCefBrowser.focusOnNavigation", true)
+    setProperty("JBCefBrowser.focusOnShow", false)
+    setProperty("JBCefBrowser.focusOnNavigation", false)
     setErrorPage { errorCode, errorText, failedUrl ->
       if (errorCode == CefLoadHandler.ErrorCode.ERR_ABORTED) null
       else GBrowserErrorPage.create(errorCode, errorText, failedUrl)
     }
 
-    // Add lifecycle handler to inject anti-detection measures once when browser is created
+    // Add a lifecycle handler to inject anti-detection measures once when the browser is created
     jbCefClient.addLifeSpanHandler(object : CefLifeSpanHandlerAdapter() {
       override fun onAfterCreated(browser: CefBrowser) {
         // Apply browser compatibility mode if enabled
@@ -81,7 +81,7 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
       }
     }, cefBrowser)
 
-    // Add load handler to apply theme
+    // Add a load handler to apply the theme
     jbCefClient.addLoadHandler(object : CefLoadHandlerAdapter() {
       override fun onLoadEnd(browser: CefBrowser, frame: CefFrame, httpStatusCode: Int) {
         if (frame.isMain && httpStatusCode < 400) {
@@ -172,6 +172,13 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
       cefBrowser.uiComponent?.validate()
       cefBrowser.uiComponent?.repaint()
 
+      // Invalidate the browser to trigger proper rendering (aligns with IJPL-200255)
+      try {
+        cefBrowser.invalidate()
+      } catch (e: Exception) {
+        thisLogger().warn("Failed to invalidate CEF browser during visibility change", e)
+      }
+
       // Ensure parent containers are refreshed too
       val parent = component.parent
       parent?.invalidate()
@@ -193,6 +200,13 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
       invalidate()
       revalidate()
       repaint()
+    }
+
+    // Invalidate the browser to trigger resize handling (aligns with IJPL-200255)
+    try {
+      cefBrowser.invalidate()
+    } catch (e: Exception) {
+      thisLogger().warn("Failed to invalidate CEF browser during resize", e)
     }
 
     // Reapply the theme after resize to ensure it's properly rendered
@@ -238,7 +252,7 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
       // Load the compatibility script template from resources
       val scriptTemplate = this::class.java.getResourceAsStream("/scripts/anti-detection.js")?.bufferedReader()?.readText()
         ?: run {
-          thisLogger().warn("GBrowser: Could not load browser compatibility script")
+          thisLogger().warn("GBrowser: Could not load the browser compatibility script")
           return
         }
 
@@ -314,7 +328,21 @@ class GCefBrowser(val project: Project, url: String?, client: JBCefClient? = nul
       // Clean up device emulation state
       GBrowserMobileToggleAction.cleanupBrowserState(id)
     } catch (e: Exception) {
-      thisLogger().warn("GBrowser: Failed to cleanup browser state during disposal", e)
+      thisLogger().warn("GBrowser: Failed to clean up browser state during disposal", e)
+    }
+
+    try {
+      // Stop any loading operations before closing (aligns with JBCefBrowserBase pattern)
+      cefBrowser.stopLoad()
+    } catch (e: Exception) {
+      thisLogger().warn("GBrowser: Failed to stop browser loading during disposal", e)
+    }
+
+    try {
+      // Allow the browser to close (aligns with JBCefBrowserBase pattern)
+      cefBrowser.setCloseAllowed()
+    } catch (e: Exception) {
+      thisLogger().warn("GBrowser: Failed to set close allowed during disposal", e)
     }
 
     try {

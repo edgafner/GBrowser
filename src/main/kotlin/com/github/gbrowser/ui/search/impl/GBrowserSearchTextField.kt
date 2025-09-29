@@ -29,6 +29,7 @@ class GBrowserSearchTextField(project: Project, private val delegate: GBrowserTo
   private var isSearchHostHighlighted: Boolean = settings.isHostHighlight
   private val items = LinkedHashSet<GBrowserSearchPopUpItem>()
   private var originalText: String? = null
+  private var isUpdatingFromNavigation = false
 
   init {
     textEditor.putClientProperty("JTextField.Search.Icon", GBrowserIcons.GBROWSER_LOGO)
@@ -57,6 +58,11 @@ class GBrowserSearchTextField(project: Project, private val delegate: GBrowserTo
   }
 
   override fun preprocessEventForTextField(event: KeyEvent): Boolean { //when (e.keyCode) {
+    // Skip processing if we're updating from navigation to prevent interference
+    if (isUpdatingFromNavigation) {
+      return super.preprocessEventForTextField(event)
+    }
+
     if (event.keyCode in MINOR_KEYS) {
       return super.preprocessEventForTextField(event)
     }
@@ -187,6 +193,22 @@ class GBrowserSearchTextField(project: Project, private val delegate: GBrowserTo
         popup = popupBuilder.createPopup().apply {
           showUnderneathOf(this@GBrowserSearchTextField)
         }
+      }
+    }
+  }
+
+  /**
+   * Safely updates the URL text without interfering with user editing.
+   * This method should be used when updating the URL due to navigation events.
+   */
+  fun updateUrlFromNavigation(url: String) {
+    if (!textEditor.hasFocus() && !isUpdatingFromNavigation) {
+      isUpdatingFromNavigation = true
+      try {
+        text = url
+        originalText = url
+      } finally {
+        isUpdatingFromNavigation = false
       }
     }
   }
