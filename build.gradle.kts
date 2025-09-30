@@ -96,7 +96,7 @@ dependencies { // IntelliJ Platform dependencies
 
   // Add JUnit 5 dependencies for tests
   testImplementation("org.junit.jupiter:junit-jupiter:5.13.4")
-  testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.4")
+  testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.0.0")
 
   // UI Test dependencies
   uiTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
@@ -106,7 +106,7 @@ dependencies { // IntelliJ Platform dependencies
 
   // Add JUnit 5 dependencies explicitly
   uiTestImplementation("org.junit.jupiter:junit-jupiter:5.13.4")
-  uiTestRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.4")
+  uiTestRuntimeOnly("org.junit.platform:junit-platform-launcher:6.0.0")
 }
 
 kotlin {
