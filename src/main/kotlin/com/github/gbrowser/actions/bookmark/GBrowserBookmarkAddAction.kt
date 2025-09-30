@@ -50,14 +50,18 @@ class GBrowserBookmarkAddAction : AnAction(), DumbAware {
     val project = e.project ?: return
     val panel = GBrowserToolWindowUtil.getSelectedBrowserPanel(e) ?: return
     val settings = project.service<GBrowserService>()
-    val existBookmarks = settings.existBookmark(panel.getCurrentUrl())
-    panel.let {
-      val favorite = GBrowserBookmark(panel.getCurrentUrl(), panel.getCurrentTitle())
-      if (existBookmarks) {
-        settings.removeBookmark(favorite)
-      } else {
-        settings.addBookmarks(favorite)
-      }
+    val currentUrl = panel.getCurrentUrl()
+    val existBookmarks = settings.existBookmark(currentUrl)
+
+    val favorite = GBrowserBookmark(currentUrl, panel.getCurrentTitle())
+    if (existBookmarks) {
+      settings.removeBookmark(favorite)
+    } else {
+      settings.addBookmarks(favorite)
     }
+
+    // Update action presentation immediately to reflect new state
+    e.presentation.icon = if (!existBookmarks) iconExist else iconAdd
+    e.presentation.text = if (!existBookmarks) textRemove else textAdd
   }
 }

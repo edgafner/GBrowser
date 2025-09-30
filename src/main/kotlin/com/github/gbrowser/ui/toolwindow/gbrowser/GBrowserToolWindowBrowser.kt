@@ -49,7 +49,7 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
   }
 
   private fun setupResizeListener() {
-    // Add component listener to handle resize events
+    // Add a component listener to handle resize events
     addComponentListener(object : ComponentAdapter() {
       override fun componentResized(e: ComponentEvent?) {
         // Force browser component to update its size
@@ -195,12 +195,6 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
     return gBrowserToolBar.mainToolBarComponent.isVisible
   }
 
-
-  private fun setFocusOnBrowserUI() {
-    gbrowser.cefBrowser.uiComponent.requestFocus()
-  }
-
-
   private fun setTabName(name: String) {
     val tabComponent = toolWindow.contentManager.getContent(this)
     if (tabComponent != null) {
@@ -256,9 +250,6 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
 
 
   override fun onAddressChange(url: String) {
-    if (!isSearchFocused) {
-      setFocusOnBrowserUI()
-    }
     setTabIcon(url)
     setHistoryItem()
     setCurrentUrl(url)
@@ -270,9 +261,9 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
     validate()
     repaint()
 
-    // Update search text
+    // Update search text safely using the dedicated method
     SwingUtilities.invokeLater {
-      gBrowserToolBar.search.text = url
+      gBrowserToolBar.search.updateUrlFromNavigation(url)
     }
 
     // Load favicon

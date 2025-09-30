@@ -244,7 +244,7 @@ class GBrowserUITest {
 
   private fun GBrowserToolWindowPanel.browserFinalActions() {
 
-    selectPopupMenuItem("Add to Bo")
+    //selectPopupMenuItem("Add to Bo")
 
     selectPopupMenuItem("Zoom Out")
     selectPopupMenuItem("Zoom In")
