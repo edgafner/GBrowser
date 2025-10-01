@@ -48,7 +48,7 @@ jobs:
       # Validate wrapper
       - name: Gradle Wrapper Validation
         if: steps.check_changelog.outputs.is_changelog != 'true'
-        uses: gradle/actions/wrapper-validation@v4
+        uses: gradle/actions/wrapper-validation@v5
 
       # Set up the Java environment for the next steps
       - name: Setup JBR 21
@@ -65,7 +65,7 @@ jobs:
       # Setup Gradle with cache for main branch builds
       - name: Setup Gradle
         if: steps.check_changelog.outputs.is_changelog != 'true'
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
         with:
           cache-read-only: false
           gradle-home-cache-includes: |
@@ -144,7 +144,7 @@ jobs:
 
       # Setup Gradle with cache fallback strategy
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
         with:
           cache-read-only: false
           gradle-home-cache-includes: |
@@ -229,7 +229,7 @@ jobs:
 
       # Setup Gradle with cache strategy
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
         with:
           cache-read-only: false
           gradle-home-cache-includes: |
@@ -290,7 +290,7 @@ jobs:
 
       # Setup Gradle with cache strategy
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
         with:
           cache-read-only: false
           gradle-home-cache-includes: |
@@ -372,7 +372,7 @@ jobs:
 
       # Setup Gradle with cache strategy
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
         with:
           cache-read-only: false
           gradle-home-cache-includes: |
