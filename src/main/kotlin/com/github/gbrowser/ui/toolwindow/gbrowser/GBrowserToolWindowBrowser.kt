@@ -4,7 +4,6 @@ import com.github.gbrowser.GBrowserIcons
 import com.github.gbrowser.services.GBrowserService
 import com.github.gbrowser.services.providers.CachingFavIconLoader
 import com.github.gbrowser.settings.dao.GBrowserHistory
-import com.github.gbrowser.ui.gcef.GBrowserCefDevToolsListener
 import com.github.gbrowser.ui.gcef.GCefBrowser
 import com.github.gbrowser.ui.gcef.impl.GBrowserCefRequestHandler
 import com.github.gbrowser.util.GBrowserUtil
@@ -21,15 +20,15 @@ import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
 import javax.swing.SwingUtilities
 
-class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleToolWindowPanel(true, true), Disposable, GBrowserToolWindowActionBarDelegate,
-                                                                      GBrowserCefDevToolsListener {
+class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleToolWindowPanel(true, true), Disposable, GBrowserToolWindowActionBarDelegate {
   private val settings: GBrowserService = toolWindow.project.service<GBrowserService>()
   private var currentUrl: String = settings.defaultUrl
   private var gBrowserToolBar: GBrowserToolWindowActionBar = GBrowserToolWindowActionBar(toolWindow.project, this)
   private var currentTitle: String = ""
   private var zoomLevel: Double = 0.0
   private var gbrowser: GCefBrowser = GCefBrowser(toolWindow.project, currentUrl, null, null)
-  private val devTools = GCefBrowser(toolWindow.project, null, gbrowser.client, gbrowser.devTools, gbrowser.id)
+
+  // DevTools are no longer available as a separate CefBrowser in the new API (253 EAP)
   private val favIconLoader: CachingFavIconLoader = service()
   private val bus: MessageBus = ApplicationManager.getApplication().messageBus
   private val settingsConnection: MessageBusConnection = bus.connect()
@@ -50,7 +49,7 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
   }
 
   private fun setupResizeListener() {
-    // Add component listener to handle resize events
+    // Add a component listener to handle resize events
     addComponentListener(object : ComponentAdapter() {
       override fun componentResized(e: ComponentEvent?) {
         // Force browser component to update its size
@@ -96,8 +95,6 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
   }
 
   fun getBrowser(): GCefBrowser = gbrowser
-
-  fun getDevToolsBrowser(): GCefBrowser = devTools
 
 
   override fun dispose() {
@@ -198,12 +195,6 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
     return gBrowserToolBar.mainToolBarComponent.isVisible
   }
 
-
-  private fun setFocusOnBrowserUI() {
-    gbrowser.cefBrowser.uiComponent.requestFocus()
-  }
-
-
   private fun setTabName(name: String) {
     val tabComponent = toolWindow.contentManager.getContent(this)
     if (tabComponent != null) {
@@ -258,14 +249,7 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
   }
 
 
-  override fun onDisposeDevtools() {
-    gbrowser.disposeDevTools()
-  }
-
   override fun onAddressChange(url: String) {
-    if (!isSearchFocused) {
-      setFocusOnBrowserUI()
-    }
     setTabIcon(url)
     setHistoryItem()
     setCurrentUrl(url)
@@ -277,9 +261,9 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
     validate()
     repaint()
 
-    // Update search text
+    // Update search text safely using the dedicated method
     SwingUtilities.invokeLater {
-      gBrowserToolBar.search.text = url
+      gBrowserToolBar.search.updateUrlFromNavigation(url)
     }
 
     // Load favicon
@@ -313,7 +297,6 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
     setCurrentTitle(title)
     gbrowser.setVisibility(true)
     gbrowser.notifyTitleChanged(title)
-    devTools.notifyTitleChanged(title)
   }
 
 

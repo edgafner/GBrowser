@@ -2,11 +2,9 @@ package com.github.gbrowser.actions
 
 import com.github.gbrowser.ui.gcef.GCefBrowser
 import com.github.gbrowser.util.GBrowserToolWindowUtil
-import com.github.gbrowser.util.GBrowserUtil
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.SimpleToolWindowPanel
-import com.intellij.openapi.wm.ToolWindowManager
 
 object GBrowserMobileToggleActionUtils {
   private val LOG = thisLogger()
@@ -22,15 +20,9 @@ object GBrowserMobileToggleActionUtils {
       return browser
     }
 
-    // If not found, try to get from DevTools window
-    val toolWindowManager = project.getService(ToolWindowManager::class.java)
-    val devToolsWindow = toolWindowManager.getToolWindow(GBrowserUtil.DEVTOOLS_TOOL_WINDOW_ID)
-    val selectedContent = devToolsWindow?.contentManager?.selectedContent
-    val devToolsPanel = selectedContent?.component as? com.github.gbrowser.ui.toolwindow.dev_tools.GBrowserToolWindowDevTools
-
-    val devBrowser = devToolsPanel?.browser
-    LOG.debug("GBrowserMobileToggleAction: getCurrentBrowser - devtools browser: ${devBrowser?.id}")
-    return devBrowser
+    // DevTools tool window removed - no longer available in new API (253 EAP)
+    LOG.debug("GBrowserMobileToggleAction: getCurrentBrowser - no browser found")
+    return null
   }
 
   fun getBrowserPanel(project: Project): SimpleToolWindowPanel? {
@@ -43,16 +35,7 @@ object GBrowserMobileToggleActionUtils {
       return browserPanel
     }
 
-    // If not found, try to get from DevTools window
-    val toolWindowManager = project.getService(ToolWindowManager::class.java)
-    val devToolsWindow = toolWindowManager.getToolWindow(GBrowserUtil.DEVTOOLS_TOOL_WINDOW_ID)
-    val selectedContent = devToolsWindow?.contentManager?.selectedContent
-    val devToolsPanel = selectedContent?.component
-
-    if (devToolsPanel is SimpleToolWindowPanel) {
-      LOG.debug("GBrowserMobileToggleAction: getBrowserPanel - found devtools panel")
-      return devToolsPanel
-    }
+    // DevTools tool window removed - no longer available in new API (253 EAP)
 
     LOG.debug("GBrowserMobileToggleAction: getBrowserPanel - no panel found")
     return null

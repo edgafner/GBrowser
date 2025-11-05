@@ -3,6 +3,7 @@ package com.github.gbrowser.settings.project
 import com.github.gbrowser.GBrowserIcons
 import com.github.gbrowser.i18n.GBrowserBundle
 import com.github.gbrowser.services.GBrowserService
+import com.github.gbrowser.settings.antidetection.GBrowserAntiDetectionSitesTableComponent
 import com.github.gbrowser.settings.bookmarks.GBrowserBookmarksTableComponent
 import com.github.gbrowser.settings.request_header.GBrowserRequestHeaderTableComponent
 import com.github.gbrowser.settings.theme.GBrowserTheme
@@ -21,6 +22,7 @@ import com.intellij.ui.dsl.builder.*
 import com.intellij.util.ui.JBEmptyBorder
 import com.intellij.util.ui.JBFont
 import com.intellij.util.ui.UIUtil
+import javax.swing.JCheckBox
 import javax.swing.JTextField
 
 class GBrowserProjectSettingsComponent(val project: Project) : SimpleToolWindowPanel(true, true), Disposable {
@@ -29,6 +31,7 @@ class GBrowserProjectSettingsComponent(val project: Project) : SimpleToolWindowP
   val textField: JTextField by lazy { JTextField() }
   private val bookmarks: GBrowserBookmarksTableComponent by lazy { GBrowserBookmarksTableComponent(project) }
   private val responseHeaders: GBrowserRequestHeaderTableComponent by lazy { GBrowserRequestHeaderTableComponent(project) }
+  private val antiDetectionSites: GBrowserAntiDetectionSitesTableComponent by lazy { GBrowserAntiDetectionSitesTableComponent(project) }
 
 
   private fun createComponent(): DialogPanel = panel {
@@ -56,6 +59,7 @@ class GBrowserProjectSettingsComponent(val project: Project) : SimpleToolWindowP
     toolWindowOptions()
     bookmarksOptions()
     responseHeaderOptions()
+    antiDetectionOptions()
 
   }
 
@@ -124,7 +128,7 @@ class GBrowserProjectSettingsComponent(val project: Project) : SimpleToolWindowP
         }
       }.bind(settings::theme)
     }
-    
+
     group("Developer Options", true) {
       row {
         val debugPortEnable = checkBox("Debug port").bindSelected(settings::isDebugEnabled) { value ->
@@ -139,11 +143,13 @@ class GBrowserProjectSettingsComponent(val project: Project) : SimpleToolWindowP
       row {
         comment("Port, which can be used for debugging JavaScript in JCEF components")
       }
-      row {
-        checkBox("Open DevTools in dialog").bindSelected(settings::isDevToolsInDialog) { value ->
-          settings.isDevToolsInDialog = value
-        }.comment("When unchecked, DevTools will open in a tool window")
-      }
+      // DevTools tool window option removed in IntelliJ 253 EAP
+      // The new JCEF API only supports opening DevTools in a built-in dialog
+      // row {
+      //   checkBox("Open DevTools in dialog").bindSelected(settings::isDevToolsInDialog) { value ->
+      //     settings.isDevToolsInDialog = value
+      //   }.comment("This option is no longer available in the new API")
+      // }
     }
 
 
@@ -211,14 +217,41 @@ class GBrowserProjectSettingsComponent(val project: Project) : SimpleToolWindowP
     }.topGap(TopGap.NONE)
   }
 
+  private fun Panel.antiDetectionOptions() {
+    collapsibleGroup("Browser Compatibility Mode", true) {
+      row {
+        text(
+          "<html><b>About:</b> Makes the IDE's embedded browser compatible with sites that incorrectly block development tools.<br>" +
+            "This helps developers access documentation, cloud consoles, and test their own applications.</html>"
+        )
+      }
+      lateinit var enableCheckbox: Cell<JCheckBox>
+      row {
+        enableCheckbox = checkBox("Enable browser compatibility mode").bindSelected(settings::antiDetectionEnabled) { value ->
+          settings.antiDetectionEnabled = value
+        }.comment("Recommended for developers. Helps access sites that block IDE browsers.")
+      }
+      row {
+        cell(antiDetectionSites).label("Compatible sites", LabelPosition.TOP).comment(
+          "Add domains that incorrectly block the IDE browser (e.g., documentation sites, cloud consoles, your own apps under development)."
+        ).align(
+          Align.FILL
+        ).enabledIf(enableCheckbox.selected)
+      }.resizableRow()
+    }.apply {
+      border = JBEmptyBorder(UIUtil.getRegularPanelInsets())
+    }.topGap(TopGap.NONE)
+  }
+
   fun isModified(): Boolean {
-    return settingsComponent.isModified() || bookmarks.isModified() || responseHeaders.isModified()
+    return settingsComponent.isModified() || bookmarks.isModified() || responseHeaders.isModified() || antiDetectionSites.isModified()
   }
 
   fun apply() {
     settingsComponent.apply()
     bookmarks.apply()
     responseHeaders.apply()
+    antiDetectionSites.apply()
 
     // Refresh all browser themes after settings are applied
     refreshAllBrowserThemes()
@@ -228,12 +261,14 @@ class GBrowserProjectSettingsComponent(val project: Project) : SimpleToolWindowP
     settingsComponent.reset()
     bookmarks.reset()
     responseHeaders.reset()
+    antiDetectionSites.reset()
 
   }
 
   override fun dispose() {
     bookmarks.dispose()
     responseHeaders.dispose()
+    // Note: antiDetectionSites doesn't need dispose as it doesn't implement Disposable
 
   }
 

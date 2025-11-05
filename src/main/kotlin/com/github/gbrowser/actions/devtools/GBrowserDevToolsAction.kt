@@ -1,13 +1,11 @@
 package com.github.gbrowser.actions.devtools
 
 import com.github.gbrowser.GBrowserIcons
-import com.github.gbrowser.ui.toolwindow.dev_tools.GBrowserToolWindowDevToolsFactory
 import com.github.gbrowser.util.GBrowserToolWindowUtil
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import javax.swing.Icon
 
@@ -60,32 +58,12 @@ class GBrowserDevToolsAction : AnAction() {
     try {
       LOG.debug("Opening DevTools for browser panel")
 
-      // Check settings for display mode
-      val settings = project.service<com.github.gbrowser.services.GBrowserService>()
-      val openInDialog = settings.isDevToolsInDialog
-      LOG.debug("isDevToolsInDialog setting: $openInDialog")
+      // In the new API (253 EAP), DevTools can only be opened in a built-in dialog
+      // The tool window option is no longer available
+      LOG.debug("Opening DevTools in built-in dialog (new API)")
+      val browser = panel.getBrowser()
+      browser.openDevtools()
 
-      if (openInDialog) {
-        // Open in dialog using JCEF's built-in DevTools dialog
-        LOG.debug("Opening DevTools in dialog")
-        val browser = panel.getBrowser()
-        val devToolsBrowser = browser.cefBrowser.devTools
-        val frame = javax.swing.JFrame("DevTools - ${browser.cefBrowser.url}")
-        frame.defaultCloseOperation = javax.swing.WindowConstants.DISPOSE_ON_CLOSE
-        frame.add(devToolsBrowser.uiComponent)
-        frame.setSize(1024, 768)
-        frame.setLocationRelativeTo(null)
-        frame.isVisible = true
-      } else {
-        // Get the DevTools browser instance
-        val devToolsBrowser = panel.getDevToolsBrowser()
-        LOG.debug("Got DevTools browser instance: $devToolsBrowser")
-
-        // Open in the tool window
-        val tabName = panel.getCurrentTitle()
-        LOG.debug("Opening DevTools in the tool window with title: $tabName")
-        GBrowserToolWindowDevToolsFactory.Companion.createTab(project, devToolsBrowser, tabName)
-      }
       LOG.debug("DevTools opened successfully")
     } catch (ex: Exception) {
       LOG.warn("Failed to open DevTools: ${ex.message}", ex)

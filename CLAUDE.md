@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+Important: Don't run runIde nor ui-test
+
 ## Project Overview
 
 GBrowser is an IntelliJ IDEA plugin that embeds a web browser tool window directly in the IDE. It uses JCEF (Java Chromium Embedded Framework) to provide a full-featured browser
@@ -16,14 +18,10 @@ experience without leaving the development environment.
 # Run tests (excluding UI tests)
 ./gradlew test
 
-# Run UI tests only (requires IDE environment)
-./gradlew uiTest
 
 # Run all tests including UI tests
 ./gradlew check
 
-# Run IDE with plugin for manual testing
-./gradlew runIde
 
 # Run a specific test class
 ./gradlew test --tests "com.gafner.giv.MyTestClass"

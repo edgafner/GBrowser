@@ -1,7 +1,7 @@
 # GitHub Actions Workflow for launching UI tests on Linux, Windows, and Mac in the following steps:
 # - prepare and launch IDE with your plugin and robot-server plugin, which is necessary to interact with UI
 # - wait for IDE to start
-# - run UI tests with separate Gradle task
+# - run UI tests with a separate Gradle task 
 #
 # Please check https://github.com/JetBrains/intellij-ui-test-robot for information about UI tests with IntelliJ Platform
 #
@@ -37,7 +37,7 @@ jobs:
         uses: actions/checkout@v5
 
 
-      # Set up Java environment for the next steps
+      # Set up the Java environment for the next steps
       - name: Setup JBR 21
         uses: actions/setup-java@v5.0.0
         with:
@@ -52,7 +52,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: "9.0.0"
+          gradle-version: "9.1.0"
           cache-read-only: false
           gradle-home-cache-includes: |
             caches
@@ -65,19 +65,19 @@ jobs:
           # Run tests
       - name: Tests
         run: ./gradlew uiTest
-
-      # Collect Tests Result
-      - name: Collect Tests Result
+      
+      # Only upload artifacts on failure for debugging
+      - name: Collect Debug Artifacts
         if: failure()
         uses: actions/upload-artifact@v4.6.2
         with:
           name: tests-result-${{ matrix.os }}
           path: |
-            ${{ github.workspace }}/build/reports
-            ${{ github.workspace }}/build/test-results
-            ${{ github.workspace }}/build/out/ide-tests/tests/**/UITest/log/screenshots/
-            ${{ github.workspace }}/build/out/ide-tests/tests/**/UITest/log/idea.log
-            ${{ github.workspace }}/build/out/ide-tests/tests/**/UITest/log/ui-hierarchy/ui.html
+            ${{ github.workspace }}/build/out/ide-tests/tests/**/*/log/
+            ${{ github.workspace }}/build/out/ide-tests/tests/**/*/reports/
+            ${{ github.workspace }}/build/out/ide-tests/tests/**/*/snapshots/
+            ${{ github.workspace }}/build/reports/tests/
+          if-no-files-found: warn
         continue-on-error: true
 
   

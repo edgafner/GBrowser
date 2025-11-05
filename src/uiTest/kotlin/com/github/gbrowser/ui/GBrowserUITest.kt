@@ -10,6 +10,7 @@ import com.github.gbrowser.ui.utils.selectAll
 import com.intellij.driver.sdk.ui.Finder
 import com.intellij.driver.sdk.ui.components.UiComponent.Companion.waitFound
 import com.intellij.driver.sdk.ui.components.common.dialogs.newProjectDialog
+import com.intellij.driver.sdk.ui.components.common.editor
 import com.intellij.driver.sdk.ui.components.common.ideFrame
 import com.intellij.driver.sdk.ui.components.common.welcomeScreen
 import com.intellij.driver.sdk.ui.components.elements.*
@@ -174,8 +175,32 @@ class GBrowserUITest {
 
           basicTab()
 
-          browserActions()
+          browserInitialActions()
+        }
 
+        editor {
+          rightClick()
+          keyboard {
+            escape()
+          }
+        }
+
+        gBrowserToolWindow {
+          browserFinalActions()
+
+          gBrowserPanel {
+
+            moveMouse()
+            rightClick()
+            driver.ui.ideFrame {
+              popup().accessibleList().clickItem("Open DevTools", false)
+              wait(1.seconds)
+            }
+          }
+
+          keyboard {
+            escape()
+          }
         }
 
       }
@@ -204,16 +229,22 @@ class GBrowserUITest {
     }
   }
 
-  private fun GBrowserToolWindowPanel.browserActions() {
+  private fun GBrowserToolWindowPanel.browserInitialActions() {
 
     // Home menu action
     selectPopupMenuItem("Home")
 
     selectPopupMenuItem("Find...")
     keyboard {
+      typeText("ab")
+      escape()
       escape()
     }
-    selectPopupMenuItem("Add to Bo")
+  }
+
+  private fun GBrowserToolWindowPanel.browserFinalActions() {
+
+    //selectPopupMenuItem("Add to Bo")
 
     selectPopupMenuItem("Zoom Out")
     selectPopupMenuItem("Zoom In")
@@ -223,23 +254,8 @@ class GBrowserUITest {
     selectPopupMenuItem("Reload Page")
     selectPopupMenuItem("Preferences")
     presencesActions()
+    wait(2.seconds)
 
-    gBrowserPanel {
-      button {
-        byTooltip("https://github.com/")
-      }.waitFound(2.seconds).click()
-
-      moveMouse()
-      rightClick()
-      driver.ui.ideFrame {
-        popup().accessibleList().clickItem("Open DevTools", false)
-        wait(1.seconds)
-      }
-    }
-
-    keyboard {
-      escape()
-    }
 
   }
 
