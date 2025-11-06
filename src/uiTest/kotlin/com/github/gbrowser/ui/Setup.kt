@@ -33,7 +33,7 @@ class Setup {
     fun setupTestContext(hyphenateWithClass: String): IDETestContext {
 
       val testCase = TestCase(
-        IdeProductProvider.IU.copy(buildNumber = "253.17525.95", buildType = BuildType.EAP.type), NoProject
+        IdeProductProvider.IU.copy(buildNumber = "253.28086.51", buildType = BuildType.EAP.type), NoProject
       )
       return Starter.newContext(testName = hyphenateWithClass, testCase = testCase).apply {
         val pluginPath = System.getProperty("path.to.build.plugin")
