@@ -221,8 +221,8 @@ class GBrowserProjectSettingsComponent(val project: Project) : SimpleToolWindowP
     collapsibleGroup("Browser Compatibility Mode", true) {
       row {
         text(
-          "<html><b>About:</b> Makes the IDE's embedded browser compatible with sites that incorrectly block development tools.<br>" +
-            "This helps developers access documentation, cloud consoles, and test their own applications.</html>"
+          "<b>About:</b> Makes the IDE's embedded browser compatible with sites that incorrectly block development tools.<br>" +
+            "This helps developers access documentation, cloud consoles, and test their own applications."
         )
       }
       lateinit var enableCheckbox: Cell<JCheckBox>
