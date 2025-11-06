@@ -4,9 +4,11 @@ import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 
-fun properties(key: String) = providers.gradleProperty(key)
+fun properties(key: String): Provider<String> = providers.gradleProperty(key)
 
 plugins {
   alias(libs.plugins.kotlin) //`jvm-test-suite`
@@ -95,18 +97,18 @@ dependencies { // IntelliJ Platform dependencies
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
 
   // Add JUnit 5 dependencies for tests
-  testImplementation("org.junit.jupiter:junit-jupiter:5.13.4")
-  testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.4")
+  testImplementation("org.junit.jupiter:junit-jupiter:6.0.1")
+  testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.0.1")
 
   // UI Test dependencies
   uiTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
-  uiTestImplementation("org.kodein.di:kodein-di-jvm:7.26.1")
+  uiTestImplementation("org.kodein.di:kodein-di-jvm:7.28.0")
   uiTestImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
   uiTestImplementation(libs.bundles.kTest)
 
   // Add JUnit 5 dependencies explicitly
-  uiTestImplementation("org.junit.jupiter:junit-jupiter:5.13.4")
-  uiTestRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.4")
+  uiTestImplementation("org.junit.jupiter:junit-jupiter:6.0.1")
+  uiTestRuntimeOnly("org.junit.platform:junit-platform-launcher:6.0.1")
 }
 
 kotlin {
@@ -116,9 +118,9 @@ kotlin {
   }
 
   compilerOptions {
-    apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_2)
-    jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
-    languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_2)
+    apiVersion.set(KotlinVersion.KOTLIN_2_2)
+    jvmTarget.set(JvmTarget.JVM_21)
+    languageVersion.set(KotlinVersion.KOTLIN_2_2)
     freeCompilerArgs.addAll(
       "-Xjvm-default=all",
       "-opt-in=kotlinx.serialization.ExperimentalSerializationApi"
