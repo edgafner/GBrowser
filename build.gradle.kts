@@ -2,7 +2,6 @@
 
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
-import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
@@ -15,7 +14,7 @@ plugins {
   alias(libs.plugins.intelliJPlatform)
   alias(libs.plugins.changelog)
   alias(libs.plugins.qodana)
-  kotlin("plugin.serialization") version "2.2.20"
+  kotlin("plugin.serialization") version "2.2.21"
   alias(libs.plugins.kover)
   idea
 }
@@ -61,11 +60,10 @@ val uiTestRuntimeOnly: Configuration by configurations.getting {
 }
 
 dependencies { // IntelliJ Platform dependencies
-
   intellijPlatform {
     val platformVersion = providers.gradleProperty("platformVersion")
-
-    create(IntelliJPlatformType.IntellijIdeaUltimate, platformVersion) {
+    val platformType = providers.gradleProperty("platformType")
+    create(platformType, platformVersion) {
       useInstaller = false
     }
     bundledPlugins(providers.gradleProperty("platformBundledPlugins").map { it.split(',') })
