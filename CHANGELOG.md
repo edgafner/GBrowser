@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2025.3.5] - 2025-11-06
+
 ### Changed
 
 - 🚀 Changelog and Gradle platform updated version
@@ -475,7 +477,8 @@
 
 -- First Jetbrains Public
 
-[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2025.3.4...HEAD
+[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2025.3.5...HEAD
+[2025.3.5]: https://github.com/edgafner/GBrowser/compare/v2025.3.4...v2025.3.5
 [2025.3.4]: https://github.com/edgafner/GBrowser/compare/v2025.3.1...v2025.3.4
 [2025.3.1]: https://github.com/edgafner/GBrowser/compare/v2025.2.7...v2025.3.1
 [2025.2.7]: https://github.com/edgafner/GBrowser/compare/v2025.2.4...v2025.2.7
