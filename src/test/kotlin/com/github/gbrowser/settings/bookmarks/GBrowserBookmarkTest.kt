@@ -20,7 +20,7 @@ class GBrowserBookmarkTest {
         val bookmark2 = GBrowserBookmark("https://example2.com", "Bookmark 1")
 
         Assertions.assertNotEquals(bookmark1, bookmark2, "Bookmarks with different URLs should not be equal")
-        Assertions.assertNotEquals(bookmark1.hashCode(), bookmark2.hashCode(), "Hash codes should not be equal for unequal objects")
+        Assertions.assertNotEquals(bookmark1.hashCode(), bookmark2.hashCode(), "Hash codes differ for these specific objects (note: collisions are technically possible but statistically unlikely)")
     }
 
     @Test

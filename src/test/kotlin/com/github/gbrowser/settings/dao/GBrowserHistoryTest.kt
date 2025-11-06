@@ -20,7 +20,7 @@ class GBrowserHistoryTest {
         val history2 = GBrowserHistory("Page 1", "https://example2.com")
 
         Assertions.assertNotEquals(history1, history2, "Histories with different URLs should not be equal")
-        Assertions.assertNotEquals(history1.hashCode(), history2.hashCode(), "Hash codes should not be equal for unequal objects")
+        Assertions.assertNotEquals(history1.hashCode(), history2.hashCode(), "Hash codes differ for these specific objects (note: collisions are technically possible but statistically unlikely)")
     }
 
     @Test
