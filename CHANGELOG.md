@@ -4,11 +4,11 @@
 
 ### Changed
 
-- 🚀 Changelog and Gradle platform updated version
+- 🚀 Updated Changelog and Gradle platform version
 
 ### Fixed
 
-- 🪲 Fixed component must be showing on the screen to determine its location [Issue 506](https://github.com/edgafner/GBrowser/issues/506)
+- 🪲 Fixed component must be shown on the screen to determine its location [Issue 506](https://github.com/edgafner/GBrowser/issues/506)
 - 🪲 Fixed Invalid html: tag <html> [Issue 502](https://github.com/edgafner/GBrowser/issues/502)
 - 🪲 Fixed Empty menu item text for GBrowserEditorOpenAction [Issue 510](https://github.com/edgafner/GBrowser/issues/510)
 
