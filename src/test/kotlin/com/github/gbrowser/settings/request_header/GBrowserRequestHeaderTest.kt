@@ -55,7 +55,7 @@ class GBrowserRequestHeaderTest {
         Assertions.assertNotEquals(header1, header3, "Different headers should not be equal")
         
         Assertions.assertEquals(header1.hashCode(), header2.hashCode(), "Hash codes should be equal for equal objects")
-        Assertions.assertNotEquals(header1.hashCode(), header3.hashCode(), "Hash codes should not be equal for unequal objects")
+        Assertions.assertNotEquals(header1.hashCode(), header3.hashCode(), "Hash codes differ for these specific objects (note: collisions are technically possible but statistically unlikely)")
     }
 
     @Test

@@ -295,7 +295,7 @@ class GBrowserSearchPopUpItemTest {
             url = "https://gitlab.com"
         )
 
-        assertNotEquals(item1.hashCode(), item2.hashCode(), "Different objects should likely have different hash codes")
+        assertNotEquals(item1.hashCode(), item2.hashCode(), "Hash codes differ for these specific objects (note: collisions are technically possible but statistically unlikely)")
     }
 
     @Test
