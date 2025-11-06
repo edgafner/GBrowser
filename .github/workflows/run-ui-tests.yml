@@ -50,9 +50,9 @@ jobs:
 
       # Setup Gradle
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
         with:
-          gradle-version: "9.1.0"
+          gradle-version: "9.2.0"
           cache-read-only: false
           gradle-home-cache-includes: |
             caches
@@ -69,7 +69,7 @@ jobs:
       # Only upload artifacts on failure for debugging
       - name: Collect Debug Artifacts
         if: failure()
-        uses: actions/upload-artifact@v4.6.2
+        uses: actions/upload-artifact@v5
         with:
           name: tests-result-${{ matrix.os }}
           path: |

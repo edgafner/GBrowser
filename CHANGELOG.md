@@ -2,6 +2,18 @@
 
 ## [Unreleased]
 
+## [2025.3.5] - 2025-11-06
+
+### Changed
+
+- 🚀 Changelog and Gradle platform updated version
+
+### Fixed
+
+- 🪲 Fixed the threading issue by moving GBrowserOpenCurrentFileAction to background thread (BGT)
+- 🪲 Fixed Cannot invoke "java.lang.Boolean.booleanValue()" (BGT) [Issue 476](https://github.com/edgafner/GBrowser/issues/476)
+- 🪲 Fixed component must be showing on the screen to determine its location [Issue 470](https://github.com/edgafner/GBrowser/issues/470)
+
 ## [2025.2.8] - 2025-11-05
 
 ### Changed
@@ -453,9 +465,10 @@
 
 -- First Jetbrains Public
 
-[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2025.2.8...HEAD
-
-[2025.2.8]: https://github.com/edgafner/GBrowser/compare/v2025.2.7...v2025.2.8
+[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2025.3.5...HEAD
+[2025.3.5]: https://github.com/edgafner/GBrowser/compare/v2025.3.4...v2025.3.5
+[2025.3.4]: https://github.com/edgafner/GBrowser/compare/v2025.3.1...v2025.3.4
+[2025.3.1]: https://github.com/edgafner/GBrowser/compare/v2025.2.7...v2025.3.1
 [2025.2.7]: https://github.com/edgafner/GBrowser/compare/v2025.2.4...v2025.2.7
 [2025.2.4]: https://github.com/edgafner/GBrowser/compare/v2025.2.3...v2025.2.4
 [2025.2.3]: https://github.com/edgafner/GBrowser/compare/v2025.2.2...v2025.2.3
