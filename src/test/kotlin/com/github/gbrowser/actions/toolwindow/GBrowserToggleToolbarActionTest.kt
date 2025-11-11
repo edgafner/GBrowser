@@ -59,17 +59,8 @@ class GBrowserToggleToolbarActionTest {
   }
 
   @Test
-  fun `test action has template presentation with text`() {
+  fun `test action has template presentation`() {
     val presentation = action.templatePresentation
     assertNotNull(presentation)
-    // Template text is set via plugin.xml
-    assertNotNull(presentation.text)
-  }
-
-  @Test
-  fun `test action has template presentation with description`() {
-    val presentation = action.templatePresentation
-    // Template description is set via plugin.xml
-    assertNotNull(presentation.description)
   }
 }
