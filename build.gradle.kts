@@ -102,7 +102,7 @@ dependencies { // IntelliJ Platform dependencies
 
   // UI Test dependencies
   uiTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
-  uiTestImplementation("org.kodein.di:kodein-di-jvm:7.28.0")
+  uiTestImplementation("org.kodein.di:kodein-di-jvm:7.29.0")
   uiTestImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
   uiTestImplementation(libs.bundles.kTest)
 
