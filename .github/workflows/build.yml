@@ -32,7 +32,7 @@ jobs:
 
       # Check out the current repository
       - name: Fetch Sources
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       
       # Check if this is a changelog-only PR
       - name: Check if changelog PR
@@ -125,7 +125,7 @@ jobs:
       # Check out the current repository
       - name: Fetch Sources
         if: needs.build.outputs.is_changelog_pr != 'true'
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           ref: ${{ github.event.pull_request.head.sha }}  # to check out the actual pull request commit, not the merge commit
           fetch-depth: 0  # a full history is required for pull request analysis
@@ -211,7 +211,7 @@ jobs:
 
       # Check out the current repository
       - name: Fetch Sources
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           ref: ${{ github.event.pull_request.head.sha }}  # to check out the actual pull request commit, not the merge commit
           fetch-depth: 0  # a full history is required for pull request analysis
@@ -275,7 +275,7 @@ jobs:
 
       # Check out the current repository
       - name: Fetch Sources
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       # Set up the Java environment for the next steps
       - name: Setup JBR 21
@@ -324,7 +324,7 @@ jobs:
       actions: read
     steps:
       - name: Fetch Sources
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           token: '${{ secrets.GITHUB_TOKEN }}'
 
@@ -357,7 +357,7 @@ jobs:
 
       # Check out the current repository
       - name: Fetch Sources
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       
       # Set up the Java environment for the next steps
       - name: Setup JBR 21
