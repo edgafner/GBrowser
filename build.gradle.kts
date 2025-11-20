@@ -162,7 +162,8 @@ intellijPlatform {
 
   pluginVerification {
     ides {
-      recommended()
+      create(IntelliJPlatformType.IntellijIdeaUltimate, "253-EAP-SNAPSHOT")
+
     }
   }
 
