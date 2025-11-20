@@ -2,7 +2,7 @@ name: Claude Code Review
 
 on:
   pull_request:
-    types: [opened, synchronize]
+    types: [ opened, synchronize ]
     # Optional: Only run on specific file changes
     # paths:
     #   - "src/**/*.ts"
@@ -56,7 +56,7 @@ jobs:
 
       - name: Run Claude Code Review
         id: claude-review
-        uses: anthropics/claude-code-action@beta
+        uses: anthropics/claude-code-action@v1.0.18
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
 
@@ -64,7 +64,7 @@ jobs:
           # model: "claude-opus-4-20250514"
           
           # Direct prompt for automated review (no @claude mention needed)
-          direct_prompt: |
+          prompt: |
             Please review this pull request (#${{ github.event.pull_request.number }}) titled "${{ github.event.pull_request.title }}".
             
             The PR has ${{ github.event.pull_request.changed_files }} changed files with +${{ github.event.pull_request.additions }} additions and -${{ github.event.pull_request.deletions }} deletions.
