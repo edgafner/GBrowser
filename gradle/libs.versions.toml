@@ -1,5 +1,5 @@
 [versions]
-changelog = "2.4.0"
+changelog = "2.5.0"
 intelliJPlatform = "2.10.4"
 kotlin = "2.2.21"
 kover = "0.9.3"
