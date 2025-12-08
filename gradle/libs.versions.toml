@@ -4,7 +4,7 @@ intelliJPlatform = "2.10.4"
 kotlin = "2.2.21"
 kover = "0.9.3"
 qodana = "2025.2.2"
-mockkTest = "1.14.6"
+mockkTest = "1.14.7"
 kotlinTest = "1.10.2"
 
 
