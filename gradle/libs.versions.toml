@@ -1,10 +1,10 @@
 [versions]
-changelog = "2.4.0"
-intelliJPlatform = "2.10.4"
+changelog = "2.5.0"
+intelliJPlatform = "2.10.5"
 kotlin = "2.2.21"
-kover = "0.9.3"
-qodana = "2025.2.2"
-mockkTest = "1.14.6"
+kover = "0.9.4"
+qodana = "2025.2.4"
+mockkTest = "1.14.7"
 kotlinTest = "1.10.2"
 
 
