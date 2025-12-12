@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- 🚀 Updated Changelog and Gradle platform version
+
 ## [2025.3.7] - 2025-11-06
 
 ### Changed
