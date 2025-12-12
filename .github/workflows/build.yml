@@ -102,7 +102,7 @@ jobs:
 
       # Store the already-built plugin as an artifact for downloading
       - name: Upload artifact
-        uses: actions/upload-artifact@v5.0.0
+        uses: actions/upload-artifact@v6.0.0
         with:
           name: ${{ steps.artifact.outputs.filename }}
           path: ./build/distributions/content/*/*
@@ -161,7 +161,7 @@ jobs:
       # Collect Tests Result of failed tests
       - name: Collect Tests Result
         if: ${{ always() }}
-        uses: actions/upload-artifact@v5.0.0
+        uses: actions/upload-artifact@v6.0.0
         with:
           name: tests-result
           path: ${{ github.workspace }}/build/reports/tests
@@ -169,7 +169,7 @@ jobs:
       # Collect Tests Result of failed tests
       - name: Collect Tests Report
         if: ${{ always() }}
-        uses: actions/upload-artifact@v5.0.0
+        uses: actions/upload-artifact@v6.0.0
         with:
           name: tests-report
           path: ${{ github.workspace }}/build/test-results/test/*.xml
@@ -307,7 +307,7 @@ jobs:
       # Collect Plugin Verifier Result
       - name: Collect Plugin Verifier Result
         if: ${{ always() }}
-        uses: actions/upload-artifact@v5.0.0
+        uses: actions/upload-artifact@v6.0.0
         with:
           name: pluginVerifier-result
           path: ${{ github.workspace }}/build/reports/pluginVerifier
