@@ -69,7 +69,7 @@ jobs:
       # Only upload artifacts on failure for debugging
       - name: Collect Debug Artifacts
         if: failure()
-        uses: actions/upload-artifact@v5.0.0
+        uses: actions/upload-artifact@v6.0.0
         with:
           name: tests-result-${{ matrix.os }}
           path: |
