@@ -2,7 +2,7 @@ name: Claude Code Review
 
 on:
   pull_request:
-    types: [ opened, synchronize ]
+    types: [ opened, synchronize, ready_for_review, reopened ]
     # Optional: Only run on specific file changes
     # paths:
     #   - "src/**/*.ts"
@@ -17,6 +17,7 @@ jobs:
       github.event.pull_request.user.login != 'dependabot[bot]' &&
       github.event.pull_request.user.login != 'dependabot-preview[bot]' &&
       github.event.pull_request.author_association != 'NONE' &&
+      github.event.pull_request.draft == false &&
       github.event.pull_request.author_association != 'FIRST_TIME_CONTRIBUTOR'
     
     # Alternative conditions you can use:
@@ -43,21 +44,24 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: read
-      issues: read
+      pull-requests: write  # Required for Claude to comment on PRs
+      issues: write         # Required for issue comments
       id-token: write
+      actions: read
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0  # Fetch all history to ensure we get all commits
           ref: ${{ github.event.pull_request.head.sha }}  # Explicitly checkout the latest PR commit
 
       - name: Run Claude Code Review
         id: claude-review
-        uses: anthropics/claude-code-action@v1.0.18
+        uses: anthropics/claude-code-action@v1.0.23
         with:
+          track_progress: true
+          # Authentication - use OAuth token for Pro/Max users
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
 
           # Optional: Specify model (defaults to Claude Sonnet 4, uncomment for Claude Opus 4)
