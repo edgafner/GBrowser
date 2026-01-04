@@ -48,6 +48,23 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # Grant screen recording permissions for macOS UI tests
+      - name: Grant macOS Screen Recording Permissions
+        if: runner.os == 'macOS'
+        run: |
+          echo "Granting screen recording permissions for UI testing..."
+
+          # Create the directory if it doesn't exist
+          mkdir -p ~/Library/"Group Containers"/group.com.apple.replayd
+
+          # Grant permissions for the IDE process
+          # Note: On GitHub Actions runners, this may have limited effect
+          # but we set it for any potential IDE processes
+          sudo defaults write ~/Library/"Group Containers"/group.com.apple.replayd/ScreenCaptureApprovals.plist \
+            "com.jetbrains.intellij" -date "3024-01-01 00:00:00 +0000" || true
+
+          echo "Screen recording permissions configured"
+
       # Setup Gradle
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
@@ -62,9 +79,12 @@ jobs:
             caches/build-cache-*
 
 
-          # Run tests
+      # Run tests with debug logging to investigate SetupException
       - name: Tests
-        run: ./gradlew uiTest
+        run: ./gradlew uiTest --info --stacktrace
+        env:
+          # Enable verbose logging for IDE starter
+          IDE_STARTER_DEBUG: true
       
       # Only upload artifacts on failure for debugging
       - name: Collect Debug Artifacts
