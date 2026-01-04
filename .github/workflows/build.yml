@@ -102,7 +102,7 @@ jobs:
 
       # Store the already-built plugin as an artifact for downloading
       - name: Upload artifact
-        uses: actions/upload-artifact@v5.0.0
+        uses: actions/upload-artifact@v6.0.0
         with:
           name: ${{ steps.artifact.outputs.filename }}
           path: ./build/distributions/content/*/*
@@ -161,7 +161,7 @@ jobs:
       # Collect Tests Result of failed tests
       - name: Collect Tests Result
         if: ${{ always() }}
-        uses: actions/upload-artifact@v5.0.0
+        uses: actions/upload-artifact@v6.0.0
         with:
           name: tests-result
           path: ${{ github.workspace }}/build/reports/tests
@@ -169,7 +169,7 @@ jobs:
       # Collect Tests Result of failed tests
       - name: Collect Tests Report
         if: ${{ always() }}
-        uses: actions/upload-artifact@v5.0.0
+        uses: actions/upload-artifact@v6.0.0
         with:
           name: tests-report
           path: ${{ github.workspace }}/build/test-results/test/*.xml
@@ -241,7 +241,7 @@ jobs:
 
       # Run Qodana inspections -
       - name: Qodana - Code Inspection
-        uses: JetBrains/qodana-action@v2025.2.4
+        uses: JetBrains/qodana-action@v2025.3.1
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
           QODANA_SHOW_REPORT: true
@@ -307,7 +307,7 @@ jobs:
       # Collect Plugin Verifier Result
       - name: Collect Plugin Verifier Result
         if: ${{ always() }}
-        uses: actions/upload-artifact@v5.0.0
+        uses: actions/upload-artifact@v6.0.0
         with:
           name: pluginVerifier-result
           path: ${{ github.workspace }}/build/reports/pluginVerifier
@@ -329,14 +329,14 @@ jobs:
           token: '${{ secrets.GITHUB_TOKEN }}'
 
       - name: Download artifact
-        uses: actions/download-artifact@v6.0.0
+        uses: actions/download-artifact@v7.0.0
         id: download
         with:
           name: tests-report
           path: ~/
 
       - name: Generate Test Report
-        uses: dorny/test-reporter@v2.3.0
+        uses: dorny/test-reporter@v2.4.0
         if: success() || failure()
         with:
           name: Test Report Dashboard
