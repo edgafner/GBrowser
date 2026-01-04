@@ -22,7 +22,7 @@ object GBrowserUtil {
   /**
    * Fetches search query suggestions from Google.
    * @param text The search text to get suggestions for
-   * @return JSON response containing search suggestions
+   * @return String containing JSON response with search suggestions
    */
   internal fun suggestQuery(text: String): String {
     if (text.isEmpty()) return ""
