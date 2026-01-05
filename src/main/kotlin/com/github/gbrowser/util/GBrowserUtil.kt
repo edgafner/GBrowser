@@ -10,12 +10,20 @@ import okhttp3.Request
 import java.util.regex.Pattern
 import java.util.regex.PatternSyntaxException
 
+/**
+ * Utility object for GBrowser plugin containing common constants and helper functions.
+ */
 object GBrowserUtil {
   const val GBROWSER_TOOL_WINDOW_ID = "GBrowser"
   // DevTools tool window removed - no longer available in new API (253 EAP)
 
   val LOG = logger<GBrowserUtil>()
 
+  /**
+   * Fetches search query suggestions from Google.
+   * @param text The search text to get suggestions for
+   * @return String containing JSON response with search suggestions
+   */
   internal fun suggestQuery(text: String): String {
     if (text.isEmpty()) return ""
     val url = "https://suggestqueries.google.com/complete/search?client=firefox&q=$text"
@@ -26,10 +34,18 @@ object GBrowserUtil {
     }
   }
 
+  /**
+   * Gets the JCEF debug port from the IDE registry.
+   * @return The current JCEF debug port number
+   */
   fun getJCEFDebugPort(): Int {
     return Registry.get("ide.browser.jcef.debug.port").asInteger()
   }
 
+  /**
+   * Sets the JCEF debug port in the IDE registry.
+   * @param port The port number to set
+   */
   fun setJCEFDebugPort(port: Int) {
     Registry.get("ide.browser.jcef.debug.port").setValue(port)
   }
@@ -47,6 +63,12 @@ object GBrowserUtil {
     }
   }
 
+  /**
+   * Validates if the input string is a valid browser URL.
+   * Checks for valid URL format or localhost references.
+   * @param input The string to validate
+   * @return true if the input is a valid browser URL, false otherwise
+   */
   fun isValidBrowserURL(input: String): Boolean {
     return try {
       val isValidUrl = isValidUrlWithoutProtocol(input)
@@ -58,6 +80,11 @@ object GBrowserUtil {
     }
   }
 
+  /**
+   * Gets the selected text from the current editor if it's a valid URL.
+   * @param anActionEvent The action event containing editor data
+   * @return The selected text if it's a valid URL, null otherwise
+   */
   fun getSelectedText(anActionEvent: AnActionEvent): String? {
     val editor = anActionEvent.getData(CommonDataKeys.EDITOR) ?: return null
 
