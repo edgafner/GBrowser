@@ -2,6 +2,9 @@ package com.github.gbrowser
 
 import com.intellij.openapi.util.IconLoader
 
+/**
+ * Object containing all icon resources used in the GBrowser plugin.
+ */
 object GBrowserIcons {
 
   @JvmField
