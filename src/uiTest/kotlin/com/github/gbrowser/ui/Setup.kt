@@ -32,9 +32,8 @@ class Setup {
      */
     fun setupTestContext(hyphenateWithClass: String): IDETestContext {
 
-      val testCase = TestCase(
-        IdeProductProvider.IU.copy(buildNumber = "253.29346.138", buildType = BuildType.RELEASE.type), NoProject
-      )
+      val testCase = TestCase(IdeProductProvider.IU, NoProject).useEAP()
+      
       return Starter.newContext(testName = hyphenateWithClass, testCase = testCase).apply {
         val pluginPath = System.getProperty("path.to.build.plugin")
         PluginConfigurator(this).installPluginFromPath(Paths.get(pluginPath))
