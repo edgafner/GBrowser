@@ -1,17 +1,21 @@
 package com.github.gbrowser.services.providers
 
-import com.intellij.ide.starter.coroutine.testSuiteSupervisorScope
 import io.mockk.unmockkAll
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import org.junit.jupiter.api.*
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 class CachingFavIconLoaderTest {
 
     private lateinit var favIconLoader: CachingFavIconLoader
+    private lateinit var testScope: CoroutineScope
 
     @BeforeEach
     fun setup() {
-      favIconLoader = CachingFavIconLoader(testSuiteSupervisorScope)
+      testScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+      favIconLoader = CachingFavIconLoader(testScope)
     }
 
     @AfterEach

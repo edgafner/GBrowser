@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- 🚀 Support for the latest 2026.1
+
 ## [2025.3.9] - 2025-12-12
 
 ### Changed
