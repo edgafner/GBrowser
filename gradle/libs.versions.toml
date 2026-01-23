@@ -5,8 +5,9 @@ kotlin = "2.3.0"
 kover = "0.9.4"
 qodana = "2025.3.1"
 mockkTest = "1.14.7"
+bytebuddy = "1.18.4"
 kotlinTest = "1.10.2"
-
+kotestAssertions = "6.1.0"
 
 
 [plugins]
@@ -18,13 +19,15 @@ kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 
 
 [libraries]
-korutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinTest" }
+coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinTest" }
 
-
-#Test
-korutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinTest" }
+# Test
+byte-buddy = { group = "net.bytebuddy", name = "byte-buddy", version.ref = "bytebuddy" }
+byte-buddy-agent = { group = "net.bytebuddy", name = "byte-buddy-agent", version.ref = "bytebuddy" }
+coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinTest" }
 mockk-test = { group = "io.mockk", name = "mockk", version.ref = "mockkTest" }
+kotest-assertions = { group = "io.kotest", name = "kotest-assertions-core-jvm", version.ref = "kotestAssertions" }
 
 
 [bundles]
-kTest = ["korutines-core", "korutines-test", "mockk-test"]
+kTest = ["coroutines-core", "coroutines-test", "mockk-test", "kotest-assertions"]

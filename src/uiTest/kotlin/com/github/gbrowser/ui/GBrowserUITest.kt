@@ -24,9 +24,9 @@ import com.intellij.ide.starter.junit5.config.UseLatestDownloadedIdeBuild
 import com.intellij.openapi.diagnostic.logger
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
+import java.io.IOException
+import java.nio.file.*
+import java.nio.file.attribute.BasicFileAttributes
 import kotlin.time.Duration.Companion.seconds
 
 @Tag("ui")
@@ -43,23 +43,7 @@ class GBrowserUITest {
       // Clean up any leftover test projects from the IDE's test directory
       val buildDir = Paths.get(System.getProperty("user.dir"), "build", "out", "ide-tests")
       if (Files.exists(buildDir)) {
-        try {
-          Files.walk(buildDir)
-            .filter { path ->
-              path.fileName.toString().startsWith("GBrowserTest_") &&
-                Files.isDirectory(path)
-            }
-            .forEach { path ->
-              try {
-                LOG.info("Cleaning up test project directory: $path")
-                path.toFile().deleteRecursively()
-              } catch (e: Exception) {
-                LOG.warn("Failed to delete test project directory: $path", e)
-              }
-            }
-        } catch (e: Exception) {
-          LOG.error("Error during test cleanup", e)
-        }
+        deleteTestDirectoriesSafely(buildDir, "GBrowserTest_")
       }
 
       // Also clean up any projects that might have been created in IdeaProjects
@@ -75,6 +59,93 @@ class GBrowserUITest {
         }
       }
       createdProjects.clear()
+    }
+
+    /**
+     * Safely deletes test directories using FileVisitor to handle race conditions
+     * where files may be deleted by other processes during traversal.
+     */
+    private fun deleteTestDirectoriesSafely(baseDir: Path, prefix: String) {
+      // First, collect directories to delete (don't delete while walking)
+      val directoriesToDelete = mutableListOf<Path>()
+
+      try {
+        Files.walkFileTree(baseDir, object : SimpleFileVisitor<Path>() {
+          override fun preVisitDirectory(dir: Path, attrs: BasicFileAttributes): FileVisitResult {
+            if (dir != baseDir && dir.fileName.toString().startsWith(prefix)) {
+              directoriesToDelete.add(dir)
+              return FileVisitResult.SKIP_SUBTREE // Don't descend into directories we'll delete
+            }
+            return FileVisitResult.CONTINUE
+          }
+
+          override fun visitFileFailed(file: Path, exc: IOException): FileVisitResult {
+            // Ignore files that disappeared during traversal (race condition with IDE shutdown)
+            LOG.debug("File disappeared during cleanup traversal: $file")
+            return FileVisitResult.CONTINUE
+          }
+        })
+      } catch (e: Exception) {
+        LOG.warn("Error walking directory for cleanup: $baseDir", e)
+      }
+
+      // Now delete the collected directories
+      directoriesToDelete.forEach { path ->
+        try {
+          LOG.info("Cleaning up test project directory: $path")
+          deleteDirectoryRecursively(path)
+        } catch (e: Exception) {
+          LOG.warn("Failed to delete test project directory: $path", e)
+        }
+      }
+    }
+
+    /**
+     * Recursively deletes a directory, handling race conditions gracefully.
+     */
+    private fun deleteDirectoryRecursively(directory: Path) {
+      if (!Files.exists(directory)) return
+
+      try {
+        Files.walkFileTree(directory, object : SimpleFileVisitor<Path>() {
+          override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
+            try {
+              Files.deleteIfExists(file)
+            } catch (e: NoSuchFileException) {
+              // File was already deleted, ignore
+            } catch (e: IOException) {
+              LOG.debug("Could not delete file: $file", e)
+            }
+            return FileVisitResult.CONTINUE
+          }
+
+          override fun visitFileFailed(file: Path, exc: IOException): FileVisitResult {
+            // File disappeared during traversal, continue
+            return FileVisitResult.CONTINUE
+          }
+
+          override fun postVisitDirectory(dir: Path, exc: IOException?): FileVisitResult {
+            try {
+              Files.deleteIfExists(dir)
+            } catch (e: DirectoryNotEmptyException) {
+              // Directory not empty, some files couldn't be deleted
+              LOG.debug("Directory not empty, skipping: $dir")
+            } catch (e: NoSuchFileException) {
+              // Directory was already deleted, ignore
+            } catch (e: IOException) {
+              LOG.debug("Could not delete directory: $dir", e)
+            }
+            return FileVisitResult.CONTINUE
+          }
+        })
+      } catch (e: Exception) {
+        // Fall back to simple delete if walkFileTree fails
+        try {
+          directory.toFile().deleteRecursively()
+        } catch (e2: Exception) {
+          LOG.debug("Fallback delete also failed for: $directory", e2)
+        }
+      }
     }
   }
 
@@ -118,26 +189,44 @@ class GBrowserUITest {
 
     possibleLocations.forEach { baseDir ->
       if (Files.exists(baseDir)) {
+        // Collect directories first, then delete (avoid race conditions)
+        val directoriesToDelete = mutableListOf<Path>()
+
         try {
-          Files.walk(baseDir, 2) // Limit depth to avoid excessive traversal
-            .filter { path ->
-              path.fileName.toString() == projectName ||
-                path.fileName.toString().startsWith("$projectName.")
-            }
-            .filter { Files.isDirectory(it) }
-            .forEach { path ->
-              try {
-                LOG.info("Cleaning up project directory: $path")
-                path.toFile().deleteRecursively()
-              } catch (e: Exception) {
-                LOG.warn("Failed to delete project directory: $path", e)
+          Files.walkFileTree(baseDir, setOf(), 2, object : SimpleFileVisitor<Path>() {
+            override fun preVisitDirectory(dir: Path, attrs: BasicFileAttributes): FileVisitResult {
+              val fileName = dir.fileName?.toString() ?: return FileVisitResult.CONTINUE
+              if (fileName == projectName || fileName.startsWith("$projectName.")) {
+                directoriesToDelete.add(dir)
+                return FileVisitResult.SKIP_SUBTREE
               }
+              return FileVisitResult.CONTINUE
             }
+
+            override fun visitFileFailed(file: Path, exc: IOException): FileVisitResult {
+              return FileVisitResult.CONTINUE // Ignore files that disappeared
+            }
+          })
         } catch (e: Exception) {
           LOG.debug("Error walking directory $baseDir", e)
         }
+
+        // Delete collected directories
+        directoriesToDelete.forEach { path ->
+          try {
+            LOG.info("Cleaning up project directory: $path")
+            deleteDirectoryRecursively(path)
+          } catch (e: Exception) {
+            LOG.warn("Failed to delete project directory: $path", e)
+          }
+        }
       }
     }
+  }
+
+  private fun deleteDirectoryRecursively(directory: Path) {
+    // Delegate to companion object's implementation
+    Companion.deleteDirectoryRecursively(directory)
   }
 
   @Test
