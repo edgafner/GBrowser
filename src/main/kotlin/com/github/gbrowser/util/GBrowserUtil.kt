@@ -5,8 +5,10 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.editor.EditorKind
 import com.intellij.openapi.util.registry.Registry
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
 import java.util.regex.Pattern
 import java.util.regex.PatternSyntaxException
 
@@ -19,6 +21,10 @@ object GBrowserUtil {
 
   val LOG = logger<GBrowserUtil>()
 
+  private val httpClient: HttpClient by lazy {
+    HttpClient.newBuilder().build()
+  }
+
   /**
    * Fetches search query suggestions from Google.
    * @param text The search text to get suggestions for
@@ -27,11 +33,12 @@ object GBrowserUtil {
   internal fun suggestQuery(text: String): String {
     if (text.isEmpty()) return ""
     val url = "https://suggestqueries.google.com/complete/search?client=firefox&q=$text"
-    val request = Request.Builder().url(url).build()
-    val client = OkHttpClient()
-    client.newCall(request).execute().use { response ->
-      return response.body.string()
-    }
+    val request = HttpRequest.newBuilder()
+      .uri(URI.create(url))
+      .GET()
+      .build()
+    val response = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
+    return response.body()
   }
 
   /**

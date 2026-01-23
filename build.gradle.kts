@@ -90,36 +90,43 @@ dependencies { // IntelliJ Platform dependencies
   compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 
 
+  // Test dependencies
+  // ByteBuddy 1.18.4 for Java 25 support (overrides MockK's transitive dependency)
+  testImplementation("net.bytebuddy:byte-buddy:1.18.4")
+  testImplementation("net.bytebuddy:byte-buddy-agent:1.18.4")
   testRuntimeOnly("junit:junit:4.13.2")
   testImplementation(libs.bundles.kTest)
   testImplementation("org.opentest4j:opentest4j:1.3.0")
-  testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
-  testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
+  testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+  testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
 
   // Add JUnit 5 dependencies for tests
-  testImplementation("org.junit.jupiter:junit-jupiter:6.0.1")
-  testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.0.1")
+  testImplementation("org.junit.jupiter:junit-jupiter:6.0.2")
+  testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.0.2")
 
   // UI Test dependencies
-  uiTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
+  // ByteBuddy 1.18.4 for Java 25 support (overrides MockK's transitive dependency)
+  uiTestImplementation("net.bytebuddy:byte-buddy:1.18.4")
+  uiTestImplementation("net.bytebuddy:byte-buddy-agent:1.18.4")
+  uiTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
   uiTestImplementation("org.kodein.di:kodein-di-jvm:7.30.0")
-  uiTestImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+  uiTestImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.10.0")
   uiTestImplementation(libs.bundles.kTest)
 
   // Add JUnit 5 dependencies explicitly
-  uiTestImplementation("org.junit.jupiter:junit-jupiter:6.0.1")
-  uiTestRuntimeOnly("org.junit.platform:junit-platform-launcher:6.0.1")
+  uiTestImplementation("org.junit.jupiter:junit-jupiter:6.0.2")
+  uiTestRuntimeOnly("org.junit.platform:junit-platform-launcher:6.0.2")
 }
 
 kotlin {
   jvmToolchain {
-    languageVersion = JavaLanguageVersion.of(21)
+    languageVersion = JavaLanguageVersion.of(25)
     vendor = JvmVendorSpec.JETBRAINS
   }
 
   compilerOptions {
     apiVersion.set(KotlinVersion.KOTLIN_2_2)
-    jvmTarget.set(JvmTarget.JVM_21)
+    jvmTarget.set(JvmTarget.JVM_25)
     languageVersion.set(KotlinVersion.KOTLIN_2_2)
     freeCompilerArgs.addAll(
       "-Xjvm-default=all",
@@ -162,7 +169,7 @@ intellijPlatform {
 
   pluginVerification {
     ides {
-      create(IntelliJPlatformType.IntellijIdeaUltimate, "253-EAP-SNAPSHOT")
+      create(IntelliJPlatformType.IntellijIdeaUltimate, "261-EAP-SNAPSHOT")
 
     }
   }
@@ -277,7 +284,7 @@ tasks {
     systemProperty("idea.test.cyclic.buffer.size", "0")
 
     jvmArgumentProviders += CommandLineArgumentProvider {
-      listOf(
+      mutableListOf(
         "--add-opens=java.base/java.lang=ALL-UNNAMED",
         "--add-opens=java.desktop/javax.swing=ALL-UNNAMED",
         "-Dexpose.ui.hierarchy.url=true",
