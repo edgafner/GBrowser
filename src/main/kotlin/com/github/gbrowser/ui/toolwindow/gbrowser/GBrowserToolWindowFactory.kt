@@ -21,13 +21,13 @@ import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.openapi.wm.ex.ToolWindowEx
 import com.intellij.openapi.wm.ex.ToolWindowManagerListener
 import com.intellij.openapi.wm.impl.content.ToolWindowContentUi
-import com.intellij.openapi.wm.impl.content.ToolWindowContentUi.setAllowTabsReordering
 import com.intellij.ui.content.ContentManagerEvent
 import com.intellij.ui.content.ContentManagerListener
 import com.intellij.util.application
 import java.util.*
 
 
+@Suppress("UnstableApiUsage")
 class GBrowserToolWindowFactory : ToolWindowFactory, DumbAware, ContentManagerListener {
 
   private lateinit var myGBrowserProjectService: GBrowserProjectService
@@ -96,7 +96,7 @@ class GBrowserToolWindowFactory : ToolWindowFactory, DumbAware, ContentManagerLi
     (toolWindow as? ToolWindowEx)?.updateContentUi()
 
     toolWindow.component.putClientProperty(ToolWindowContentUi.DONT_HIDE_TOOLBAR_IN_HEADER, true)
-    setAllowTabsReordering(toolWindow, myGBrowserService.isDragAndDropEnabled)
+    toolWindow.setTabsSplittingAllowed(myGBrowserService.isTabsSplittingAllowed)
 
     project.messageBus.connect(toolWindow.disposable).subscribe(
       ToolWindowManagerListener.TOPIC, object : ToolWindowManagerListener {
@@ -207,7 +207,7 @@ class GBrowserToolWindowFactory : ToolWindowFactory, DumbAware, ContentManagerLi
   private fun addSettingsListener(toolWindow: ToolWindow) {
     myGBrowserService.addListener { state: GBrowserService.SettingsState ->
       toolWindow.component.putClientProperty("HideIdLabel", state.hideIdLabel.toString())
-      setAllowTabsReordering(toolWindow, state.isDragAndDropEnabled)
+      toolWindow.setTabsSplittingAllowed(state.isTabsSplittingAllowed)
       toolWindow.contentManager.contents.forEach { content ->
         content.putUserData(ToolWindow.SHOW_CONTENT_ICON, state.isTabIconVisible)
       }
@@ -281,7 +281,6 @@ class GBrowserToolWindowFactory : ToolWindowFactory, DumbAware, ContentManagerLi
 
 
 }
-
 
 
 

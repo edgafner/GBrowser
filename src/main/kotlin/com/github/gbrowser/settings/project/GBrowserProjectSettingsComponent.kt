@@ -171,9 +171,9 @@ class GBrowserProjectSettingsComponent(val project: Project) : SimpleToolWindowP
                         }
                       })
       twoColumnsRow({
-                      checkBox("Enable drag and drop tabs").bindSelected(settings::isDragAndDropEnabled) { value ->
-                        settings.isDragAndDropEnabled = value
-                      }.comment("Allow drag and drop for tabs")
+                      checkBox("Enable tab splitting").bindSelected(settings::isTabsSplittingAllowed) { value ->
+                        settings.isTabsSplittingAllowed = value
+                      }.comment("Allow splitting tabs via drag and drop")
                     }, {
                       checkBox("Reload previous tabs").bindSelected(settings::reloadTabOnStartup) { value ->
                         settings.reloadTabOnStartup = value

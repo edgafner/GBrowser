@@ -7,7 +7,14 @@ qodana = "2025.3.1"
 mockkTest = "1.14.7"
 bytebuddy = "1.18.4"
 kotlinTest = "1.10.2"
-kotestAssertions = "6.1.0"
+kotlinxSerialization = "1.10.0"
+kotestAssertions = "6.1.1"
+jackson = "2.21.0"
+jacksonAnnotations = "2.21"
+junit5 = "6.0.2"
+junit4 = "4.13.2"
+opentest4j = "1.3.0"
+kodein = "7.30.0"
 
 
 [plugins]
@@ -16,10 +23,20 @@ intelliJPlatform = { id = "org.jetbrains.intellij.platform", version.ref = "inte
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 qodana = { id = "org.jetbrains.qodana", version.ref = "qodana" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+
 
 
 [libraries]
 coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinTest" }
+
+# Jackson
+jackson-core = { group = "com.fasterxml.jackson.core", name = "jackson-core", version.ref = "jackson" }
+jackson-annotations = { group = "com.fasterxml.jackson.core", name = "jackson-annotations", version.ref = "jacksonAnnotations" }
+jackson-module-kotlin = { group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version.ref = "jackson" }
+jackson-datatype-jsr310 = { group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version.ref = "jackson" }
+jackson-databind = { group = "com.fasterxml.jackson.core", name = "jackson-databind", version.ref = "jackson" }
+jackson-dataformat-yaml = { group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version.ref = "jackson" }
 
 # Test
 byte-buddy = { group = "net.bytebuddy", name = "byte-buddy", version.ref = "bytebuddy" }
@@ -27,7 +44,18 @@ byte-buddy-agent = { group = "net.bytebuddy", name = "byte-buddy-agent", version
 coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinTest" }
 mockk-test = { group = "io.mockk", name = "mockk", version.ref = "mockkTest" }
 kotest-assertions = { group = "io.kotest", name = "kotest-assertions-core-jvm", version.ref = "kotestAssertions" }
-
+junit-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit5" }
+junit-jupiter-params = { group = "org.junit.jupiter", name = "junit-jupiter-params", version.ref = "junit5" }
+junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit5" }
+junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junit5" }
+junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher", version.ref = "junit5" }
+junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
+opentest4j = { group = "org.opentest4j", name = "opentest4j", version.ref = "opentest4j" }
+kodein-di = { group = "org.kodein.di", name = "kodein-di-jvm", version.ref = "kodein" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 
 [bundles]
 kTest = ["coroutines-core", "coroutines-test", "mockk-test", "kotest-assertions"]
+jackson = ["jackson-core", "jackson-annotations", "jackson-module-kotlin", "jackson-datatype-jsr310", "jackson-databind", "jackson-dataformat-yaml"]
+junit5 = ["junit-jupiter-api", "junit-jupiter-params"]
+junit5Runtime = ["junit-jupiter-engine", "junit-platform-launcher"]
