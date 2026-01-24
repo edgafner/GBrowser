@@ -38,7 +38,7 @@ class GBrowserService : SerializablePersistentStateComponent<GBrowserService.Set
                            var isDebugEnabled: Boolean = false,
                            var debugPort: Int = if (GBrowserUtil.getJCEFDebugPort() == -1) 9222 else GBrowserUtil.getJCEFDebugPort(),
                            var isProtocolHidden: Boolean = true,
-                           var isDragAndDropEnabled: Boolean = true,
+                           var isTabsSplittingAllowed: Boolean = true,
                            var isDevToolsInDialog: Boolean = false,
                            var theme: String = GBrowserTheme.FOLLOW_IDE.name,
                            var historyItemsToKeep: Int = 20,
@@ -175,11 +175,11 @@ class GBrowserService : SerializablePersistentStateComponent<GBrowserService.Set
       }
     }
 
-  var isDragAndDropEnabled: Boolean
-    get() = state.isDragAndDropEnabled
+  var isTabsSplittingAllowed: Boolean
+    get() = state.isTabsSplittingAllowed
     set(value) {
       updateStateAndEmit {
-        it.copy(isDragAndDropEnabled = value)
+        it.copy(isTabsSplittingAllowed = value)
       }
     }
 

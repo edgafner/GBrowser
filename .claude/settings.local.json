@@ -18,7 +18,8 @@
       "Bash(./codecov:*)",
       "Bash(gh repo view:*)",
       "Bash(gh pr diff:*)",
-      "mcp__ide__getDiagnostics"
+      "mcp__ide__getDiagnostics",
+      "WebFetch(domain:repo1.maven.org)"
     ],
     "deny": []
   },

@@ -278,15 +278,15 @@ class GBrowserServiceTest {
   }
 
   @Test
-  fun `test isDragAndDropEnabled state serialization`() = runTest {
-    service.isDragAndDropEnabled = false
+  fun `test isTabsSplittingAllowed state serialization`() = runTest {
+    service.isTabsSplittingAllowed = false
     val state = service.getState()
     val element = serialize(state)!!
     val xml = JDOMUtil.write(element)
 
     Assertions.assertEquals(
       """<state><![CDATA[{
-  "isDragAndDropEnabled": false
+  "isTabsSplittingAllowed": false
 }]]></state>""".trimIndent(), xml
     )
   }
