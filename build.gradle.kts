@@ -15,7 +15,7 @@ plugins {
   alias(libs.plugins.intelliJPlatform)
   alias(libs.plugins.changelog)
   alias(libs.plugins.qodana)
-  kotlin("plugin.serialization") version "2.3.0"
+  alias(libs.plugins.kotlinx.serialization)
   alias(libs.plugins.kover)
   idea
 }
@@ -64,8 +64,8 @@ dependencies { // IntelliJ Platform dependencies
 
   intellijPlatform {
     val platformVersion = providers.gradleProperty("platformVersion")
-
-    create(IntelliJPlatformType.IntellijIdeaUltimate, platformVersion) {
+    val platformType = providers.gradleProperty("platformType")
+    create(platformType, platformVersion) {
       useInstaller = false
     }
     bundledPlugins(providers.gradleProperty("platformBundledPlugins").map { it.split(',') })
@@ -82,40 +82,32 @@ dependencies { // IntelliJ Platform dependencies
     testFramework(TestFrameworkType.Starter, configurationName = "uiTestImplementation")
   }
 
-  // Implementation dependencies
-  implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.21.0") { isTransitive = false }
-  implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.21.0") { isTransitive = false }
-  implementation("com.fasterxml.jackson.core:jackson-databind:2.21.0") { isTransitive = false }
-  implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.21.0") { isTransitive = false }
-  compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.10.0")
+    // Implementation dependencies
+  implementation(libs.bundles.jackson) { isTransitive = false }
+  compileOnly(libs.kotlinx.serialization.json)
 
 
   // Test dependencies
   // ByteBuddy 1.18.4 for Java 25 support (overrides MockK's transitive dependency)
-  testImplementation("net.bytebuddy:byte-buddy:1.18.4")
-  testImplementation("net.bytebuddy:byte-buddy-agent:1.18.4")
-  testRuntimeOnly("junit:junit:4.13.2")
+  testImplementation(libs.byte.buddy)
+  testImplementation(libs.byte.buddy.agent)
+  testRuntimeOnly(libs.junit4)
   testImplementation(libs.bundles.kTest)
-  testImplementation("org.opentest4j:opentest4j:1.3.0")
-  testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
-  testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
-
-  // Add JUnit 5 dependencies for tests
-  testImplementation("org.junit.jupiter:junit-jupiter:6.0.2")
-  testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.0.2")
+  testImplementation(libs.opentest4j)
+  testImplementation(libs.bundles.junit5)
+  testRuntimeOnly(libs.bundles.junit5Runtime)
 
   // UI Test dependencies
   // ByteBuddy 1.18.4 for Java 25 support (overrides MockK's transitive dependency)
-  uiTestImplementation("net.bytebuddy:byte-buddy:1.18.4")
-  uiTestImplementation("net.bytebuddy:byte-buddy-agent:1.18.4")
-  uiTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
-  uiTestImplementation("org.kodein.di:kodein-di-jvm:7.30.0")
-  uiTestImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.10.0")
+  uiTestImplementation(libs.byte.buddy)
+  uiTestImplementation(libs.byte.buddy.agent)
+  uiTestImplementation(libs.coroutines.core)
+  uiTestImplementation(libs.kodein.di)
   uiTestImplementation(libs.bundles.kTest)
 
   // Add JUnit 5 dependencies explicitly
-  uiTestImplementation("org.junit.jupiter:junit-jupiter:6.0.2")
-  uiTestRuntimeOnly("org.junit.platform:junit-platform-launcher:6.0.2")
+  uiTestImplementation(libs.junit.jupiter)
+  uiTestRuntimeOnly(libs.junit.platform.launcher)
 }
 
 kotlin {
@@ -164,6 +156,8 @@ intellijPlatform {
 
     ideaVersion {
       sinceBuild = providers.gradleProperty("pluginSinceBuild")
+      untilBuild = providers.gradleProperty("pluginUntilBuild")
+
     }
   }
 
