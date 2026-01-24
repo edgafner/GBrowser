@@ -96,7 +96,7 @@ class GBrowserToolWindowFactory : ToolWindowFactory, DumbAware, ContentManagerLi
     (toolWindow as? ToolWindowEx)?.updateContentUi()
 
     toolWindow.component.putClientProperty(ToolWindowContentUi.DONT_HIDE_TOOLBAR_IN_HEADER, true)
-    toolWindow.setTabsSplittingAllowed(myGBrowserService.isDragAndDropEnabled)
+    toolWindow.setTabsSplittingAllowed(myGBrowserService.isTabsSplittingAllowed)
 
     project.messageBus.connect(toolWindow.disposable).subscribe(
       ToolWindowManagerListener.TOPIC, object : ToolWindowManagerListener {
@@ -207,7 +207,7 @@ class GBrowserToolWindowFactory : ToolWindowFactory, DumbAware, ContentManagerLi
   private fun addSettingsListener(toolWindow: ToolWindow) {
     myGBrowserService.addListener { state: GBrowserService.SettingsState ->
       toolWindow.component.putClientProperty("HideIdLabel", state.hideIdLabel.toString())
-      toolWindow.setTabsSplittingAllowed(state.isDragAndDropEnabled)
+      toolWindow.setTabsSplittingAllowed(state.isTabsSplittingAllowed)
       toolWindow.contentManager.contents.forEach { content ->
         content.putUserData(ToolWindow.SHOW_CONTENT_ICON, state.isTabIconVisible)
       }
