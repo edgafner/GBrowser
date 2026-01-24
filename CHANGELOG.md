@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2026.1.1] - 2026-01-23
+
 ### Added
 
 - 🚀 Support for the latest 2026.1
@@ -499,7 +501,8 @@
 
 -- First Jetbrains Public
 
-[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2025.3.9...HEAD
+[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2026.1.1...HEAD
+[2026.1.1]: https://github.com/edgafner/GBrowser/compare/v2025.3.9...v2026.1.1
 [2025.3.9]: https://github.com/edgafner/GBrowser/compare/v2025.3.7...v2025.3.9
 [2025.3.7]: https://github.com/edgafner/GBrowser/compare/v2025.3.5...v2025.3.7
 [2025.3.5]: https://github.com/edgafner/GBrowser/compare/v2025.3.4...v2025.3.5
