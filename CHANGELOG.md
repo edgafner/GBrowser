@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Added
+
+- 🚀 Support for the latest 2026.1
+- 🚀 Changelog and Gradle platform updated version
+
 ## [2026.1.1] - 2026-01-23
 
 ### Added
