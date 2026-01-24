@@ -7,7 +7,7 @@ qodana = "2025.3.1"
 mockkTest = "1.14.7"
 bytebuddy = "1.18.4"
 kotlinTest = "1.10.2"
-kotestAssertions = "6.1.0"
+kotestAssertions = "6.1.1"
 
 
 [plugins]
