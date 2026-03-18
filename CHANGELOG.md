@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2026.1.4] - 2026-03-18
+
 ### Changed
 
 - 🚀 Changelog and Gradle platform updated version
@@ -518,7 +520,8 @@
 
 -- First Jetbrains Public
 
-[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2026.1.3...HEAD
+[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2026.1.4...HEAD
+[2026.1.4]: https://github.com/edgafner/GBrowser/compare/v2026.1.3...v2026.1.4
 [2026.1.3]: https://github.com/edgafner/GBrowser/compare/v2026.1.2...v2026.1.3
 [2026.1.2]: https://github.com/edgafner/GBrowser/compare/v2026.1.1...v2026.1.2
 [2026.1.1]: https://github.com/edgafner/GBrowser/compare/v2025.3.9...v2026.1.1
