@@ -37,9 +37,9 @@ class GBrowserMobileToggleActionTest {
   }
 
   @Test
-  fun `test action is thread safe and runs on EDT`() {
-    // Device emulation UI changes must happen on EDT
-    assertEquals(ActionUpdateThread.EDT, action.getActionUpdateThread())
+  fun `test action is thread safe and runs on BGT`() {
+    // Device emulation action update runs on BGT to avoid blocking the UI thread
+    assertEquals(ActionUpdateThread.BGT, action.getActionUpdateThread())
   }
 
   @Test

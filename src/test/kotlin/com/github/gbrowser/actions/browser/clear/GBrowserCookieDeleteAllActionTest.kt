@@ -41,9 +41,9 @@ class GBrowserCookieDeleteAllActionTest {
   }
 
   @Test
-  fun `test action is thread safe and runs on EDT`() {
-    // Cookie deletion runs on EDT as it interacts with JCEF browser
-    assertEquals(ActionUpdateThread.EDT, action.actionUpdateThread)
+  fun `test action is thread safe and runs on BGT`() {
+    // Cookie deletion action runs on BGT to avoid blocking the UI thread
+    assertEquals(ActionUpdateThread.BGT, action.actionUpdateThread)
   }
 
   @Test

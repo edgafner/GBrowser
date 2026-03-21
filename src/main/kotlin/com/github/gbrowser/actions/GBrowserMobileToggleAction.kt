@@ -47,7 +47,7 @@ class GBrowserMobileToggleAction : ToggleAction(
     }
   }
 
-  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
   override fun isSelected(e: AnActionEvent): Boolean {
     val project = e.project

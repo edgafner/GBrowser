@@ -15,7 +15,7 @@ class GBrowserToggleToolbarAction : AnAction(), DumbAware {
     e.presentation.isEnabled = contentManager?.isEmpty?.not() == true
   }
 
-  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
   override fun actionPerformed(e: AnActionEvent) {
     GBrowserToolWindowUtil.getSelectedBrowserPanel(e)?.let { panel ->

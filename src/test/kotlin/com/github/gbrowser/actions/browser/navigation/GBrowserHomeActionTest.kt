@@ -42,9 +42,9 @@ class GBrowserHomeActionTest {
   }
 
   @Test
-  fun `test action is thread safe and runs on EDT`() {
-    // Home action runs on EDT as it may trigger UI updates
-    assertEquals(ActionUpdateThread.EDT, action.actionUpdateThread)
+  fun `test action is thread safe and runs on BGT`() {
+    // Home action runs on BGT to avoid blocking the UI thread
+    assertEquals(ActionUpdateThread.BGT, action.actionUpdateThread)
   }
 
   @Test

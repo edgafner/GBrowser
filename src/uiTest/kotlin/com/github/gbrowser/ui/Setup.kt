@@ -1,7 +1,6 @@
 package com.github.gbrowser.ui
 
 import com.intellij.ide.starter.buildTool.GradleBuildTool
-import com.intellij.ide.starter.community.model.BuildType
 import com.intellij.ide.starter.di.di
 import com.intellij.ide.starter.ide.IDETestContext
 import com.intellij.ide.starter.ide.IdeProductProvider
@@ -32,7 +31,7 @@ class Setup {
      */
     fun setupTestContext(hyphenateWithClass: String): IDETestContext {
 
-      val testCase = TestCase(IdeProductProvider.IU, NoProject).useEAP()
+      val testCase = TestCase(IdeProductProvider.IU, NoProject).useRC()
       
       return Starter.newContext(testName = hyphenateWithClass, testCase = testCase).apply {
         val pluginPath = System.getProperty("path.to.build.plugin")

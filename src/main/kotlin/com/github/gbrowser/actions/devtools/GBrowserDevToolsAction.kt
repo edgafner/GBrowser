@@ -27,11 +27,10 @@ class GBrowserDevToolsAction : AnAction() {
 
     e.presentation.isEnabled = panel.hasContent()
     e.presentation.icon = iconActive
-    e.presentation.text = "Open DevTools"
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread {
-    return ActionUpdateThread.EDT
+    return ActionUpdateThread.BGT
   }
 
   override fun actionPerformed(e: AnActionEvent) {

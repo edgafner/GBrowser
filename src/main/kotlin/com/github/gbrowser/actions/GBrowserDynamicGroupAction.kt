@@ -26,5 +26,5 @@ class GBrowserDynamicGroupAction(private val actionItems: List<AnAction>, val ic
         return actionItems.toTypedArray()
     }
 
-    override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
+    override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 }

@@ -15,7 +15,7 @@ class GBrowserZoomResetAction : AnAction(), DumbAware {
     e.presentation.isEnabled = GBrowserToolWindowUtil.getSelectedBrowserPanel(e)?.hasContent() == true
   }
 
-  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
   override fun actionPerformed(e: AnActionEvent) {
     GBrowserToolWindowUtil.getSelectedBrowserPanel(e)?.zoomReset()

@@ -39,9 +39,9 @@ class GBrowserDevToolsActionTest {
   }
 
   @Test
-  fun `test action is thread safe and runs on EDT`() {
-    // DevTools action runs on EDT for UI updates
-    assertEquals(ActionUpdateThread.EDT, action.actionUpdateThread)
+  fun `test action is thread safe and runs on BGT`() {
+    // DevTools action runs on BGT to avoid blocking the UI thread
+    assertEquals(ActionUpdateThread.BGT, action.actionUpdateThread)
   }
 
 }

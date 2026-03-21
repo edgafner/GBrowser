@@ -14,7 +14,7 @@ class GBrowserCloseTabAction : AnAction(), DumbAware {
     isEnabledInModalContext = true
   }
 
-  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabled = true

@@ -41,9 +41,9 @@ class GBrowserStopLoadActionTest {
   }
 
   @Test
-  fun `test action is thread safe and runs on EDT`() {
-    // Stop load actions run on EDT as they trigger UI updates
-    assertEquals(ActionUpdateThread.EDT, action.actionUpdateThread)
+  fun `test action is thread safe and runs on BGT`() {
+    // Stop load actions run on BGT to avoid blocking the UI thread
+    assertEquals(ActionUpdateThread.BGT, action.actionUpdateThread)
   }
 
   @Test

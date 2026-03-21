@@ -41,9 +41,9 @@ class GBrowserRefreshActionTest {
   }
 
   @Test
-  fun `test action is thread safe and runs on EDT`() {
-    // Refresh actions run on EDT as they trigger UI updates
-    assertEquals(ActionUpdateThread.EDT, action.actionUpdateThread)
+  fun `test action is thread safe and runs on BGT`() {
+    // Refresh actions run on BGT to avoid blocking the UI thread
+    assertEquals(ActionUpdateThread.BGT, action.actionUpdateThread)
   }
 
   @Test
