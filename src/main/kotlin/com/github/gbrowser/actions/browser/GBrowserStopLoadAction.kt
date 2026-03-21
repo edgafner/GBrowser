@@ -15,7 +15,7 @@ class GBrowserStopLoadAction : AnAction(), DumbAware {
 
   }
 
-  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
   override fun actionPerformed(e: AnActionEvent) {
     GBrowserToolWindowUtil.getSelectedBrowserPanel(e)?.stopLoad()

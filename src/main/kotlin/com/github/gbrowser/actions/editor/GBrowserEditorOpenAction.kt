@@ -19,7 +19,7 @@ class GBrowserEditorOpenAction : AnAction(), DumbAware {
     e.presentation.isEnabledAndVisible = GBrowserUtil.getSelectedText(e) != null
   }
 
-  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
   override fun actionPerformed(anActionEvent: AnActionEvent) {
     GBrowserToolWindowUtil.createContentTabAndShow(anActionEvent, GBrowserUtil.GBROWSER_TOOL_WINDOW_ID,

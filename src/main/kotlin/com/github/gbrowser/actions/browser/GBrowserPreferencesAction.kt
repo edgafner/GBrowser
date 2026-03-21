@@ -21,7 +21,7 @@ class GBrowserPreferencesAction : AnAction(), DumbAware {
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread {
-    return ActionUpdateThread.EDT
+    return ActionUpdateThread.BGT
   }
 
   override fun actionPerformed(e: AnActionEvent) {

@@ -43,7 +43,7 @@ class GBrowserBookmarkGroupAction : ActionGroup(GBrowserBundle.message("group.ac
     templatePresentation.icon = GBrowserIcons.BOOKMARK_MANAGER
   }
 
-  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
   override fun getChildren(e: AnActionEvent?): Array<AnAction> {
     val project = e?.project ?: return emptyArray()

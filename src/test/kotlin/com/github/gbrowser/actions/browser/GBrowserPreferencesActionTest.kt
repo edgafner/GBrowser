@@ -42,9 +42,9 @@ class GBrowserPreferencesActionTest {
   }
 
   @Test
-  fun `test action is thread safe and runs on EDT`() {
-    // Preferences action runs on EDT as it opens UI dialogs
-    assertEquals(ActionUpdateThread.EDT, action.actionUpdateThread)
+  fun `test action is thread safe and runs on BGT`() {
+    // Preferences action runs on BGT to avoid blocking the UI thread
+    assertEquals(ActionUpdateThread.BGT, action.actionUpdateThread)
   }
 
   @Test

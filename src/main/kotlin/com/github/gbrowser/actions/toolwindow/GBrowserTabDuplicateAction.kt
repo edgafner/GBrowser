@@ -11,7 +11,7 @@ import com.intellij.openapi.project.DumbAware
 
 class GBrowserTabDuplicateAction : AnAction(), DumbAware {
 
-  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabled = GBrowserToolWindowUtil.getSelectedBrowserPanel(e)?.hasContent() == true

@@ -43,9 +43,9 @@ class GBrowserBookmarkAddActionTest {
   }
 
   @Test
-  fun `test action is thread safe and runs on EDT`() {
-    // Bookmark actions run on EDT as they update UI presentation and interact with services
-    assertEquals(ActionUpdateThread.EDT, action.actionUpdateThread)
+  fun `test action is thread safe and runs on BGT`() {
+    // Bookmark actions run on BGT to avoid blocking the UI thread
+    assertEquals(ActionUpdateThread.BGT, action.actionUpdateThread)
   }
 
   @Test

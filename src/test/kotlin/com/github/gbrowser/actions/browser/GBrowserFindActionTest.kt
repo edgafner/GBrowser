@@ -27,9 +27,9 @@ class GBrowserFindActionTest {
   }
 
   @Test
-  fun `test action runs on EDT thread`() {
-    // Find action should run on EDT for UI updates
-    assertEquals(ActionUpdateThread.EDT, action.actionUpdateThread)
+  fun `test action runs on BGT thread`() {
+    // Find action runs on BGT to avoid blocking the UI thread
+    assertEquals(ActionUpdateThread.BGT, action.actionUpdateThread)
   }
 
   @Test

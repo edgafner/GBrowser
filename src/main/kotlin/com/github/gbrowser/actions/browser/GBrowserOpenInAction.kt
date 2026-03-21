@@ -24,7 +24,7 @@ class GBrowserOpenInAction : AnAction(), DumbAware {
 
   }
 
-  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
   override fun actionPerformed(e: AnActionEvent) {
     GBrowserToolWindowUtil.getSelectedBrowserPanel(e)?.getCurrentUrl()?.let { BrowserUtil.browse(it) }

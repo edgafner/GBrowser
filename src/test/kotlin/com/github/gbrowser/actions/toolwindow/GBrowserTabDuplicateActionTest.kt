@@ -42,9 +42,9 @@ class GBrowserTabDuplicateActionTest {
   }
 
   @Test
-  fun `test action is thread safe and runs on EDT`() {
-    // Tab management actions run on EDT as they modify UI state
-    assertEquals(ActionUpdateThread.EDT, action.actionUpdateThread)
+  fun `test action is thread safe and runs on BGT`() {
+    // Tab management actions run on BGT to avoid blocking the UI thread
+    assertEquals(ActionUpdateThread.BGT, action.actionUpdateThread)
   }
 
   @Test
