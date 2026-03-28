@@ -37,9 +37,9 @@ jobs:
 
       # Setup Gradle
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
         with:
-          cache-read-only: true
+          cache-disabled: true
       
       # Update the Unreleased section with the current release note
       - name: Patch Changelog

@@ -48,7 +48,7 @@ jobs:
       # Validate wrapper
       - name: Gradle Wrapper Validation
         if: steps.check_changelog.outputs.is_changelog != 'true'
-        uses: gradle/actions/wrapper-validation@v5
+        uses: gradle/actions/wrapper-validation@v6
 
       # Set up the Java environment for the next steps
       - name: Setup JBR 25
@@ -65,8 +65,9 @@ jobs:
       # Setup Gradle with cache for main branch builds
       - name: Setup Gradle
         if: steps.check_changelog.outputs.is_changelog != 'true'
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
         with:
+          cache-disabled: true
           cache-read-only: false
           gradle-home-cache-includes: |
             caches
@@ -144,7 +145,7 @@ jobs:
 
       # Setup Gradle with cache fallback strategy
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
         with:
           cache-read-only: false
           gradle-home-cache-includes: |
@@ -176,7 +177,7 @@ jobs:
 
       # Upload the Kover report to CodeCov
       - name: Upload Code Coverage Report
-        uses: codecov/codecov-action@v5.5.3
+        uses: codecov/codecov-action@v6.0.0
         with:
           files: ${{ github.workspace }}/build/reports/kover/report.xml
           flags: unittests
@@ -229,7 +230,7 @@ jobs:
 
       # Setup Gradle with cache strategy
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
         with:
           cache-read-only: false
           gradle-home-cache-includes: |
@@ -290,7 +291,7 @@ jobs:
 
       # Setup Gradle with cache strategy
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
         with:
           cache-read-only: false
           gradle-home-cache-includes: |
@@ -336,7 +337,7 @@ jobs:
           path: ~/
 
       - name: Generate Test Report
-        uses: dorny/test-reporter@v2.6.0
+        uses: dorny/test-reporter@v3.0.0
         if: success() || failure()
         with:
           name: Test Report Dashboard
@@ -372,7 +373,7 @@ jobs:
 
       # Setup Gradle with cache strategy
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
         with:
           cache-read-only: false
           gradle-home-cache-includes: |
