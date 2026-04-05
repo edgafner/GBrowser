@@ -26,7 +26,7 @@ object GBrowserToolWindowUtil {
 
   fun getSelectedBrowserPanel(project: Project): GBrowserToolWindowBrowser? {
     val toolWindow = getToolWindow(project, GBrowserUtil.GBROWSER_TOOL_WINDOW_ID) ?: return null
-    val selectedContent = toolWindow.contentManager.selectedContent ?: return null
+    val selectedContent = toolWindow.contentManagerIfCreated?.selectedContent ?: return null
     return selectedContent.component as? GBrowserToolWindowBrowser
   }
 
@@ -98,13 +98,13 @@ object GBrowserToolWindowUtil {
 
   fun getContentManager(project: Project?, id: String): ContentManager? {
     val toolWindowManager = getToolWindowManager(project)
-    return toolWindowManager?.getToolWindow(id)?.contentManager
+    return toolWindowManager?.getToolWindow(id)?.contentManagerIfCreated
   }
 
   fun getAllBrowsers(project: Project): List<GCefBrowser> {
     val browsers = mutableListOf<GCefBrowser>()
     val toolWindow = getToolWindow(project, GBrowserUtil.GBROWSER_TOOL_WINDOW_ID)
-    toolWindow?.contentManager?.contents?.forEach { content ->
+    toolWindow?.contentManagerIfCreated?.contents?.forEach { content ->
       val panel = content.component as? GBrowserToolWindowBrowser
       panel?.let {
         browsers.add(it.getBrowser())
