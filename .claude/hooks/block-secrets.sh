@@ -16,7 +16,7 @@ case "$file_path" in
   *credentials.json|*credentials.xml|*credentials.yaml|*credentials.yml)
     echo "BLOCKED: Cannot edit credentials file '$file_path'" >&2
     exit 2 ;;
-  **/signing/**|*.keystore|*.jks|*.p12|*.pfx)
+  */signing/*|*.keystore|*.jks|*.p12|*.pfx)
     echo "BLOCKED: Cannot edit signing file '$file_path'" >&2
     exit 2 ;;
   *secret.key|*secret.pem|*.secret)

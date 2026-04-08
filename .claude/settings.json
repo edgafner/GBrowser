@@ -59,7 +59,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "jq -r '.tool_input.file_path // .tool_input.path // empty' | { read file; if [[ \"$file\" == *.md ]] && [[ \"$file\" != *CLAUDE.md ]] && [[ \"$file\" != *.claude/* ]]; then echo '{\"block\": true, \"feedback\": \"Blocked: Do not create/edit markdown files outside .claude/ directory. Exception: CLAUDE.md files are allowed.\"}'; exit 2; fi; }"
+            "command": "jq -r '.tool_input.file_path // .tool_input.path // empty' | { read -r file; if [[ \"$file\" == *.md ]] && [[ \"$file\" != *CLAUDE.md ]] && [[ \"$file\" != *.claude/* ]]; then printf '%s' '{\"block\": true, \"feedback\": \"Blocked: Do not create/edit markdown files outside .claude/ directory. Exception: CLAUDE.md files are allowed.\"}'; exit 2; fi; }"
           }
         ]
       },
@@ -69,7 +69,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "jq -r '.tool_input.command // empty' | { read cmd; if echo \"$cmd\" | grep -qE '\\./gradlew' && ! echo \"$cmd\" | grep -q '\\-\\-no-scan'; then echo '{\"block\": true, \"feedback\": \"Blocked: All Gradle commands must include --no-scan flag.\"}'; exit 2; fi; }"
+            "command": "jq -r '.tool_input.command // empty' | { read -r cmd; if printf '%s' \"$cmd\" | grep -qE '(\\./)?gradlew' && ! printf '%s' \"$cmd\" | grep -q '\\-\\-no-scan'; then printf '%s' '{\"block\": true, \"feedback\": \"Blocked: All Gradle commands must include --no-scan flag.\"}'; exit 2; fi; }"
           }
         ]
       },
@@ -79,7 +79,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "jq -r '.tool_input.command // empty' | { read cmd; if echo \"$cmd\" | grep -qE '(git reset --hard|git clean -fd|git filter-branch)'; then echo '{\"decision\": \"ask\", \"message\": \"Destructive git operation detected. Confirm before proceeding.\"}'; fi; }"
+            "command": "jq -r '.tool_input.command // empty' | { read -r cmd; if printf '%s' \"$cmd\" | grep -qE '(git reset --hard|git clean -fd|git filter-branch)'; then printf '%s' '{\"decision\": \"ask\", \"message\": \"Destructive git operation detected. Confirm before proceeding.\"}'; fi; }"
           }
         ]
       }
