@@ -1,0 +1,39 @@
+# Custom dependency submission workflow that sets up JBR 25 before running Gradle.
+# This replaces GitHub's "Automatic Dependency Submission" which fails when the
+# foojay toolchain resolver API is unavailable, because it doesn't pre-install JBR 25.
+#
+# After adding this workflow, disable the automatic dependency submission in:
+# Settings > Code security > Dependency graph > "Automatic dependency submission"
+
+name: Dependency Submission
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write
+
+jobs:
+  dependency-submission:
+    name: Submit dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch Sources
+        uses: actions/checkout@v6
+
+      - name: Setup JBR 25
+        uses: actions/setup-java@v5.2.0
+        with:
+          distribution: 'jetbrains'
+          java-version: 25
+          java-package: 'jdk+jcef'
+          check-latest: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Submit Dependency Graph
+        uses: gradle/actions/dependency-submission@v6

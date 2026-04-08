@@ -12,34 +12,35 @@ experience without leaving the development environment.
 ## Build and Development Commands
 
 ```bash
+# Quick compile check (fastest feedback)
+./gradlew compileKotlin --no-scan
+
 # Build the plugin
-./gradlew buildPlugin
+./gradlew buildPlugin --no-scan
 
 # Run tests (excluding UI tests)
-./gradlew test
-
+./gradlew test --no-scan
 
 # Run all tests including UI tests
-./gradlew check
-
+./gradlew check --no-scan
 
 # Run a specific test class
-./gradlew test --tests "com.gafner.giv.MyTestClass"
+./gradlew test --no-scan --tests "com.github.gbrowser.MyTestClass"
 
 # Run a specific test method
-./gradlew test --tests "com.gafner.giv.MyTestClass.myTestMethod"
+./gradlew test --no-scan --tests "com.github.gbrowser.MyTestClass.myTestMethod"
 
 # Clean and rebuild
-./gradlew clean buildPlugin
+./gradlew clean buildPlugin --no-scan
 
 # Verify plugin compatibility with different IDE versions
-./gradlew runPluginVerifier
+./gradlew runPluginVerifier --no-scan
 
 # Generate code coverage report
-./gradlew koverHtmlReport
+./gradlew koverHtmlReport --no-scan
 
 # Check for dependency updates
-./gradlew dependencyUpdates
+./gradlew dependencyUpdates --no-scan
 ```
 
 ## Architecture Overview
@@ -95,8 +96,8 @@ experience without leaving the development environment.
 ### Important Development Notes
 
 1. **JCEF Requirements**: Development and testing require JBR with JCEF support
-2. **Platform Version**: Currently targeting IntelliJ 252 EAP (2025.2)
-3. **Kotlin Version**: Uses Kotlin 2.2.0 with JVM 21
+2. **Platform Version**: Currently targeting IntelliJ 261 EAP-SNAPSHOT
+3. **Kotlin Version**: Uses Kotlin 2.3.20 with JVM 25
 4. **Threading**: Actions specify execution threads (EDT for UI, BGT for background)
 5. **Memory**: IDE runs with 4GB heap, tests with 2GB heap
 6. **Caching**: Uses Caffeine cache for favicons and webpage titles with expiration
@@ -119,6 +120,8 @@ experience without leaving the development environment.
 - Safe URL handling with validation utilities
 - DevTools accessible via right-click context menu or dedicated action
 
-## Personal Memories
+## Gotchas
 
-- Memorize the current request I need to restart the IDE
+- Use `contentManagerIfCreated` (not `contentManager`) for read-only tool window access outside EDT — `contentManager` lazily initializes and requires EDT
+- Never catch `CancellationException` or `ProcessCanceledException` without rethrowing
+- `createContentTab` intentionally uses `contentManager` (not `contentManagerIfCreated`) because it runs inside `invokeLater` on EDT and needs the content manager initialized
