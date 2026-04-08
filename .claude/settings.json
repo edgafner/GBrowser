@@ -1,0 +1,99 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/block-secrets.sh",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "if": "Bash(git commit *)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/no-commit-on-main.sh",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "if": "Bash(git push *)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/no-force-push.sh",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "if": "Bash(git push *)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/verify-before-push.sh",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "if": "Bash(gh issue comment *)|Bash(gh pr comment *)|Bash(gh issue edit *)|Bash(gh issue close *)|Bash(gh issue reopen *)|Bash(gh issue label *)|Bash(gh issue create *)|Bash(gh pr edit *)|Bash(gh pr close *)|Bash(gh pr reopen *)|Bash(gh pr label *)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"decision\": \"ask\", \"message\": \"You are about to post a PUBLIC comment on GitHub. Did Jonathan explicitly ask you to post this?\"}'"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // .tool_input.path // empty' | { read -r file; if [[ \"$file\" == *.md ]] && [[ \"$file\" != *CLAUDE.md ]] && [[ \"$file\" != *.claude/* ]]; then printf '%s' '{\"block\": true, \"feedback\": \"Blocked: Do not create/edit markdown files outside .claude/ directory. Exception: CLAUDE.md files are allowed.\"}'; exit 2; fi; }"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "if": "Bash(./gradlew *)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.command // empty' | { read -r cmd; if printf '%s' \"$cmd\" | grep -qE '(\\./)?gradlew' && ! printf '%s' \"$cmd\" | grep -q '\\-\\-no-scan'; then printf '%s' '{\"block\": true, \"feedback\": \"Blocked: All Gradle commands must include --no-scan flag.\"}'; exit 2; fi; }"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "if": "Bash(git *)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.command // empty' | { read -r cmd; if printf '%s' \"$cmd\" | grep -qE '(git reset --hard|git clean -fd|git filter-branch)'; then printf '%s' '{\"decision\": \"ask\", \"message\": \"Destructive git operation detected. Confirm before proceeding.\"}'; fi; }"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Reminder: Use --no-scan with all Gradle commands. NEVER use gh issue/pr comment on the PUBLIC issue tracker without explicit permission. NEVER commit to main directly.'"
+          }
+        ]
+      }
+    ]
+  }
+}

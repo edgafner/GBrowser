@@ -82,7 +82,7 @@ dependencies { // IntelliJ Platform dependencies
     testFramework(TestFrameworkType.Starter, configurationName = "uiTestImplementation")
   }
 
-    // Implementation dependencies
+  // Implementation dependencies
   implementation(libs.bundles.jackson) { isTransitive = false }
   compileOnly(libs.kotlinx.serialization.json)
 
@@ -117,9 +117,9 @@ kotlin {
   }
 
   compilerOptions {
-    apiVersion.set(KotlinVersion.KOTLIN_2_2)
+    apiVersion.set(KotlinVersion.KOTLIN_2_3)
     jvmTarget.set(JvmTarget.JVM_25)
-    languageVersion.set(KotlinVersion.KOTLIN_2_2)
+    languageVersion.set(KotlinVersion.KOTLIN_2_3)
     freeCompilerArgs.addAll(
       "-Xjvm-default=all",
       "-opt-in=kotlinx.serialization.ExperimentalSerializationApi"
@@ -163,8 +163,7 @@ intellijPlatform {
 
   pluginVerification {
     ides {
-      create(IntelliJPlatformType.IntellijIdeaUltimate, "261-EAP-SNAPSHOT")
-
+      recommended()
     }
   }
 
