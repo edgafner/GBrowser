@@ -31,8 +31,9 @@ class Setup {
      */
     fun setupTestContext(hyphenateWithClass: String): IDETestContext {
 
-      val testCase = TestCase(IdeProductProvider.IU, NoProject).useRC()
-      
+      // Use useRelease() to run against the latest stable release build
+      val testCase = TestCase(IdeProductProvider.IU, NoProject).useRelease()
+
       return Starter.newContext(testName = hyphenateWithClass, testCase = testCase).apply {
         val pluginPath = System.getProperty("path.to.build.plugin")
         PluginConfigurator(this).installPluginFromPath(Paths.get(pluginPath))
