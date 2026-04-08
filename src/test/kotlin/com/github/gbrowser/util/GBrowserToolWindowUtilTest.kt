@@ -61,7 +61,7 @@ class GBrowserToolWindowUtilTest {
     val mockContentManager = mockk<ContentManager>()
 
     every { mockEvent.getData(CommonDataKeys.PROJECT) } returns mockProject
-    every { mockToolWindow.contentManager } returns mockContentManager
+    every { mockToolWindow.contentManagerIfCreated } returns mockContentManager
     every { mockContentManager.selectedContent } returns null
 
     mockkObject(GBrowserToolWindowUtil)
@@ -82,7 +82,7 @@ class GBrowserToolWindowUtilTest {
     val mockBrowserPanel = mockk<GBrowserToolWindowBrowser>()
 
     every { mockEvent.getData(CommonDataKeys.PROJECT) } returns mockProject
-    every { mockToolWindow.contentManager } returns mockContentManager
+    every { mockToolWindow.contentManagerIfCreated } returns mockContentManager
     every { mockContentManager.selectedContent } returns mockContent
     every { mockContent.component } returns mockBrowserPanel
 
@@ -161,7 +161,7 @@ class GBrowserToolWindowUtilTest {
     mockkStatic(ToolWindowManager::class)
     every { ToolWindowManager.getInstance(mockProject) } returns mockToolWindowManager
     every { mockToolWindowManager.getToolWindow("testId") } returns mockToolWindow
-    every { mockToolWindow.contentManager } returns mockContentManager
+    every { mockToolWindow.contentManagerIfCreated } returns mockContentManager
 
     val result = GBrowserToolWindowUtil.getContentManager(mockProject, "testId")
 

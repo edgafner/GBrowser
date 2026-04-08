@@ -4,7 +4,7 @@
 
 ### Fixed
 
-- 🪲 Fixed Access is allowed from Event Dispatch Thread (EDT) only
+- 🪲 Fixed "Access is allowed from Event Dispatch Thread (EDT) only" threading error
 
 ## [2026.1.5] - 2026-03-21
 
