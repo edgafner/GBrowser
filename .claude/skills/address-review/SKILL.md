@@ -68,11 +68,13 @@ Filter to only unresolved threads. This is the **primary source** for file-level
 These are comments NOT attached to specific file lines — posted on the PR body itself.
 
 **Issue comments** (bot summaries, reviewer questions):
+
 ```bash
 gh api repos/{owner}/{repo}/issues/$PR_NUMBER/comments
 ```
 
 **Review submissions** (reviewer summaries posted via GitHub's "Submit review" button):
+
 ```bash
 gh api repos/{owner}/{repo}/pulls/$PR_NUMBER/reviews
 ```
@@ -80,13 +82,15 @@ gh api repos/{owner}/{repo}/pulls/$PR_NUMBER/reviews
 > Note: `{owner}` and `{repo}` are auto-substituted by `gh` when inside a git repo.
 
 Filter to comments/reviews that contain actionable feedback. Ignore:
+
 - Bot status messages (CI reports with "all right", deployment notifications)
 - Approval-only reviews with empty body
 - "LGTM" or "looks good" comments
 
 ### Consolidating feedback
 
-Combine findings from Steps 2a and 2b into a single triage list. Step 2a covers file-level threads; Step 2b covers PR-level comments and review bodies. There should be no duplicates between them since they cover different types of feedback.
+Combine findings from Steps 2a and 2b into a single triage list. Step 2a covers file-level threads; Step 2b covers PR-level comments and review bodies. There should be no
+duplicates between them since they cover different types of feedback.
 
 ## Step 3: Classify Each Thread/Comment
 

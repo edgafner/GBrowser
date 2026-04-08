@@ -16,3 +16,6 @@ build
 /out/
 /.remember/
 .claude/settings.local.json
+.claude/CLAUDE.local.md
+.claude/todos/
+.worktrees/

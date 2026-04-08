@@ -12,6 +12,9 @@ experience without leaving the development environment.
 ## Build and Development Commands
 
 ```bash
+# Quick compile check (fastest feedback)
+./gradlew compileKotlin --no-scan
+
 # Build the plugin
 ./gradlew buildPlugin --no-scan
 

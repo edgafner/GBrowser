@@ -3,12 +3,6 @@ name: Claude Code Review
 on:
   pull_request:
     types: [ opened, synchronize, ready_for_review, reopened ]
-    # Optional: Only run on specific file changes
-    # paths:
-    #   - "src/**/*.ts"
-    #   - "src/**/*.tsx"
-    #   - "src/**/*.js"
-    #   - "src/**/*.jsx"
 
 jobs:
   claude-review:
@@ -19,105 +13,117 @@ jobs:
       github.event.pull_request.author_association != 'NONE' &&
       github.event.pull_request.draft == false &&
       github.event.pull_request.author_association != 'FIRST_TIME_CONTRIBUTOR'
-    
-    # Alternative conditions you can use:
-    # 
-    # Option 1: Only run for organization members
-    # if: |
-    #   github.event.pull_request.author_association == 'MEMBER' ||
-    #   github.event.pull_request.author_association == 'OWNER' ||
-    #   github.event.pull_request.author_association == 'COLLABORATOR'
-    #
-    # Option 2: Run for everyone except bots
-    # if: |
-    #   !endsWith(github.event.pull_request.user.login, '[bot]')
-    #
-    # Option 3: Allowlist specific users
-    # if: |
-    #   contains(fromJSON('["user1", "user2", "user3"]'), github.event.pull_request.user.login)
-    #
-    # Option 4: Skip based on PR labels
-    # if: |
-    #   !contains(github.event.pull_request.labels.*.name, 'skip-review') &&
-    #   !contains(github.event.pull_request.labels.*.name, 'dependencies')
-    
+
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: write  # Required for Claude to comment on PRs
-      issues: write         # Required for issue comments
+      pull-requests: write
+      issues: write
       id-token: write
       actions: read
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
-          fetch-depth: 0  # Fetch all history to ensure we get all commits
-          ref: ${{ github.event.pull_request.head.sha }}  # Explicitly checkout the latest PR commit
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Run Claude Code Review
         id: claude-review
-        uses: anthropics/claude-code-action@v1.0.87
+        uses: anthropics/claude-code-action@v1.0.89
         with:
+          use_sticky_comment: true
           track_progress: true
-          # Authentication - use OAuth token for Pro/Max users
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
 
-          # Optional: Specify model (defaults to Claude Sonnet 4, uncomment for Claude Opus 4)
-          # model: "claude-opus-4-20250514"
-          
-          # Direct prompt for automated review (no @claude mention needed)
           prompt: |
             Please review this pull request (#${{ github.event.pull_request.number }}) titled "${{ github.event.pull_request.title }}".
-            
-            The PR has ${{ github.event.pull_request.changed_files }} changed files with +${{ github.event.pull_request.additions }} additions and -${{ github.event.pull_request.deletions }} deletions.
-            
+
+            Repository: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+            PR Author: @${{ github.event.pull_request.user.login }}
+            Base Branch: ${{ github.event.pull_request.base.ref }}
+            Head Branch: ${{ github.event.pull_request.head.ref }}
+            Changed Files: ${{ github.event.pull_request.changed_files }}
+            Additions: +${{ github.event.pull_request.additions }}
+            Deletions: -${{ github.event.pull_request.deletions }}
+
+            ## Functionality
+            - Potential bugs or logic issues
+            - Error handling and edge cases
+            - Performance considerations
+            - Memory leaks or resource management
+
+            ## Security & Testing
+            - Security vulnerabilities or concerns
+            - Input validation
+            - Test coverage for new features
+
+            ## Documentation
+            - Code comments for complex logic
+            - CLAUDE.md compliance for project structure
+
+            Review the CLAUDE.md file in the repository for detailed project guidelines.
+            Provide constructive, helpful feedback with specific suggestions.
+
+            Use inline comments for code-specific issues via `mcp__github_inline_comment__create_inline_comment`.
+            Use `gh pr comment` for general feedback and summary.
+
+            This is a JetBrains plugin project using Kotlin. For more context about JetBrains plugin development refer to https://plugins.jetbrains.com/docs/intellij/welcome.html
+            and its subpages or in the official documentation repo: https://github.com/JetBrains/intellij-sdk-docs/tree/main/topics
+            in '.topic' and '.md' files.
+
             IMPORTANT: If you have previously reviewed this PR:
             1. First, check which of your previous suggestions have been addressed
             2. Acknowledge improvements that were made based on your feedback
             3. Identify any remaining issues that still need attention
             4. Review any new changes introduced since your last review
-            
-            Focus your review on:
-            - The specific changes made in this PR (use git diff to see actual changes)
-            - Whether previous feedback has been addressed
-            - Code quality and adherence to best practices
-            - Potential bugs or edge cases
-            - Performance implications of the changes
-            - Security considerations
-            - Whether the changes align with the PR's stated purpose
-            - Test coverage for the new/modified code
-            - Alert in case a new dependency in the plugin.xml was added.
-            
-            Be specific, constructive, and reference actual code changes in your feedback.
-            Mention specific files and line numbers when providing feedback.
-            
-            Don't alert for duplication content in the CHANGELOG.md.
 
-          # Optional: Use sticky comments to make Claude reuse the same comment on later pushes to the same PR
-          use_sticky_comment: true
-          
-          
-          # Optional: Customize review based on file types
-          # direct_prompt: |
-          #   Review this PR focusing on:
-          #   - For TypeScript files: Type safety and proper interface usage
-          #   - For API endpoints: Security, input validation, and error handling
-          #   - For React components: Performance, accessibility, and best practices
-          #   - For tests: Coverage, edge cases, and test quality
-          
-          # Optional: Different prompts for different authors
-          # direct_prompt: |
-          #   ${{ github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR' && 
-          #   'Welcome! Please review this PR from a first-time contributor. Be encouraging and provide detailed explanations for any suggestions.' ||
-          #   'Please provide a thorough code review focusing on our coding standards and best practices.' }}
-          
-          # Optional: Add specific tools for running tests or linting
-          # allowed_tools: "Bash(npm run test),Bash(npm run lint),Bash(npm run typecheck)"
-          
-          # Optional: Skip review for certain conditions
-          # if: |
-          #   !contains(github.event.pull_request.title, '[skip-review]') &&
-          #   !contains(github.event.pull_request.title, '[WIP]')
+            1. **Code Quality**:
+               - Adherence to best practices and coding standards
+               - Code readability and maintainability
+               - Proper error handling and edge cases
+               - Performance implications
+               - Security considerations
 
+            2. **Architecture & Design**:
+               - Whether changes align with JetBrains infrastructure and plugin architecture including but not limited to actions, services,
+                    extensions, persistence, tool windows, and UI components
+               - Impact on existing functionality
+               - Proper separation of concerns
+
+            3. **Testing**:
+               - Test coverage for new/modified code
+               - Quality of test cases
+               - Missing test scenarios
+
+            4. **Dependencies**:
+               - Alert if new dependencies are added in plugin.xml or similar files
+               - Check for dependencies that are added to the Gradle file but should be used from the platform
+
+            ## Review Format
+
+            Structure your review as a GitHub comment with:
+
+            1. **Summary**: Brief overview of the changes and your assessment
+            2. **Positive Aspects**: What's done well
+            3. **Issues Found**: Specific problems with file paths and line numbers
+            4. **Suggestions**: Actionable improvements with code examples where helpful
+            5. **Overall Assessment**: Approve, request changes, or needs discussion
+
+            ## Important Notes
+
+            - Be specific and constructive in your feedback
+            - Reference exact files and line numbers
+            - Provide code snippets for suggested improvements
+            - Don't alert for duplicate content in CHANGELOG.md
+            - If the changes are trivial (like version bumps), keep the review brief
+
+            Start your review with this tracking marker for continuity:
+            <!-- claude-review-${{ github.event.pull_request.number }}-${{ github.run_number }} -->
+
+          claude_args: |
+            --model ${{ github.event.pull_request.changed_files <= 30 && 'claude-sonnet-4-6' || 'claude-haiku-4-5-20251001' }}
+            --max-turns ${{ github.event.pull_request.changed_files <= 10 && '30' || (github.event.pull_request.changed_files <= 30 && '40' || '60') }}
+            --allowedTools Edit,Read,Write
