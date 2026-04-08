@@ -14,3 +14,5 @@ build
 /.intellijPlatform/
 /.kotlin/
 /out/
+/.remember/
+.claude/settings.local.json
