@@ -2,6 +2,7 @@ package com.github.gbrowser
 
 import com.github.gbrowser.services.GBrowserService
 import com.github.gbrowser.settings.bookmarks.GBrowserBookmark
+import com.github.gbrowser.settings.request_header.GBrowserRequestHeader
 import com.intellij.configurationStore.serialize
 import com.intellij.openapi.util.JDOMUtil
 import kotlinx.coroutines.test.runTest
@@ -306,7 +307,7 @@ class GBrowserServiceTest {
 
   @Test
   fun `test requestHeaders state serialization`() = runTest {
-    val header = com.github.gbrowser.settings.request_header.GBrowserRequestHeader(
+    val header = GBrowserRequestHeader(
       "test-value", 
       "test-name", 
       true, 
@@ -486,7 +487,7 @@ class GBrowserServiceTest {
   @Test
   fun `test addRequestHeader with single header method`() = runTest {
     service.requestHeaders = mutableSetOf()
-    val header = com.github.gbrowser.settings.request_header.GBrowserRequestHeader(
+    val header = GBrowserRequestHeader(
       "test-value", 
       "test-name", 
       true, 
@@ -502,13 +503,13 @@ class GBrowserServiceTest {
   @Test
   fun `test addRequestHeader with list method`() = runTest {
     service.requestHeaders = mutableSetOf()
-    val header1 = com.github.gbrowser.settings.request_header.GBrowserRequestHeader(
+    val header1 = GBrowserRequestHeader(
       "test-value-1", 
       "test-name-1", 
       true, 
       "test-regex-1"
     )
-    val header2 = com.github.gbrowser.settings.request_header.GBrowserRequestHeader(
+    val header2 = GBrowserRequestHeader(
       "test-value-2", 
       "test-name-2", 
       false, 
@@ -524,7 +525,7 @@ class GBrowserServiceTest {
 
   @Test
   fun `test removeRequestHeader with single header method`() = runTest {
-    val header = com.github.gbrowser.settings.request_header.GBrowserRequestHeader(
+    val header = GBrowserRequestHeader(
       "test-value", 
       "test-name", 
       true, 
@@ -539,13 +540,13 @@ class GBrowserServiceTest {
 
   @Test
   fun `test removeRequestHeader with list method`() = runTest {
-    val header1 = com.github.gbrowser.settings.request_header.GBrowserRequestHeader(
+    val header1 = GBrowserRequestHeader(
       "test-value-1", 
       "test-name-1", 
       true, 
       "test-regex-1"
     )
-    val header2 = com.github.gbrowser.settings.request_header.GBrowserRequestHeader(
+    val header2 = GBrowserRequestHeader(
       "test-value-2", 
       "test-name-2", 
       false, 
