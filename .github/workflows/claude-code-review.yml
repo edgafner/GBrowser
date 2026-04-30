@@ -31,7 +31,7 @@ jobs:
 
       - name: Run Claude Code Review
         id: claude-review
-        uses: anthropics/claude-code-action@v1.0.99
+        uses: anthropics/claude-code-action@v1.0.110
         with:
           use_sticky_comment: true
           track_progress: true
