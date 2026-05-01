@@ -165,6 +165,13 @@ intellijPlatform {
       listOf(it.substringAfter('-', "").substringBefore('.').ifEmpty { "default" })
     }
   }
+
+  pluginVerification {
+    failureLevel = listOf(
+      org.jetbrains.intellij.platform.gradle.tasks.VerifyPluginTask.FailureLevel.COMPATIBILITY_PROBLEMS,
+      org.jetbrains.intellij.platform.gradle.tasks.VerifyPluginTask.FailureLevel.OVERRIDE_ONLY_API_USAGES,
+    )
+  }
 }
 
 changelog {
