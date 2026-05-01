@@ -256,7 +256,7 @@ jobs:
 
       # Run Qodana inspections — stable cache key so main reuses its cache
       - name: Qodana - Code Inspection
-        uses: JetBrains/qodana-action@v2025.3.2
+        uses: JetBrains/qodana-action@v2026.1.0
         with:
           primary-cache-key: qodana-2025.3-${{ github.ref_name }}
           cache-default-branch-only: true

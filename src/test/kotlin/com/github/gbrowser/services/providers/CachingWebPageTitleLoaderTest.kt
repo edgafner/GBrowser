@@ -92,13 +92,10 @@ class CachingWebPageTitleLoaderTest {
     // Different URLs should return different CompletableFuture instances
     assertNotSame(future1, future2)
 
-    // Verify both URLs were fetched
-    verify(exactly = 1) { Jsoup.connect(url1) }
-    verify(exactly = 1) { Jsoup.connect(url2) }
-
-    testScope.runTest {
-      testDispatcher.scheduler.advanceUntilIdle()
-    }
+    // Verify both URLs were fetched (poll with timeout — Jsoup.connect runs on Dispatchers.IO,
+    // not the test scheduler, so we can't deterministically advance it).
+    verify(timeout = 2000, exactly = 1) { Jsoup.connect(url1) }
+    verify(timeout = 2000, exactly = 1) { Jsoup.connect(url2) }
   }
 
   @Test
