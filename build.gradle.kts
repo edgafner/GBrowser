@@ -82,6 +82,8 @@ dependencies { // IntelliJ Platform dependencies
 
     // 262 + IJPGP 2.16.0: InlineIconButton (intellij.platform.vcs.impl) no longer leaks transitively via Git4Idea — declare explicitly.
     bundledModule("intellij.platform.vcs.impl")
+    // 262: HorizontalListPanel (com.intellij.collaboration.ui) also no longer leaks transitively — declare explicitly.
+    bundledModule("intellij.platform.collaborationTools")
   }
 
   // Implementation dependencies
