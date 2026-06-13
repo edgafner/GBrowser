@@ -3,7 +3,8 @@ package com.github.gbrowser.ui
 import com.intellij.ide.starter.buildTool.GradleBuildTool
 import com.intellij.ide.starter.di.di
 import com.intellij.ide.starter.ide.IDETestContext
-import com.intellij.ide.starter.ide.IdeProductProvider
+import com.intellij.ide.starter.models.IdeInfo
+import com.intellij.tools.ide.starter.product.idea.ultimate.IdeaUltimate
 import com.intellij.ide.starter.models.TestCase
 import com.intellij.ide.starter.path.GlobalPaths
 import com.intellij.ide.starter.plugins.PluginConfigurator
@@ -31,8 +32,8 @@ class Setup {
      */
     fun setupTestContext(hyphenateWithClass: String): IDETestContext {
 
-      // Use useRelease() to run against the latest stable release build
-      val testCase = TestCase(IdeProductProvider.IU, NoProject).useRelease()
+      // 262 EAP: no stable 2026.2 release yet — run against the EAP build.
+      val testCase = TestCase(IdeInfo.IdeaUltimate, NoProject).useEAP()
 
       return Starter.newContext(testName = hyphenateWithClass, testCase = testCase).apply {
         val pluginPath = System.getProperty("path.to.build.plugin")

@@ -107,6 +107,9 @@ dependencies { // IntelliJ Platform dependencies
   // Add JUnit 5 dependencies explicitly
   uiTestImplementation(libs.junit.jupiter)
   uiTestRuntimeOnly(libs.junit.platform.launcher)
+
+  // 262: IdeInfo.IdeaUltimate moved to a per-product ide-starter artifact (was IdeProductProvider.IU).
+  uiTestImplementation("com.jetbrains.intellij.tools:ide-starter-product-idea-ultimate:262.+")
 }
 
 kotlin {
