@@ -79,6 +79,9 @@ dependencies { // IntelliJ Platform dependencies
 
     // Test framework dependencies for UI tests - only Starter needed
     testFramework(TestFrameworkType.Starter, configurationName = "uiTestImplementation")
+
+    // 262 + IJPGP 2.16.0: InlineIconButton (intellij.platform.vcs.impl) no longer leaks transitively via Git4Idea — declare explicitly.
+    bundledModule("intellij.platform.vcs.impl")
   }
 
   // Implementation dependencies
