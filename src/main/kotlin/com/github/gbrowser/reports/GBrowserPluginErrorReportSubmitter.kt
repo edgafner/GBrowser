@@ -1,7 +1,6 @@
 package com.github.gbrowser.reports
 
 import com.intellij.ide.BrowserUtil
-import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.diagnostic.ErrorReportSubmitter
 import com.intellij.openapi.diagnostic.IdeaLoggingEvent
@@ -82,9 +81,8 @@ internal class GBrowserPluginErrorReportSubmitter : ErrorReportSubmitter() {
   }
 
   private fun StringBuilder.appendRuntimeInformation() {
-    val descriptor = PluginManagerCore.getPlugin(pluginDescriptor.pluginId)!!
     appendEncoded("- **OS:** ${OS.CURRENT}\n")
-    appendEncoded("- **Plugin Version:** ${descriptor.version}\n")
+    appendEncoded("- **Plugin Version:** ${pluginDescriptor.version}\n")
     appendEncoded("- **IDE:** ${ApplicationInfo.getInstance().fullApplicationName}\n")
     appendEncoded("- **IDE Version:** ${ApplicationInfo.getInstance().build.asString()}")
   }
