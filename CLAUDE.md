@@ -96,7 +96,7 @@ experience without leaving the development environment.
 ### Important Development Notes
 
 1. **JCEF Requirements**: Development and testing require JBR with JCEF support
-2. **Platform Version**: Currently targeting IntelliJ 261 EAP-SNAPSHOT
+2. **Platform Version**: Currently targeting IntelliJ 262 EAP-SNAPSHOT
 3. **Kotlin Version**: Uses Kotlin 2.3.20 with JVM 25
 4. **Threading**: Actions specify execution threads (EDT for UI, BGT for background)
 5. **Memory**: IDE runs with 4GB heap, tests with 2GB heap
