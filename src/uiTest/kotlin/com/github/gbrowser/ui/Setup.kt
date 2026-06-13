@@ -4,12 +4,12 @@ import com.intellij.ide.starter.buildTool.GradleBuildTool
 import com.intellij.ide.starter.di.di
 import com.intellij.ide.starter.ide.IDETestContext
 import com.intellij.ide.starter.models.IdeInfo
-import com.intellij.tools.ide.starter.product.idea.ultimate.IdeaUltimate
 import com.intellij.ide.starter.models.TestCase
 import com.intellij.ide.starter.path.GlobalPaths
 import com.intellij.ide.starter.plugins.PluginConfigurator
 import com.intellij.ide.starter.project.NoProject
 import com.intellij.ide.starter.runner.Starter
+import com.intellij.tools.ide.starter.product.idea.ultimate.IdeaUltimate
 import org.kodein.di.DI
 import org.kodein.di.bindSingleton
 import java.nio.file.Paths
