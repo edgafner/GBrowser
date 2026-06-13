@@ -79,6 +79,11 @@ dependencies { // IntelliJ Platform dependencies
 
     // Test framework dependencies for UI tests - only Starter needed
     testFramework(TestFrameworkType.Starter, configurationName = "uiTestImplementation")
+
+    // 262 + IJPGP 2.16.0 tightened transitive bundled-module resolution; these used to arrive
+    // transitively (via the bundled Git4Idea plugin) and must now be declared explicitly.
+    bundledModule("intellij.platform.vcs.impl")           // com.intellij.util.ui.InlineIconButton
+    bundledModule("intellij.platform.collaborationTools") // com.intellij.collaboration.ui.HorizontalListPanel
   }
 
   // Implementation dependencies
@@ -107,6 +112,9 @@ dependencies { // IntelliJ Platform dependencies
   // Add JUnit 5 dependencies explicitly
   uiTestImplementation(libs.junit.jupiter)
   uiTestRuntimeOnly(libs.junit.platform.launcher)
+
+  // 262: IdeInfo.IdeaUltimate moved to a per-product ide-starter artifact (was IdeProductProvider.IU).
+  uiTestImplementation("com.jetbrains.intellij.tools:ide-starter-product-idea-ultimate:262.+")
 }
 
 kotlin {
