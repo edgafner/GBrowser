@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Added
+- 🚀 Support 2026.2 EAP
+
 ## [2026.1.8] - 2026-05-01
 
 ### Changed
