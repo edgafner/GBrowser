@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- 🚀 Support 2026.2 EAP
+
 ## [2026.2.1] - 2026-06-13
 
 ### Added
