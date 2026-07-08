@@ -84,6 +84,12 @@ dependencies { // IntelliJ Platform dependencies
     // transitively (via the bundled Git4Idea plugin) and must now be declared explicitly.
     bundledModule("intellij.platform.vcs.impl")           // com.intellij.util.ui.InlineIconButton
     bundledModule("intellij.platform.collaborationTools") // com.intellij.collaboration.ui.HorizontalListPanel
+
+    // Since IDE 262 (IJPL-246446) JCEF lives in content modules of the "Web Browser (JCEF)" plugin
+    // and is no longer on the default compile classpath. Keep in sync with the <dependencies>
+    // block in plugin.xml: ui.jcef owns com.intellij.ui.jcef.*, libraries.jcef owns org.cef.*.
+    bundledModule("intellij.platform.ui.jcef")
+    bundledModule("intellij.libraries.jcef")
   }
 
   // Implementation dependencies

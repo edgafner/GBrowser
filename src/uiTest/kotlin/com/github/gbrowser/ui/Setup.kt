@@ -32,8 +32,11 @@ class Setup {
      */
     fun setupTestContext(hyphenateWithClass: String): IDETestContext {
 
-      // 262 EAP: no stable 2026.2 release yet — run against the EAP build.
-      val testCase = TestCase(IdeInfo.IdeaUltimate, NoProject).useEAP()
+      // Pin the UI-test IDE to the SAME EAP build we compile/runIde against
+      // (platformVersion in gradle.properties). An unpinned useEAP() resolves to the
+      // latest EAP on the runner, which drifts away from our build and breaks the
+      // fixtures mid-week. Bump this in lockstep with gradle.properties' platformVersion.
+      val testCase = TestCase(IdeInfo.IdeaUltimate, NoProject).useEAP("262.8117.19")
 
       return Starter.newContext(testName = hyphenateWithClass, testCase = testCase).apply {
         val pluginPath = System.getProperty("path.to.build.plugin")
