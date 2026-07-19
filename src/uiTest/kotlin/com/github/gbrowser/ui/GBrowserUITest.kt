@@ -12,6 +12,7 @@ import com.intellij.driver.sdk.ui.components.UiComponent.Companion.waitFound
 import com.intellij.driver.sdk.ui.components.common.dialogs.newProjectDialog
 import com.intellij.driver.sdk.ui.components.common.editor
 import com.intellij.driver.sdk.ui.components.common.ideFrame
+import com.intellij.driver.sdk.ui.components.common.toolwindows.projectView
 import com.intellij.driver.sdk.ui.components.common.welcomeScreen
 import com.intellij.driver.sdk.ui.components.elements.*
 import com.intellij.driver.sdk.ui.enabled
@@ -268,6 +269,22 @@ class GBrowserUITest {
 
       ideFrame {
         waitForIndicatorsIgnore()
+
+        // 2026.2 does not reliably open an editor tab for a freshly created project,
+        // and the editor { } interaction below needs one. Open the wizard's sample
+        // Main.java from the Project view (same idiom as the AZD plugin's ui.txt fix):
+        // doubleClickPath expands ancestors without toggling the already-expanded root.
+        if (driver.ui.ideFrame().leftToolWindowToolbar.projectButton.isToolWindowVisible().not()) {
+          leftToolWindowToolbar.projectButton.open()
+        }
+        projectView {
+          with(projectViewTree) {
+            waitForNodesLoaded()
+            val projectRoot = collectExpandedPathsAsStrings().first()
+            doubleClickPath(projectRoot, "src", "Main.java", fullMatch = false)
+          }
+        }
+
         showGBrowserToolWindow()
         wait(1.seconds)
 
