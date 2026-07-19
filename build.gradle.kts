@@ -73,11 +73,12 @@ dependencies { // IntelliJ Platform dependencies
     zipSigner()
 
     // Test framework dependencies for regular tests
-    testFramework(TestFrameworkType.Starter)
     testFramework(TestFrameworkType.Platform)
     testFramework(TestFrameworkType.JUnit5)
 
-    // Test framework dependencies for UI tests - only Starter needed
+    // Test framework dependencies for UI tests - only Starter needed.
+    // Since IJPGP 2.18.0 this also auto-imports the ide-starter-product-* artifacts
+    // (e.g. ide-starter-product-idea-ultimate for `IdeInfo.IdeaUltimate`) on platform >= 262.
     testFramework(TestFrameworkType.Starter, configurationName = "uiTestImplementation")
 
     // 262 + IJPGP 2.16.0 tightened transitive bundled-module resolution; these used to arrive
@@ -119,8 +120,12 @@ dependencies { // IntelliJ Platform dependencies
   uiTestImplementation(libs.junit.jupiter)
   uiTestRuntimeOnly(libs.junit.platform.launcher)
 
-  // 262: IdeInfo.IdeaUltimate moved to a per-product ide-starter artifact (was IdeProductProvider.IU).
-  uiTestImplementation("com.jetbrains.intellij.tools:ide-starter-product-idea-ultimate:262.+")
+  // The auto-added Starter dependencies exclude every library the IDE distribution bundles,
+  // but Starter tests run OUTSIDE the IDE process and the squashed starter jar does not
+  // shade the TeamCity service-messages library its TeamCityReporter needs on IDE close
+  // (NoClassDefFoundError: jetbrains/buildServer/messages/serviceMessages/ServiceMessage).
+  // Version pinned to what com.jetbrains.intellij.platform:test-framework-core declares.
+  uiTestRuntimeOnly("org.jetbrains.teamcity:serviceMessages:2024.07")
 }
 
 kotlin {
