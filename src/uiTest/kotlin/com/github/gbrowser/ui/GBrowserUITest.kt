@@ -233,23 +233,36 @@ class GBrowserUITest {
   fun gBrowserToolWindow() {
     run.driver.withContext {
       welcomeScreen {
-        createNewProjectButton.click()
+        // On unlicensed CI runners the "onboarding tour" promo banner pops into the
+        // welcome screen asynchronously and reflows the center buttons between locate
+        // and click — SmoothRobot logs "Click was unsuccessful" and the wizard never
+        // opens. Let the layout settle, then re-click if the wizard did not appear.
+        wait(3.seconds)
 
-        try {
-          newProjectDialog {
-            wait(1.seconds)
+        for (attempt in 1..3) {
+          createNewProjectButton.click()
 
-            chooseProjectType("Java")
+          try {
+            newProjectDialog {
+              wait(1.seconds)
 
-            sampleCodeLabel.enabled()
+              chooseProjectType("Java")
 
-            setProjectName(projectName)
+              sampleCodeLabel.enabled()
 
-            createButton.click()
+              setProjectName(projectName)
+
+              createButton.click()
+            }
+            break
+          } catch (e: Exception) {
+            val wizardNeverOpened = e.message?.contains("NewProjectDialogUI") == true
+            if (attempt == 3 || !wizardNeverOpened) {
+              LOG.warn("Unable to create a project using newProjectDialog, giving up", e)
+              throw e
+            }
+            LOG.warn("New Project wizard did not open (attempt $attempt), re-clicking", e)
           }
-        } catch (e: Exception) {
-          LOG.warn("Unable to create a project using newProjectDialog, trying to fall back", e)
-          throw e
         }
       }
 
