@@ -50,12 +50,12 @@ idea {
   }
 }
 
-val uiTestImplementation: Configuration by configurations.getting {
+val uiTestImplementation: Configuration = configurations.getByName("uiTestImplementation") {
   extendsFrom(configurations.testImplementation.get())
 }
 
 
-val uiTestRuntimeOnly: Configuration by configurations.getting {
+val uiTestRuntimeOnly: Configuration = configurations.getByName("uiTestRuntimeOnly") {
   extendsFrom(configurations.testRuntimeOnly.get())
 }
 
