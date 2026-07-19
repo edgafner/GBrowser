@@ -5,14 +5,6 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-    ignore:
-      # CodeQL's Kotlin extractor lags Kotlin releases (2.26.x supports <= 2.4.0);
-      # newer Kotlin fails the java-kotlin code-scanning job with
-      # KotlinVersionTooRecentError. Remove when CodeQL supports Kotlin 2.4.10+.
-      - dependency-name: "org.jetbrains.kotlin.jvm"
-        versions: [ "[2.4.1,)" ]
-      - dependency-name: "org.jetbrains.kotlin.plugin.serialization"
-        versions: [ "[2.4.1,)" ]
     groups:
       gradle-minor-patch:
         patterns: [ "*" ]
