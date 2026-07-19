@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Upgrade dependencies
+
 ## [2026.2.1] - 2026-06-13
 
 ### Added
