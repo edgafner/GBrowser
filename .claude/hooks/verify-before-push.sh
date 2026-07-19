@@ -1,5 +1,10 @@
 #!/bin/bash
-# Warn if pushing without recent build
+# Warn if pushing without recent build.
+# Self-guards on the command from stdin: the settings.json `if` filter is not
+# applied by all Claude Code versions, so this can run for every Bash call.
+input=$(cat)
+cmd=$(echo "$input" | jq -r '.tool_input.command // empty')
+echo "$cmd" | grep -qE '\bgit\b[^|;&]*\bpush\b' || exit 0
 project_dir="${CLAUDE_PROJECT_DIR:-.}"
 recent_build=false
 
