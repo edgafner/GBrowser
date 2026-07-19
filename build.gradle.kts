@@ -50,12 +50,12 @@ idea {
   }
 }
 
-val uiTestImplementation: Configuration by configurations.getting {
+val uiTestImplementation: Configuration = configurations.getByName("uiTestImplementation") {
   extendsFrom(configurations.testImplementation.get())
 }
 
 
-val uiTestRuntimeOnly: Configuration by configurations.getting {
+val uiTestRuntimeOnly: Configuration = configurations.getByName("uiTestRuntimeOnly") {
   extendsFrom(configurations.testRuntimeOnly.get())
 }
 
@@ -73,17 +73,24 @@ dependencies { // IntelliJ Platform dependencies
     zipSigner()
 
     // Test framework dependencies for regular tests
-    testFramework(TestFrameworkType.Starter)
     testFramework(TestFrameworkType.Platform)
     testFramework(TestFrameworkType.JUnit5)
 
-    // Test framework dependencies for UI tests - only Starter needed
+    // Test framework dependencies for UI tests - only Starter needed.
+    // Since IJPGP 2.18.0 this also auto-imports the ide-starter-product-* artifacts
+    // (e.g. ide-starter-product-idea-ultimate for `IdeInfo.IdeaUltimate`) on platform >= 262.
     testFramework(TestFrameworkType.Starter, configurationName = "uiTestImplementation")
 
     // 262 + IJPGP 2.16.0 tightened transitive bundled-module resolution; these used to arrive
     // transitively (via the bundled Git4Idea plugin) and must now be declared explicitly.
     bundledModule("intellij.platform.vcs.impl")           // com.intellij.util.ui.InlineIconButton
     bundledModule("intellij.platform.collaborationTools") // com.intellij.collaboration.ui.HorizontalListPanel
+
+    // Since IDE 262 (IJPL-246446) JCEF lives in content modules of the "Web Browser (JCEF)" plugin
+    // and is no longer on the default compile classpath. Keep in sync with the <dependencies>
+    // block in plugin.xml: ui.jcef owns com.intellij.ui.jcef.*, libraries.jcef owns org.cef.*.
+    bundledModule("intellij.platform.ui.jcef")
+    bundledModule("intellij.libraries.jcef")
   }
 
   // Implementation dependencies
@@ -113,8 +120,12 @@ dependencies { // IntelliJ Platform dependencies
   uiTestImplementation(libs.junit.jupiter)
   uiTestRuntimeOnly(libs.junit.platform.launcher)
 
-  // 262: IdeInfo.IdeaUltimate moved to a per-product ide-starter artifact (was IdeProductProvider.IU).
-  uiTestImplementation("com.jetbrains.intellij.tools:ide-starter-product-idea-ultimate:262.+")
+  // The auto-added Starter dependencies exclude every library the IDE distribution bundles,
+  // but Starter tests run OUTSIDE the IDE process and the squashed starter jar does not
+  // shade the TeamCity service-messages library its TeamCityReporter needs on IDE close
+  // (NoClassDefFoundError: jetbrains/buildServer/messages/serviceMessages/ServiceMessage).
+  // Version pinned to what com.jetbrains.intellij.platform:test-framework-core declares.
+  uiTestRuntimeOnly("org.jetbrains.teamcity:serviceMessages:2024.07")
 }
 
 kotlin {

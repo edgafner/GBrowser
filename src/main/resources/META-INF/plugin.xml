@@ -7,6 +7,23 @@
   <resource-bundle>messages.GBrowserBundle</resource-bundle>
   <depends>com.intellij.modules.platform</depends>
 
+  <dependencies>
+    <!--
+      Since IDE 262 (IJPL-246446) JCEF was moved out of the core platform into the bundled
+      "Web Browser (JCEF)" plugin (its plugin ID reuses the old v1 alias com.intellij.modules.jcef).
+      Without these dependencies the JCEF classes are not visible to our classloader on builds
+      262.8117+ (NoClassDefFoundError: com/intellij/ui/jcef/JBCefBrowser).
+      - intellij.platform.ui.jcef owns com.intellij.ui.jcef.* (JBCefBrowser, JBCefClient, ...)
+      - intellij.libraries.jcef owns the CEF library (org.cef.*) which we subclass directly;
+        it is public visibility since 262.8117 (it was internal in 262.7132 — do not lower
+        pluginSinceBuild below 262.8117 while this dependency is declared).
+      This mirrors how JetBrains' own JCEF consumers (Markdown, Images) declare it.
+    -->
+    <plugin id="com.intellij.modules.jcef"/>
+    <module name="intellij.platform.ui.jcef"/>
+    <module name="intellij.libraries.jcef"/>
+  </dependencies>
+
   <extensions defaultExtensionNs="com.intellij">
 
 

@@ -12,6 +12,7 @@ import com.intellij.driver.sdk.ui.components.UiComponent.Companion.waitFound
 import com.intellij.driver.sdk.ui.components.common.dialogs.newProjectDialog
 import com.intellij.driver.sdk.ui.components.common.editor
 import com.intellij.driver.sdk.ui.components.common.ideFrame
+import com.intellij.driver.sdk.ui.components.common.toolwindows.projectView
 import com.intellij.driver.sdk.ui.components.common.welcomeScreen
 import com.intellij.driver.sdk.ui.components.elements.*
 import com.intellij.driver.sdk.ui.enabled
@@ -233,28 +234,57 @@ class GBrowserUITest {
   fun gBrowserToolWindow() {
     run.driver.withContext {
       welcomeScreen {
-        createNewProjectButton.click()
+        // On unlicensed CI runners the "onboarding tour" promo banner pops into the
+        // welcome screen asynchronously and reflows the center buttons between locate
+        // and click — SmoothRobot logs "Click was unsuccessful" and the wizard never
+        // opens. Let the layout settle, then re-click if the wizard did not appear.
+        wait(3.seconds)
 
-        try {
-          newProjectDialog {
-            wait(1.seconds)
+        for (attempt in 1..3) {
+          createNewProjectButton.click()
 
-            chooseProjectType("Java")
+          try {
+            newProjectDialog {
+              wait(1.seconds)
 
-            sampleCodeLabel.enabled()
+              chooseProjectType("Java")
 
-            setProjectName(projectName)
+              sampleCodeLabel.enabled()
 
-            createButton.click()
+              setProjectName(projectName)
+
+              createButton.click()
+            }
+            break
+          } catch (e: Exception) {
+            val wizardNeverOpened = e.message?.contains("NewProjectDialogUI") == true
+            if (attempt == 3 || !wizardNeverOpened) {
+              LOG.warn("Unable to create a project using newProjectDialog, giving up", e)
+              throw e
+            }
+            LOG.warn("New Project wizard did not open (attempt $attempt), re-clicking", e)
           }
-        } catch (e: Exception) {
-          LOG.warn("Unable to create a project using newProjectDialog, trying to fall back", e)
-          throw e
         }
       }
 
       ideFrame {
         waitForIndicatorsIgnore()
+
+        // 2026.2 does not reliably open an editor tab for a freshly created project,
+        // and the editor { } interaction below needs one. Open the wizard's sample
+        // Main.java from the Project view (same idiom as the AZD plugin's ui.txt fix):
+        // doubleClickPath expands ancestors without toggling the already-expanded root.
+        if (driver.ui.ideFrame().leftToolWindowToolbar.projectButton.isToolWindowVisible().not()) {
+          leftToolWindowToolbar.projectButton.open()
+        }
+        projectView {
+          with(projectViewTree) {
+            waitForNodesLoaded()
+            val projectRoot = collectExpandedPathsAsStrings().first()
+            doubleClickPath(projectRoot, "src", "Main.java", fullMatch = false)
+          }
+        }
+
         showGBrowserToolWindow()
         wait(1.seconds)
 

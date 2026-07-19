@@ -18,12 +18,12 @@ jobs:
     steps:
 
       - name: Fetch Sources
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.release.tag_name }}
 
       - name: Setup JBR 25
-        uses: actions/setup-java@v5.2.0
+        uses: actions/setup-java@v5.5.0
         with:
           distribution: 'jetbrains'
           java-version: 25
