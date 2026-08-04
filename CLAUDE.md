@@ -97,7 +97,9 @@ experience without leaving the development environment.
 
 1. **JCEF Requirements**: Development and testing require JBR with JCEF support
 2. **Platform Version**: Currently targeting IntelliJ 2026.2 GA (build IU-262.8665.258 — bump gradle.properties `platformVersion`/`pluginSinceBuild` and uiTest Setup.kt `useRelease(...)` in lockstep)
-3. **Kotlin Version**: Uses Kotlin 2.3.20 with JVM 25
+3. **Kotlin Version**: Compiled with Kotlin 2.4.10 (`gradle/libs.versions.toml`), targeting JVM 25. The language API level is deliberately
+  held at 2.3 (`languageVersion.set(KotlinVersion.KOTLIN_2_3)` in `build.gradle.kts`) so the plugin stays loadable on IDEs shipping an
+  older Kotlin runtime — bump the compiler and the API level separately.
 4. **Threading**: Actions specify execution threads (EDT for UI, BGT for background)
 5. **Memory**: IDE runs with 4GB heap, tests with 2GB heap
 6. **Caching**: Uses Caffeine cache for favicons and webpage titles with expiration
