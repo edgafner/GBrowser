@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+### Added
+
+- 🚀 Support 2026.3 EAP (`263-EAP-SNAPSHOT`, since-build `263.3889`)
+
+### Changed
+
+- Upgrade dependencies
+
 ## [2026.2.3] - 2026-07-19
 
 ### Changed
