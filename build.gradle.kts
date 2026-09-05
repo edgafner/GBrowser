@@ -186,6 +186,13 @@ intellijPlatform {
   }
 
   pluginVerification {
+    ides {
+      // Pin the verifier to the published 2026.3 EAP snapshot. recommended() re-resolves on every
+      // run and can pick a nightly that is not published to the IDE download repository, failing
+      // with an opaque "Could not resolve idea:idea:<build>". Bump in lockstep with
+      // platformVersion (switch to the concrete GA build once 2026.3 is released).
+      create(org.jetbrains.intellij.platform.gradle.IntelliJPlatformType.IntellijIdeaUltimate, "263-EAP-SNAPSHOT")
+    }
     failureLevel = listOf(
       org.jetbrains.intellij.platform.gradle.tasks.VerifyPluginTask.FailureLevel.COMPATIBILITY_PROBLEMS,
       org.jetbrains.intellij.platform.gradle.tasks.VerifyPluginTask.FailureLevel.OVERRIDE_ONLY_API_USAGES,
