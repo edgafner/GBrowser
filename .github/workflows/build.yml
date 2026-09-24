@@ -58,7 +58,7 @@ jobs:
       # Set up the Java environment for the next steps
       - name: Setup JBR 25
         if: steps.check_changelog.outputs.is_changelog != 'true'
-        uses: actions/setup-java@v6.0.0
+        uses: actions/setup-java@v6.0.1
         with:
           distribution: 'jetbrains'
           java-version: 25
@@ -132,7 +132,7 @@ jobs:
 
       # Set up the Java environment for the next steps
       - name: Setup JBR 25
-        uses: actions/setup-java@v6.0.0
+        uses: actions/setup-java@v6.0.1
         with:
           distribution: 'jetbrains'
           java-version: 25
@@ -157,7 +157,7 @@ jobs:
 
       # Free up disk space — lightweight cleanup
       - name: Free Disk Space
-        uses: jlumbroso/free-disk-space@v1.3.1
+        uses: jlumbroso/free-disk-space@v2.0.0
         with:
           tool-cache: false
           android: true
@@ -189,7 +189,7 @@ jobs:
 
       # Upload the Kover report to CodeCov
       - name: Upload Code Coverage Report
-        uses: codecov/codecov-action@v7.0.0
+        uses: codecov/codecov-action@v7.1.1
         with:
           files: ${{ github.workspace }}/build/reports/kover/report.xml
           flags: unittests
@@ -219,7 +219,7 @@ jobs:
 
       # Set up the Java environment for the next steps
       - name: Setup JBR 25
-        uses: actions/setup-java@v6.0.0
+        uses: actions/setup-java@v6.0.1
         with:
           distribution: 'jetbrains'
           java-version: 25
@@ -244,7 +244,7 @@ jobs:
 
       # Free up disk space — lightweight cleanup
       - name: Free Disk Space
-        uses: jlumbroso/free-disk-space@v1.3.1
+        uses: jlumbroso/free-disk-space@v2.0.0
         with:
           tool-cache: false
           android: true
@@ -284,7 +284,7 @@ jobs:
 
       # Set up the Java environment for the next steps
       - name: Setup JBR 25
-        uses: actions/setup-java@v6.0.0
+        uses: actions/setup-java@v6.0.1
         with:
           distribution: 'jetbrains'
           java-version: 25
@@ -309,7 +309,7 @@ jobs:
 
       # Free up disk space before running plugin verifier (downloads multiple IDE versions)
       - name: Free Disk Space
-        uses: jlumbroso/free-disk-space@v1.3.1
+        uses: jlumbroso/free-disk-space@v2.0.0
         with:
           tool-cache: false
           android: true
@@ -381,7 +381,7 @@ jobs:
 
       # Set up the Java environment for the next steps
       - name: Setup JBR 25
-        uses: actions/setup-java@v6.0.0
+        uses: actions/setup-java@v6.0.1
         with:
           distribution: 'jetbrains'
           java-version: 25
