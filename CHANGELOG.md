@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+### Added
+
+- 🚀 Support for next 2026.3 EAP
+
+### Changed
+
+- Upgrade dependencies
+
 ## [2026.3.1] - 2026-09-05
 
 ### Added
