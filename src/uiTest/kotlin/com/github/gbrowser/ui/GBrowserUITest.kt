@@ -18,6 +18,7 @@ import com.intellij.driver.sdk.ui.components.elements.*
 import com.intellij.driver.sdk.ui.enabled
 import com.intellij.driver.sdk.ui.shouldBe
 import com.intellij.driver.sdk.ui.ui
+import com.intellij.driver.sdk.WaitForException
 import com.intellij.driver.sdk.wait
 import com.intellij.ide.starter.driver.engine.BackgroundRun
 import com.intellij.ide.starter.driver.engine.runIdeWithDriver
@@ -171,6 +172,13 @@ class GBrowserUITest {
   fun closeIde() {
     try {
       run.closeIdeAndWait()
+    } catch (e: WaitForException) {
+      // 263.6259.32 EAP: ApplicationImpl.doExit throws an NPE (isUnitTestMode on a null Application,
+      // blamed on Performance Diagnostics) and the process never exits; Starter then SIGTERMs it.
+      // The test body has already passed by then, so only this shutdown timeout is tolerated
+      // (same as AZD's doc-screenshot tests). Anything else still fails the test.
+      if (e.message?.contains("did not stop") != true) throw e
+      LOG.warn("Ignoring IDE shutdown timeout: ${e.message}")
     } finally { // Ensure cleanup happens even if the test fails
       if (::tempDir.isInitialized && Files.exists(tempDir)) {
         tempDir.toFile().deleteRecursively()

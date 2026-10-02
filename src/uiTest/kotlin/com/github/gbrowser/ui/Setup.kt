@@ -19,6 +19,8 @@ class Setup {
 
   companion object {
 
+    private const val AIR_PLUGIN_ID = "com.intellij.air"
+
     init {
       di = DI.Companion {
         extend(di)
@@ -33,16 +35,21 @@ class Setup {
     fun setupTestContext(hyphenateWithClass: String): IDETestContext {
 
       // Pin the UI-test IDE to the SAME build we compile/runIde against
-      // (platformVersion in gradle.properties, 263-EAP-SNAPSHOT = IU-263.3889.65). An unpinned
+      // (platformVersion in gradle.properties, 263-EAP-SNAPSHOT = IU-263.6259.32). An unpinned
       // useEAP() resolves to the latest EAP on the runner, which can drift ahead of our build
       // and break the fixtures. Bump this in lockstep with gradle.properties' platformVersion.
       // ide-starter's public downloader rejects EAP builds older than 30 days, so this pin has
       // to be refreshed as new 2026.3 EAPs land, not just once per cycle.
-      val testCase = TestCase(IdeInfo.IdeaUltimate, NoProject).useEAP("263.3889.65")
+      val testCase = TestCase(IdeInfo.IdeaUltimate, NoProject).useEAP("263.6259.32")
 
       return Starter.newContext(testName = hyphenateWithClass, testCase = testCase).apply {
         val pluginPath = System.getProperty("path.to.build.plugin")
         PluginConfigurator(this).installPluginFromPath(Paths.get(pluginPath))
+        // JetBrains's bundled agent plugin ("Air", branded Junie) first ships in 263.6259.32. It
+        // replaces the editor empty state with an "Ask Agent" prompt + install banner and adds
+        // main-toolbar buttons — new startup chrome that contests focus/activation with our
+        // fixtures. Nothing here exercises it, so disable it (same fix as JirAI's UI tests).
+        PluginConfigurator(this).disablePlugins(AIR_PLUGIN_ID)
         withBuildTool<GradleBuildTool>()
       }.applyVMOptionsPatch {
         addSystemProperty("allure.results.directory", "build/allure-results")
@@ -60,6 +67,10 @@ class Setup {
         addSystemProperty("ide.ui.scale", "1.0")
         addSystemProperty("ide.ui.scale.override", "1.0")
         addSystemProperty("idea.trust.all.projects", true)
+        // 2026.3 replaced the modal FlatWelcomeFrame with a hidden "IntelliJ IDEA Home" project in an
+        // ordinary IdeFrameImpl, so welcomeScreen {} never matches. Restore the classic screen the test
+        // flow starts from (= Starter's IDERunContext.disableNonModalWelcomeScreen()).
+        addSystemProperty("idea.welcome.screen.non.modal.enabled", false)
         addSystemProperty("jb.consents.confirmation.enabled", false)
         addSystemProperty("jb.privacy.policy.text", "<!--999.999-->")
         addSystemProperty("jbScreenMenuBar.enabled", false)
