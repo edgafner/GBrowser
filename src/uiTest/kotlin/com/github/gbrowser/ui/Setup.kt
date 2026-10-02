@@ -19,6 +19,8 @@ class Setup {
 
   companion object {
 
+    private const val AIR_PLUGIN_ID = "com.intellij.air"
+
     init {
       di = DI.Companion {
         extend(di)
@@ -43,6 +45,11 @@ class Setup {
       return Starter.newContext(testName = hyphenateWithClass, testCase = testCase).apply {
         val pluginPath = System.getProperty("path.to.build.plugin")
         PluginConfigurator(this).installPluginFromPath(Paths.get(pluginPath))
+        // JetBrains's bundled agent plugin ("Air", branded Junie) first ships in 263.6259.32. It
+        // replaces the editor empty state with an "Ask Agent" prompt + install banner and adds
+        // main-toolbar buttons — new startup chrome that contests focus/activation with our
+        // fixtures. Nothing here exercises it, so disable it (same fix as JirAI's UI tests).
+        PluginConfigurator(this).disablePlugins(AIR_PLUGIN_ID)
         withBuildTool<GradleBuildTool>()
       }.applyVMOptionsPatch {
         addSystemProperty("allure.results.directory", "build/allure-results")
