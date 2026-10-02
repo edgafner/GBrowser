@@ -67,6 +67,10 @@ class Setup {
         addSystemProperty("ide.ui.scale", "1.0")
         addSystemProperty("ide.ui.scale.override", "1.0")
         addSystemProperty("idea.trust.all.projects", true)
+        // 2026.3 replaced the modal FlatWelcomeFrame with a hidden "IntelliJ IDEA Home" project in an
+        // ordinary IdeFrameImpl, so welcomeScreen {} never matches. Restore the classic screen the test
+        // flow starts from (= Starter's IDERunContext.disableNonModalWelcomeScreen()).
+        addSystemProperty("idea.welcome.screen.non.modal.enabled", false)
         addSystemProperty("jb.consents.confirmation.enabled", false)
         addSystemProperty("jb.privacy.policy.text", "<!--999.999-->")
         addSystemProperty("jbScreenMenuBar.enabled", false)
