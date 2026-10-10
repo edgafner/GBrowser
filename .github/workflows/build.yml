@@ -256,7 +256,7 @@ jobs:
 
       # Run Qodana inspections — stable cache key so main reuses its cache
       - name: Qodana - Code Inspection
-        uses: JetBrains/qodana-action@v2026.2.1
+        uses: JetBrains/qodana-action@v2026.2.2
         with:
           primary-cache-key: qodana-2025.3-${{ github.ref_name }}
           cache-default-branch-only: true
@@ -356,7 +356,7 @@ jobs:
           path: ~/
 
       - name: Generate Test Report
-        uses: dorny/test-reporter@v3.0.0
+        uses: dorny/test-reporter@v3.2.0
         if: success() || failure()
         with:
           name: Test Report Dashboard
