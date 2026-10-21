@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Upgrade dependencies (Gradle 9.8.1, Kotlin 2.4.21)
+
 ## [2026.3.2] - 2026-10-02
 
 ### Added
