@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2026.3.3] - 2026-10-21
+
 ### Added
 
 - 🚀 Support for the next 2026.3 EAP (263.7031)
@@ -584,7 +586,8 @@
 
 -- First Jetbrains Public
 
-[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2026.3.2...HEAD
+[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2026.3.3...HEAD
+[2026.3.3]: https://github.com/edgafner/GBrowser/compare/v2026.3.2...v2026.3.3
 [2026.3.2]: https://github.com/edgafner/GBrowser/compare/v2026.3.1...v2026.3.2
 [2026.3.1]: https://github.com/edgafner/GBrowser/compare/v2026.2.3...v2026.3.1
 [2026.2.3]: https://github.com/edgafner/GBrowser/compare/v2026.2.1...v2026.2.3
