@@ -83,8 +83,10 @@ dependencies { // IntelliJ Platform dependencies
 
     // 262 + IJPGP 2.16.0 tightened transitive bundled-module resolution; these used to arrive
     // transitively (via the bundled Git4Idea plugin) and must now be declared explicitly.
-    bundledModule("intellij.platform.vcs.impl")           // com.intellij.util.ui.InlineIconButton
-    bundledModule("intellij.platform.collaborationTools") // com.intellij.collaboration.ui.HorizontalListPanel
+    // 263.7031 then moved both symbols out of the platform-vcs-plugin / collaborationTools modules
+    // into the platform-level `.shared` product modules (lib/intellij.platform.*.shared.jar).
+    bundledModule("intellij.platform.vcs.impl.shared")           // com.intellij.util.ui.InlineIconButton
+    bundledModule("intellij.platform.collaborationTools.shared") // com.intellij.collaboration.ui.HorizontalListPanel
 
     // Since IDE 262 (IJPL-246446) JCEF lives in content modules of the "Web Browser (JCEF)" plugin
     // and is no longer on the default compile classpath. Keep in sync with the <dependencies>
