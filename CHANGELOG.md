@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- 🚀 Built against the 2026.3 Beta (263.7307.44)
+
 ## [2026.3.3] - 2026-10-21
 
 ### Added
