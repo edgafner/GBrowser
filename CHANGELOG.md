@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2026.3.4] - 2026-10-24
+
 ### Added
 
 - 🚀 Built against the 2026.3 Beta (263.7307.44)
@@ -590,7 +592,8 @@
 
 -- First Jetbrains Public
 
-[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2026.3.3...HEAD
+[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2026.3.4...HEAD
+[2026.3.4]: https://github.com/edgafner/GBrowser/compare/v2026.3.3...v2026.3.4
 [2026.3.3]: https://github.com/edgafner/GBrowser/compare/v2026.3.2...v2026.3.3
 [2026.3.2]: https://github.com/edgafner/GBrowser/compare/v2026.3.1...v2026.3.2
 [2026.3.1]: https://github.com/edgafner/GBrowser/compare/v2026.2.3...v2026.3.1
