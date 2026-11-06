@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2026.3.5] - 2026-11-06
+
 ### Changed
 
 - 🚀 Built against the IntelliJ IDEA 2026.3 release (263.7307.200). The range of supported IDE builds is unchanged
@@ -597,7 +599,8 @@
 
 -- First Jetbrains Public
 
-[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2026.3.4...HEAD
+[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2026.3.5...HEAD
+[2026.3.5]: https://github.com/edgafner/GBrowser/compare/v2026.3.4...v2026.3.5
 [2026.3.4]: https://github.com/edgafner/GBrowser/compare/v2026.3.3...v2026.3.4
 [2026.3.3]: https://github.com/edgafner/GBrowser/compare/v2026.3.2...v2026.3.3
 [2026.3.2]: https://github.com/edgafner/GBrowser/compare/v2026.3.1...v2026.3.2
