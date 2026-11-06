@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Changed
+
+- 🚀 Built against the IntelliJ IDEA 2026.3 release (263.7307.200). The range of supported IDE builds is unchanged
+- Upgrade dependencies (Byte Buddy 1.18.17)
+
 ## [2026.3.4] - 2026-10-24
 
 ### Added
