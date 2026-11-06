@@ -96,7 +96,7 @@ experience without leaving the development environment.
 ### Important Development Notes
 
 1. **JCEF Requirements**: Development and testing require JBR with JCEF support
-2. **Platform Version**: Currently targeting IntelliJ 2026.3 Beta (`263-EAP-SNAPSHOT`, resolved to build IU-263.7307.44 on 2026-10-24 — bump gradle.properties `platformVersion`/`pluginSinceBuild`, uiTest Setup.kt `useEAP(...)` and the plugin-verifier IDE in build.gradle.kts in lockstep). ide-starter refuses EAP builds older than 30 days, so re-pin `useEAP(...)` as new 2026.3 EAPs land. 2026.2 users are served from `release/2026.2-fixes`.
+2. **Platform Version**: Currently targeting IntelliJ IDEA 2026.3 GA (`platformVersion=2026.3`, build IU-263.7307.200, released 2026-11-05). The plugin verifier (build.gradle.kts) and uiTest Setup.kt `useRelease("2026.3")` move in lockstep with it. Release builds have no ide-starter 30-day expiry, so no monthly re-pin is needed until the next major's first EAP. 2026.2 users are served from `release/2026.2-fixes`.
 3. **Kotlin Version**: Uses Kotlin 2.4.21 with JVM 25
 4. **Threading**: Actions specify execution threads (EDT for UI, BGT for background)
 5. **Memory**: IDE runs with 4GB heap, tests with 2GB heap

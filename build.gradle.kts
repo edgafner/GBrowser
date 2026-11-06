@@ -189,11 +189,15 @@ intellijPlatform {
 
   pluginVerification {
     ides {
-      // Pin the verifier to the published 2026.3 EAP snapshot. recommended() re-resolves on every
-      // run and can pick a nightly that is not published to the IDE download repository, failing
-      // with an opaque "Could not resolve idea:idea:<build>". Bump in lockstep with
-      // platformVersion (switch to the concrete GA build once 2026.3 is released).
-      create(org.jetbrains.intellij.platform.gradle.IntelliJPlatformType.IntellijIdeaUltimate, "263-EAP-SNAPSHOT")
+      // Pin the verifier to the 2026.3 GA release (2026-11-06: build 263.7307.200, published in the
+      // releases repo as `2026.3`; before that the floating 263-EAP-SNAPSHOT). recommended() re-resolves
+      // on every run and can pick a nightly that is not published to the IDE download repository,
+      // failing with an opaque "Could not resolve idea:idea:<build>". Bump in lockstep with platformVersion.
+      create(org.jetbrains.intellij.platform.gradle.IntelliJPlatformType.IntellijIdeaUltimate, "2026.3")
+      // 2026-11-06: also verify against the oldest supported build (pluginSinceBuild=263.7031), as AZD does.
+      // Compiling against 263.7307 can emit calls an older 263 build lacks; only the verifier on the
+      // older build catches that. Move with pluginSinceBuild.
+      create(org.jetbrains.intellij.platform.gradle.IntelliJPlatformType.IntellijIdeaUltimate, "263.7031.23-EAP-SNAPSHOT")
     }
     failureLevel = listOf(
       org.jetbrains.intellij.platform.gradle.tasks.VerifyPluginTask.FailureLevel.COMPATIBILITY_PROBLEMS,
