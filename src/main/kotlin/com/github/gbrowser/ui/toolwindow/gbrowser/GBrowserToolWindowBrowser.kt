@@ -209,7 +209,7 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
     val builderContent = toolWindow.contentManager.getContent(this)
     if (builderContent != null) {
       favIconLoader.loadFavIcon(url).thenAccept { icon ->
-        icon?.let { builderContent.icon = it }
+        icon?.let { application.invokeLater { builderContent.icon = it } }
       }
 
     }
@@ -249,7 +249,9 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
   }
 
 
+  // Called on the EDT: GBrowserCefDisplayChangeHandler re-dispatches the CEF-thread callback (#417)
   override fun onAddressChange(url: String) {
+    if (gbrowser.isDisposed) return
     setTabIcon(url)
     setHistoryItem()
     setCurrentUrl(url)
@@ -267,10 +269,12 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
     }
 
     // Load favicon
-    favIconLoader.loadFavIcon(url.trim(), targetSize = 13).thenAccept {
-      gBrowserToolBar.search.textEditor.putClientProperty(
-        "JTextField.Search.Icon", it ?: GBrowserIcons.GBROWSER_LOGO
-      )
+    favIconLoader.loadFavIcon(url.trim(), targetSize = 13).thenAccept { icon ->
+      application.invokeLater {
+        gBrowserToolBar.search.textEditor.putClientProperty(
+          "JTextField.Search.Icon", icon ?: GBrowserIcons.GBROWSER_LOGO
+        )
+      }
     }
 
     // Extra visibility check after a short delay (helps with unpinned mode)
@@ -292,7 +296,9 @@ class GBrowserToolWindowBrowser(private val toolWindow: ToolWindow) : SimpleTool
     }
   }
 
+  // Called on the EDT: GBrowserCefDisplayChangeHandler re-dispatches the CEF-thread callback (#417)
   override fun onTitleChange(title: String) {
+    if (gbrowser.isDisposed) return
     setTabName(title)
     setCurrentTitle(title)
     gbrowser.setVisibility(true)
