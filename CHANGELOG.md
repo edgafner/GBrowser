@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2026.3.6] - 2026-11-11
+
 ### Fixed
 
 - 🐛 Fix IDE freeze when a page rapidly changes its URL or title, e.g. GitLab merge requests ([#417](https://github.com/edgafner/GBrowser/issues/417))
@@ -603,7 +605,8 @@
 
 -- First Jetbrains Public
 
-[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2026.3.5...HEAD
+[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2026.3.6...HEAD
+[2026.3.6]: https://github.com/edgafner/GBrowser/compare/v2026.3.5...v2026.3.6
 [2026.3.5]: https://github.com/edgafner/GBrowser/compare/v2026.3.4...v2026.3.5
 [2026.3.4]: https://github.com/edgafner/GBrowser/compare/v2026.3.3...v2026.3.4
 [2026.3.3]: https://github.com/edgafner/GBrowser/compare/v2026.3.2...v2026.3.3
