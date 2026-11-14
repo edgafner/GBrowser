@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- 🐛 Fix IDE freeze when a page rapidly changes its URL or title, e.g. GitLab merge requests ([#417](https://github.com/edgafner/GBrowser/issues/417))
+
+
 ## [2026.3.6] - 2026-11-11
 
 ### Fixed
