@@ -19,10 +19,20 @@
 #
 # Usage: macos-runner-node-check.sh [runner-root]   (default: derived from RUNNER_TEMP)
 set -euo pipefail
+# This repo is public, so job logs are world-readable: every path this script prints goes through `show`, which writes
+# the runner user's home as `~` and so keeps the macOS user name out of the log. `~/...` still works pasted into a shell.
+show() {
+  local h="${HOME%/}"
+  case "$1" in
+    "$h") [ -n "$h" ] && printf '~' || printf '%s' "$1" ;;
+    "$h"/*) [ -n "$h" ] && printf '~%s' "${1#"$h"}" || printf '%s' "$1" ;;
+    *) printf '%s' "$1" ;;
+  esac
+}
 root="${1:-${RUNNER_TEMP:-}}"
 case "$root" in */_work/_temp) root="${root%/_work/_temp}" ;; esac
 if [ -z "$root" ] || [ ! -d "$root" ]; then
-  echo "::warning::Cannot work out the runner root (RUNNER_TEMP='${RUNNER_TEMP:-}'); skipping the runner-binary check."
+  echo "::warning::Cannot work out the runner root (RUNNER_TEMP='$(show "${RUNNER_TEMP:-}")'); skipping the runner-binary check."
   exit 0
 fi
 root="$(cd "$root" && pwd -P)"
@@ -44,26 +54,26 @@ seen=""
 for pid in $($pgrep_bin -a -f '/node ([^ ]+/)?RunnerService[.]js$' || true); do
   # `|| true`: under pipefail, `head -1` closing the pipe early would otherwise make a good read look like a failure.
   cwd="$("$lsof_bin" -p "$pid" -a -d cwd -Fn 2>/dev/null | sed -n 's/^n//p' | head -1)" || true
-  seen="$seen $pid:${cwd:-unreadable}"
+  seen="$seen $pid:$(show "${cwd:-unreadable}")"
   [ "$cwd" = "$root" ] || continue
   checked=1
   exe="$("$lsof_bin" -p "$pid" -a -d txt -Fn 2>/dev/null | sed -n 's/^n//p' | head -1)" || true
   if [ -n "$exe" ] && [ ! -e "$exe" ]; then
-    echo "::error::The runner service on ${RUNNER_NAME:-this Mac} (pid $pid) is running a deleted binary, $exe. The runner updated itself under it, so macOS can no longer attribute robot clicks to it and every click would be lost. Restart the service, then rerun: cd $(printf '%q' "$root") && ./svc.sh stop && ./svc.sh start"
+    echo "::error::The runner service on ${RUNNER_NAME:-this Mac} (pid $pid) is running a deleted binary, $(show "$exe"). The runner updated itself under it, so macOS can no longer attribute robot clicks to it and every click would be lost. Restart the service, then rerun: cd $(show "$root") && ./svc.sh stop && ./svc.sh start"
     exit 1
   fi
-  echo "Runner service (pid $pid) runs $exe, which exists"
+  echo "Runner service (pid $pid) runs $(show "$exe"), which exists"
 done
 if [ "$checked" -eq 0 ]; then
   if [ -n "$seen" ]; then
     # Another runner's service, or this one with an unreadable working directory: say so loudly, it is the check not running.
-    echo "::warning::RunnerService.js processes exist ($seen) but none has working directory $root; the runner-binary check did not run."
+    echo "::warning::RunnerService.js processes exist ($seen) but none has working directory $(show "$root"); the runner-binary check did not run."
   else
     if [ "${ACTIONS_RUNNER_SVC:-}" = "1" ]; then
       # The service plist sets this (azd-mac: EnvironmentVariables ACTIONS_RUNNER_SVC=1), so a service must exist: not a pass.
       echo "::warning::ACTIONS_RUNNER_SVC=1 but no RunnerService.js process was found; the runner-binary check did not run."
     else
-      echo "::notice::No RunnerService.js process; the runner at $root is not a service, so its binary is not checked."
+      echo "::notice::No RunnerService.js process; the runner at $(show "$root") is not a service, so its binary is not checked."
     fi
   fi
 fi

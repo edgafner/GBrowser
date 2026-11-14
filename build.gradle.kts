@@ -280,6 +280,12 @@ tasks {
     description = "Runs only the UI tests that start the IDE"
     group = "verification"
 
+    // A UI-test result depends on the downloaded IDE, the display and the runner, none of which are task
+    // inputs. With org.gradle.caching=true the persistent self-hosted runner replayed a PR's result on main
+    // (`:uiTest FROM-CACHE`, 2026-11-14) without starting the IDE, so never cache it or treat it as up to date.
+    outputs.cacheIf("UI tests must start the IDE every run") { false }
+    outputs.upToDateWhen { false }
+
     testClassesDirs = sourceSets["uiTest"].output.classesDirs
     classpath = sourceSets["uiTest"].runtimeClasspath
 
