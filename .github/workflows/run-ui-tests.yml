@@ -1,104 +1,126 @@
-# GitHub Actions Workflow for launching UI tests on Linux, Windows, and Mac in the following steps:
-# - prepare and launch IDE with your plugin and robot-server plugin, which is necessary to interact with UI
-# - wait for IDE to start
-# - run UI tests with a separate Gradle task 
+# UI tests (IDE Starter + Driver) on the self-hosted Apple Silicon UI runner (label `mac-ui-m2`), like the sibling
+# AZD and JirAI plugins. GitHub's hosted macos-latest kept failing the New Project click: the hosted test IDE is
+# unlicensed, its welcome-screen promo banner reflows the buttons, and the click is lost. The M2's test IDE is licensed.
 #
-# Please check https://github.com/JetBrains/intellij-ui-test-robot for information about UI tests with IntelliJ Platform
+# 🔴 GBrowser is a PUBLIC repository. Read before changing the triggers or the runner:
+# - For `pull_request` the workflow file is taken from the PR itself, so the `if:` below cannot keep a fork PR off the
+#   runner; the repo setting "Require approval for all external contributors" is what does. Keep it on.
+# - Job logs and artifacts are world-readable: nothing here may print what else is open on the Mac (the preflight is
+#   trimmed for that), and screenshots (*.png) are left out of the debug artifact. Download them from the runner instead.
 #
-# Workflow is triggered manually.
+# Scope: pushes to main and manual runs always test; a PR runs only from a branch of THIS repo with the `ready` label
+# (the runner is one shared machine). The required check "Test GBrowser UI on macos-latest" is the summary job at the
+# bottom, so a PR that skips the tests can still merge.
 
 name: Run UI Tests
 on:
   workflow_dispatch:
   push:
     branches: [ main ]
-  # Trigger the workflow on any pull request
   pull_request:
+    # labeled/unlabeled: adding `ready` starts a run without a new push. closed: cancels a merged PR's run in flight.
+    types: [ opened, synchronize, reopened, labeled, unlabeled, closed ]
+
+concurrency:
+  group: ui-tests-macos-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
 
   testUI:
-    permissions:
-      contents: write
-      checks: write
-      pull-requests: write
-    runs-on: ${{ matrix.os }}
-    name: Test GBrowser UI on ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: macos-latest
+    name: Test GBrowser UI on macOS (M2)
+    if: >-
+      github.event.action != 'closed' &&
+      (github.event_name != 'pull_request' ||
+       (github.event.pull_request.head.repo.full_name == github.repository &&
+        contains(github.event.pull_request.labels.*.name, 'ready')))
+    # Pinned to the M2 UI runner by its own label, as JirAI's click-heavy job is: on azd-mac robot clicks were lost
+    # ("MOUSE_RELEASED event was missing") while the same tests passed locally. Not `mac-m2`: that is the build runner.
+    runs-on: [ self-hosted, macOS, mac-ui-m2 ]
+    timeout-minutes: 60
 
     steps:
-
-      # Check out the current repository
       - name: Fetch Sources
         uses: actions/checkout@v7
 
-
-      # Set up the Java environment for the next steps
       - name: Setup JBR 25
         uses: actions/setup-java@v6.1.0
         with:
           distribution: 'jetbrains'
           java-version: 25
           java-package: 'jdk+jcef'
-          check-latest: true
+          # false: the runner keeps its tool cache; re-resolving "latest" on every run only costs time.
+          check-latest: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Grant screen recording permissions for macOS UI tests
-      - name: Grant macOS Screen Recording Permissions
-        if: runner.os == 'macOS'
-        run: |
-          echo "Granting screen recording permissions for UI testing..."
-
-          # Create the directory if it doesn't exist
-          mkdir -p ~/Library/"Group Containers"/group.com.apple.replayd
-
-          # Grant permissions for the IDE process
-          # Note: On GitHub Actions runners, this may have limited effect
-          # but we set it for any potential IDE processes
-          sudo defaults write ~/Library/"Group Containers"/group.com.apple.replayd/ScreenCaptureApprovals.plist \
-            "com.jetbrains.intellij" -date "3024-01-01 00:00:00 +0000" || true
-
-          echo "Screen recording permissions configured"
-
-      # Setup Gradle
+      # No gradle-version: ./gradlew uses the wrapper's version. The runner keeps its own Gradle User Home,
+      # so the Actions cache is not needed.
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
         with:
-          gradle-version: "9.4.1"
           cache-disabled: true
-          gradle-home-cache-includes: |
-            caches
-            notifications
-            jdks
-          gradle-home-cache-excludes: |
-            caches/build-cache-*
 
+      - name: Purge stale UI-test output
+        run: |
+          TESTS_DIR="${{ runner.tool_cache }}/gbrowser-ide-tests/tests"
+          # Everything under tests/ is from earlier runs (this job has written nothing yet). 120 minutes is well above
+          # the job timeout, so a directory a parallel job is still writing can never match.
+          if [ -d "$TESTS_DIR" ]; then
+            find "$TESTS_DIR" -mindepth 1 -maxdepth 1 -type d -mmin +120 -exec rm -rf {} +
+            echo "Purged test-output dirs untouched for 2h under $TESTS_DIR"
+          else
+            echo "No $TESTS_DIR yet - nothing to purge"
+          fi
+        continue-on-error: true
 
-      # Run tests with debug logging to investigate SetupException
+      - name: macOS UI preflight
+        uses: ./.github/actions/macos-ui-preflight
+        timeout-minutes: 2
+
       - name: Tests
-        run: ./gradlew uiTest --info --stacktrace
         env:
-          # Enable verbose logging for IDE starter
+          # Persistent IDE Starter home outside the workspace (see GBrowserGlobalPaths): the IDE download is reused.
+          IDE_CACHE_DIR: "${{ runner.tool_cache }}/gbrowser-ide-tests"
           IDE_STARTER_DEBUG: true
-      
-      # Only upload artifacts on failure for debugging
+        # -d keeps the display awake for the whole run (the preflight only wakes it); -i and -s keep the Mac awake.
+        run: caffeinate -d -i -s ./gradlew uiTest --info --stacktrace --no-scan
+        timeout-minutes: 45
+
       - name: Collect Debug Artifacts
         if: failure()
         uses: actions/upload-artifact@v7.0.2
         with:
-          name: tests-result-${{ matrix.os }}
+          name: tests-result-macos-m2
+          # IDE Starter writes to IDE_CACHE_DIR on CI and to build/out/ide-tests locally; collect both roots.
+          # Screenshots are excluded: they are captures of the self-hosted Mac's screen and artifacts are public.
           path: |
-            ${{ github.workspace }}/build/out/ide-tests/tests/**/*/log/
-            ${{ github.workspace }}/build/out/ide-tests/tests/**/*/reports/
-            ${{ github.workspace }}/build/out/ide-tests/tests/**/*/snapshots/
+            ${{ runner.tool_cache }}/gbrowser-ide-tests/tests/*/**/log/
+            ${{ runner.tool_cache }}/gbrowser-ide-tests/tests/*/**/reports/
+            ${{ github.workspace }}/build/out/ide-tests/tests/*/**/log/
+            ${{ github.workspace }}/build/out/ide-tests/tests/*/**/reports/
             ${{ github.workspace }}/build/reports/tests/
+            !**/*.png
           if-no-files-found: warn
+          retention-days: 2
         continue-on-error: true
 
-  
-
+  # The required status check (ruleset main-1) keeps the old job name, so the rename above needs no ruleset change.
+  # GitHub-hosted on purpose: if it ran on the self-hosted Mac it would queue forever whenever that Mac is offline.
+  ui-tests-result:
+    name: Test GBrowser UI on macos-latest
+    needs: testUI
+    if: always() && github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Check results
+        run: |
+          case "${{ needs.testUI.result }}" in
+            success) echo "macOS UI tests passed" ;;
+            skipped) echo "macOS UI tests skipped (PR without the 'ready' label, or from a fork)" ;;
+            *) echo "macOS UI tests ${{ needs.testUI.result }}"; exit 1 ;;
+          esac

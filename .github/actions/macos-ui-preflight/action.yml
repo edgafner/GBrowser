@@ -1,0 +1,68 @@
+name: macOS UI preflight
+description: Wake the display and fail fast on a locked session, a latched mouse button, a running screensaver, or a runner service running a deleted binary
+# Shared with the sibling AZD and JirAI plugins (2026-10-22). This copy deliberately drops their "frontmost application" and
+# "on-screen window owners" diagnostics: GBrowser is a PUBLIC repository, so its job logs are world-readable, and those
+# probes would publish what else is open on the self-hosted Mac.
+runs:
+  using: composite
+  steps:
+    # A runner that updated itself under its still-running service drops every robot click; the script says why.
+    - name: Check the runner service is not running a deleted binary
+      shell: bash
+      run: bash "${{ github.action_path }}/../../scripts/macos-runner-node-check.sh"
+
+    - name: Check display awake, session unlocked, no latched mouse button, no screensaver
+      shell: bash
+      run: |
+        caffeinate -u -t 5
+        if ioreg -n Root -d1 | grep -q '"CGSSessionScreenIsLocked"=Yes'; then
+          echo "::error::The macOS session on ${RUNNER_NAME} is locked, so UI-test input cannot reach the IDE. Unlock it and set Lock Screen > Require password to Never."
+          exit 1
+        fi
+        failures=()
+
+        # Mouse-button mask, sampled 5 times. A button counts as held only if its bit is set in every
+        # sample (bitwise AND), so a click that is merely in flight is ignored.
+        samples=()
+        sample_ok=1
+        for i in 1 2 3 4 5; do
+          if m=$(osascript -l JavaScript -e 'ObjC.import("AppKit"); $.NSEvent.pressedMouseButtons' 2>/dev/null) && [[ "$m" =~ ^[0-9]+$ ]]; then
+            samples+=("$m")
+          else
+            sample_ok=0
+            break
+          fi
+          if [ "$i" -lt 5 ]; then
+            sleep 0.2
+          fi
+        done
+        if [ "$sample_ok" -eq 1 ]; then
+          echo "mouse button mask samples: ${samples[*]}"
+          held=7
+          for m in "${samples[@]}"; do
+            held=$(( held & m ))
+          done
+          held_names=()
+          if [ $(( held & 1 )) -ne 0 ]; then held_names+=("left"); fi
+          if [ $(( held & 2 )) -ne 0 ]; then held_names+=("right"); fi
+          if [ $(( held & 4 )) -ne 0 ]; then held_names+=("middle"); fi
+          if [ "${#held_names[@]}" -gt 0 ]; then
+            joined=$(IFS=/; echo "${held_names[*]}")
+            failures+=("The ${joined} mouse button is held down on ${RUNNER_NAME} (mask samples ${samples[*]}); robot clicks will be lost. Make one physical click with that button on ${RUNNER_NAME}, then rerun.")
+          fi
+        else
+          echo "::warning::Could not read the mouse-button state on ${RUNNER_NAME} (osascript failed); skipping the latched-button check."
+        fi
+
+        # While the screensaver runs, synthetic UI input does not reach the IDE.
+        if pgrep -x ScreenSaverEngine > /dev/null 2>&1; then
+          failures+=("The screensaver is running on ${RUNNER_NAME}; UI input cannot reach the IDE. Set the screen saver to Never.")
+        fi
+
+        if [ "${#failures[@]}" -gt 0 ]; then
+          for f in "${failures[@]}"; do
+            echo "::error::${f}"
+          done
+          exit 1
+        fi
+        echo "Display awake, session unlocked, no latched mouse button, no screensaver"

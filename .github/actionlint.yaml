@@ -1,0 +1,4 @@
+# Custom labels of the self-hosted runners (see run-ui-tests.yml), so actionlint does not flag them.
+self-hosted-runner:
+  labels:
+    - mac-ui-m2
