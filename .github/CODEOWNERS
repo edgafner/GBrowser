@@ -1,0 +1,4 @@
+# Workflows, actions and CI scripts decide what runs on the self-hosted macOS runner, so every change
+# under .github/ needs a code-owner review (ruleset main-1: require_code_owner_review). Both accounts
+# are the owner's, so a PR opened from one can be approved from the other.
+/.github/ @Jonatha1983 @JG9A
