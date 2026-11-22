@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Upgrade dependencies (kotlinx-serialization 1.13.0, Kotest 6.2.7)
+
 ## [2026.3.7] - 2026-11-14
 
 ### Fixed
