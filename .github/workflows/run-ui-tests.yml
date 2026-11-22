@@ -97,13 +97,15 @@ jobs:
           name: tests-result-macos-m2
           # IDE Starter writes to IDE_CACHE_DIR on CI and to build/out/ide-tests locally; collect both roots.
           # Screenshots are excluded: they are captures of the self-hosted Mac's screen and artifacts are public.
+          # A relative `!**/*.png` resolves against the workspace only, so every root needs its own absolute exclusion.
           path: |
             ${{ runner.tool_cache }}/gbrowser-ide-tests/tests/*/**/log/
             ${{ runner.tool_cache }}/gbrowser-ide-tests/tests/*/**/reports/
             ${{ github.workspace }}/build/out/ide-tests/tests/*/**/log/
             ${{ github.workspace }}/build/out/ide-tests/tests/*/**/reports/
             ${{ github.workspace }}/build/reports/tests/
-            !**/*.png
+            !${{ runner.tool_cache }}/gbrowser-ide-tests/**/*.png
+            !${{ github.workspace }}/**/*.png
           if-no-files-found: warn
           retention-days: 2
         continue-on-error: true
