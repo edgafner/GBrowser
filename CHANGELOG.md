@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2026.3.8] - 2026-11-23
+
 ### Changed
 
 - Upgrade dependencies (kotlinx-serialization 1.13.0, Kotest 6.2.7)
@@ -615,7 +617,8 @@
 
 -- First Jetbrains Public
 
-[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2026.3.7...HEAD
+[Unreleased]: https://github.com/edgafner/GBrowser/compare/v2026.3.8...HEAD
+[2026.3.8]: https://github.com/edgafner/GBrowser/compare/v2026.3.7...v2026.3.8
 [2026.3.7]: https://github.com/edgafner/GBrowser/compare/v2026.3.6...v2026.3.7
 [2026.3.6]: https://github.com/edgafner/GBrowser/compare/v2026.3.5...v2026.3.6
 [2026.3.5]: https://github.com/edgafner/GBrowser/compare/v2026.3.4...v2026.3.5
